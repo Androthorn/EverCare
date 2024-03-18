@@ -1,0 +1,6 @@
+# Arquivos compilados Haskell
+*.o
+*.hi
+
+# Arquivos executáveis
+*.exe
