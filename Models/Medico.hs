@@ -1,3 +1,4 @@
+module Haskell.Model.Medico where
 import Prelude hiding(id)
 import Haskell.View.Utils (split)
 import Haskell.View.Utils (split, formataBool)
