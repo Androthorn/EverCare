@@ -1,6 +1,6 @@
-module Util where
+module App.Util where
 
-import System.Process
+import System.Process (system)
 import System.IO (stdout, hFlush)
 
 titulo :: String
@@ -42,8 +42,6 @@ leituraDadosPaciente = do
               prompt "Sexo > ",
               prompt "Data de Nascimento > ",
               prompt "Endereço > ",
-              prompt "Peso > ",
-              prompt "Altura > ",
               prompt "Tipo Sanguineo > ",
               prompt "Cardiopata (S ou N) > ",
               prompt "Hipertenso (S ou N) > ",
@@ -106,3 +104,14 @@ prompt text = do
     putStr text
     hFlush stdout
     getLine
+
+boolToString :: Bool -> String
+boolToString True = "S"
+boolToString False = "N"
+
+split :: String -> Char -> String -> [String]
+split "" _ "" = []
+split "" _ aux = [aux]
+split (h : t) sep aux | h == sep && aux == "" = split t sep aux
+                  | h == sep = [aux] ++ split t sep ""
+                  | otherwise = split t sep (aux ++ [h])

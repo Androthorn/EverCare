@@ -1,6 +1,8 @@
-module Paciente where
+module Models.Paciente where
+    
+import App.Util (boolToString, split)
+
 import Prelude hiding (id)
-import Haskell.View.Utils (split, formataBool)
 import Data.Char (toUpper)
 
 data Paciente = Paciente {
@@ -40,22 +42,22 @@ instance Show Paciente where
                     "Data de nascimento: " ++ dtn ++ "\n" ++
                     "Endereço: " ++ e ++ "\n" ++
                     "Tipo sanguíneo: " ++ ts ++ "\n" ++
-                    "Cardiopata? " ++ formataBool c ++ "\n"++
-                    "Hipertenso? " ++ formataBool h ++ "\n" ++
-                    "Diabético? " ++ formataBool db
+                    "Cardiopata? " ++ boolToString c ++ "\n"++
+                    "Hipertenso? " ++ boolToString h ++ "\n" ++
+                    "Diabético? " ++ boolToString db
 
 instance Read Paciente where
     readsPrec _ str = do
-        let l = split str ';' ""
-        let id = read (l !! 0) :: Int
-        let nome = l !! 1
-        let cpf = l !! 2
-        let sexo = l !! 3
-        let dataNascimento = l !! 4
-        let endereco = l !! 5
-        let planoDeSaude = l !! 6
-        let tipoSanguineo = l !! 7
-        let cardiopata = if (toUpper $ head (l !! 8)) == 'S' then True else False
-        let diabetico =  if (toUpper $ head (l !! 9)) == 'S' then True else False
-        let hipertenso = if (toUpper $ head (l !! 10)) == 'S' then True else False
+        let paciente = split str ';' ""
+        let id = read (paciente !! 0) :: Int
+        let nome = paciente !! 1
+        let cpf = paciente !! 2
+        let sexo = paciente !! 3
+        let dataNascimento = paciente !! 4
+        let endereco = paciente !! 5
+        let planoDeSaude = paciente !! 6
+        let tipoSanguineo = paciente !! 7
+        let cardiopata = if (toUpper $ head (paciente !! 8)) == 'S' then True else False
+        let diabetico =  if (toUpper $ head (paciente !! 9)) == 'S' then True else False
+        let hipertenso = if (toUpper $ head (paciente !! 10)) == 'S' then True else False
         [(Paciente id nome cpf sexo dataNascimento endereco planoDeSaude tipoSanguineo cardiopata diabetico hipertenso, "")]

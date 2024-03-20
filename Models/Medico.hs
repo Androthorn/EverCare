@@ -1,7 +1,9 @@
-module Haskell.Model.Medico where
+module Models.Medico where
+
+import App.Util (boolToString, split)
+  
 import Prelude hiding(id)
-import Haskell.View.Utils (split)
-import Haskell.View.Utils (split, formataBool)
+
 
 data Medico = Medico {
     id :: Int,
@@ -13,7 +15,7 @@ data Medico = Medico {
 }
 
 toString :: Medico -> String
-toString m = show (idclinica m) ++ ";" ++
+toString m = show (clinica m) ++ ";" ++
              show (id m) ++ ";" ++
              nome m ++ ";" ++
              crm m ++ ";" ++
@@ -21,20 +23,21 @@ toString m = show (idclinica m) ++ ";" ++
              show (horarios m)
 
 instance Show Medico where
-    show (Medico id n c idU e _) =  "----------------------------\n" ++
-                                    "Médico " ++ (show id) ++ "\n" ++
-                                    "Nome: " ++ n ++ "\n" ++
-                                    "CRM: " ++ c ++ "\n" ++
-                                    "Clínica: " ++ (show clinica) ++ "\n" ++
-                                    "Especialidade: " ++ e ++ "\n"
+    show (Medico id nome crm clinica esp _) =  "----------------------------\n" ++
+                                            "Médico " ++ (show id) ++ "\n" ++
+                                            "Nome: " ++ nome ++ "\n" ++
+                                            "CRM: " ++ crm ++ "\n" ++
+                                            "Clínica: " ++ (show clinica) ++ "\n" ++
+                                            "Especialidade: " ++ esp ++ "\n"
 
 instance Read Medico where
     readsPrec _ str = do
-    let l = split str ';' 
-    let id = read (l !! 1) :: Int
-    let nome = l !! 2
-    let crm = l !! 3
-    let clinica = read (l !! 0) :: Int
-    let especialidade = l !! 4
-    let horarios = if (length l == 6) then read (l !! 5) :: String else empty
-    [(Medico id nome crm clinica especialidade horarios, "")]
+        let medico = split str ';' ""
+        let id = read (medico !! 1) :: Int
+        let nome = medico !! 2
+        let crm = medico !! 3
+        let clinica = read (medico !! 0) :: Int
+        let especialidade = medico !! 4
+        let horarios = if (length medico == 6) then read (medico !! 5) :: String else ""
+
+        [(Medico id nome crm clinica especialidade horarios, "")]

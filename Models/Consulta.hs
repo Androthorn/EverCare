@@ -1,4 +1,4 @@
-module Consulta where
+module Models.Consulta where
 
 import Data.Time.Clock
 import Data.Time.Format
