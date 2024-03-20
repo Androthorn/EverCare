@@ -1,8 +1,13 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Redundant bracket" #-}
+{-# HLINT ignore "Redundant if" #-}
 module Main where
 
 import Util
 import Data.Char ( toUpper )
 import Control.Concurrent (threadDelay)
+import Text.XHtml (menu)
+import Control.Monad.RWS.Lazy (MonadState(put))
 
 
 main :: IO ()
@@ -85,6 +90,9 @@ menuPaciente dados = do
     if toUpper (head op) == 'M' then do
         menuPaciente 1
 
+    -- | opção Ver Agendamento
+    -- | opção Receitas / Laudos / Solicitações de Exames
+
     else if toUpper (head op) == 'S' then do
         inicial
 
@@ -144,7 +152,9 @@ menuClinica dados = do
         cadastraMedico 1 -- |idClinica na vdd
 
     else if toUpper (head op) == 'V' then do
-        menuClinica 1
+        visualizaInformacaoClinica
+    
+    -- | Adicionar opção de abrir o dashboard de analises da clinica
 
     else if toUpper (head op) == 'S' then do
         inicial
@@ -152,6 +162,30 @@ menuClinica dados = do
     else do
         putStrLn "Opção inválida"
         menuClinica 1
+
+visualizaInformacaoClinica :: IO ()
+visualizaInformacaoClinica = do
+    limpaTela
+    putStrLn (tituloI "INFORMAÇÕES DA CLÍNICA")
+    putStrLn (visualizarInformacaoClinica)
+    op <- prompt "Opção > "
+
+    if toUpper (head op) == 'A' then do
+        menuClinica 1
+        -- visualiza agendamentos
+    else if toUpper (head op) == 'P' then do
+        menuClinica 1
+        -- visualiza pacientes
+    else if toUpper (head op) == 'M' then do
+        menuClinica 1
+        -- visualiza medicos
+    else if toUpper (head op) == 'V' then do
+        menuClinica 1
+    
+    else do
+        putStrLn "Opção inválida"
+        visualizaInformacaoClinica
+
 
 cadastraMedico :: Int -> IO()
 cadastraMedico idClinica = do
@@ -201,9 +235,31 @@ menuMedico dados = do
     if toUpper (head op) == 'V' then do
         menuMedico 1
 
+    -- | opção Ver Agendamento  (do médico)
+    else if toUpper (head op) == 'E' then do
+        menuMedico 1
+        -- | opção Emitir (receitas, laudos, solicitação de exames)
     else if toUpper (head op) == 'S' then do
         inicial
 
     else do
         putStrLn "Opção inválida"
         menuMedico 1
+
+emitirMedico :: IO()
+emitirMedico = do
+    putStrLn emissaoMedico
+    op <- prompt "Opção > "
+
+    if toUpper (head op) == 'R' then do
+        menuMedico 1
+        -- | opção Receita
+    else if toUpper (head op) == 'S' then do
+        menuMedico 1
+        -- | opção Solicitação de Exame
+    else if toUpper (head op) == 'L' then do
+        menuMedico 1
+        -- | opção Laudo Médico
+    else do
+        putStrLn "Opção inválida"
+        emitirMedico
