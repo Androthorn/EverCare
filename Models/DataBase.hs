@@ -2,13 +2,18 @@ module Models.DataBase where
 
 import qualified Models.Paciente as Paciente
 import qualified Models.Medico as Medico
-import Models.Clinica
+import qualified Models.Clinica as Clinica
+import App.Util (split)
+import System.IO
+import System.Directory
+
 
 data BD = BD {
     pacientes :: [Paciente.Paciente],
     medicos :: [Medico.Medico],
-    clinicas :: [Clinica],
+    clinicas :: [Clinica.Clinica],
     loginsPacientes :: [(Int, String)],
+    loginsClinica :: [(Int, String)],
     idAtualPaciente :: Int,
     idAtualMedico :: Int,
     idAtualClinica :: Int
@@ -21,23 +26,36 @@ novoBD = BD {
     medicos = [],
     clinicas = [],
     loginsPacientes = [],
+    loginsClinica = [],
     idAtualPaciente = 1,
     idAtualMedico = 1,
     idAtualClinica = 1
 }
 
+
 pacientesToString :: [Paciente.Paciente] -> String -> String
 pacientesToString [] str = str
-pacientesToString (x:xs) str = str ++ (Paciente.toString x ) ++ "\n" ++ pacientesToString xs str
+pacientesToString (x:xs) str = str ++ (Paciente.toString x) ++ "\n" ++ pacientesToString xs str
 
 stringToPacientes :: [String] -> [Paciente.Paciente]
 stringToPacientes [] = []
 stringToPacientes l = map read l :: [Paciente.Paciente]
 
+clinicasToString :: [Clinica.Clinica] -> String -> String
+clinicasToString [] str = str
+clinicasToString (x:xs) str = str ++ (Clinica.toString x) ++ "\n" ++ clinicasToString xs str
+
+stringToClinicas :: [String] -> [Clinica.Clinica]
+stringToClinicas [] = []
+stringToClinicas l = map read l :: [Clinica.Clinica]
+
 medicosToString :: [Medico.Medico] -> String -> String
 medicosToString [] str = str
 medicosToString (x:xs) str = str ++ (Medico.toString x) ++ "\n" ++ medicosToString xs str
 
+stringToMedicos :: [String] -> [Medico.Medico]
+stringToMedicos [] = []
+stringToMedicos l = map read l :: [Medico.Medico]
 
 loginsPacientesToString :: [(Int, String)] -> String -> String
 loginsPacientesToString [] str = str
@@ -46,3 +64,11 @@ loginsPacientesToString (x:xs) str = str ++ (show x) ++ "\n" ++ loginsPacientesT
 stringToLoginsPaciente :: [String] -> [(Int, String)]
 stringToLoginsPaciente [] = []
 stringToLoginsPaciente l = map read l :: [(Int, String)]
+
+loginsClinicaToString :: [(Int, String)] -> String -> String
+loginsClinicaToString [] str = str
+loginsClinicaToString (x:xs) str = str ++ (show x) ++ "\n" ++ loginsClinicaToString xs str
+
+stringToLoginsClinica :: [String] -> [(Int, String)]
+stringToLoginsClinica [] = []
+stringToLoginsClinica l = map read l :: [(Int, String)]

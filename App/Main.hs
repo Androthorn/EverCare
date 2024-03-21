@@ -87,7 +87,7 @@ loginPaciente dados = do
     senha <- prompt "Senha > "
     putStrLn ""
 
-    let aut = Autenticator.autenticaPaciente (BD.loginsPacientes dados) (read id) senha
+    let aut = Autenticator.autentica(BD.loginsPacientes dados) (read id) senha
 
     if aut then do
         menuPaciente dados
@@ -141,22 +141,30 @@ cadastraClinica dados = do
     putStrLn (tituloI "CADASTRO DE CLÍNICA")
     dadosC <- leituraDadosClinica
     senha <- prompt "Senha > "
-    putStrLn "Clínica cadastrada com sucesso! Direcionando pro Login..."
-    threadDelay 1000000  -- waits for 1 second
 
-    -- | Aqui vai a função que salva os dados no banco de dados.
-    loginClinica dados
+    putStrLn ("Clínica cadastrado com sucesso! Seu id é: " ++ (show (BD.idAtualClinica dados)))
+    threadDelay 2000000  -- waits for 1 second
+    
+    loginClinica dados { BD.clinicas = (BD.clinicas dados) ++ [CControl.criaClinica (BD.idAtualClinica dados) dadosC],
+    BD.loginsClinica = (BD.loginsClinica dados) ++ [(BD.idAtualClinica dados, senha)],
+    BD.idAtualClinica = (BD.idAtualClinica dados) + 1
+    }
 
 loginClinica :: BD.BD -> IO()
 loginClinica dados = do
     limpaTela
     putStrLn (tituloI "LOGIN DE CLÍNICA")
-    cnpj <- prompt "CNPJ > "
+    idC <- prompt "ID > "
     senha <- prompt "Senha > "
+    putStrLn ""
 
-    -- | Aqui vai a função que verifica se a clínica existe e se a senha está correta.
-    -- | Se estiver, direciona pro dashboard/menu de clínica, caso não volta pra parte de clínica.
-    menuClinica dados
+    let aut = Autenticator.autentica (BD.loginsClinica dados) (read idC) senha
+    if aut then do
+        menuClinica dados
+    else do
+        putStrLn "ID ou senha incorretos"
+        threadDelay 1000000  -- waits for 1 second
+        inicialClinica dados
 
 menuClinica :: BD.BD -> IO()
 menuClinica dados = do
