@@ -14,6 +14,7 @@ data BD = BD {
     clinicas :: [Clinica.Clinica],
     loginsPacientes :: [(Int, String)],
     loginsClinica :: [(Int, String)],
+    loginsMedico :: [(Int, String)],
     idAtualPaciente :: Int,
     idAtualMedico :: Int,
     idAtualClinica :: Int
@@ -27,6 +28,7 @@ novoBD = BD {
     clinicas = [],
     loginsPacientes = [],
     loginsClinica = [],
+    loginsMedico = [],
     idAtualPaciente = 1,
     idAtualMedico = 1,
     idAtualClinica = 1
@@ -72,3 +74,11 @@ loginsClinicaToString (x:xs) str = str ++ (show x) ++ "\n" ++ loginsClinicaToStr
 stringToLoginsClinica :: [String] -> [(Int, String)]
 stringToLoginsClinica [] = []
 stringToLoginsClinica l = map read l :: [(Int, String)]
+
+loginsMedicoToString :: [(Int, String)] -> String -> String
+loginsMedicoToString [] str = str
+loginsMedicoToString (x:xs) str = str ++ (show x) ++ "\n" ++ loginsMedicoToString xs str
+
+stringToLoginsMedico :: [String] -> [(Int, String)]
+stringToLoginsMedico [] = []
+stringToLoginsMedico l = map read l :: [(Int, String)]

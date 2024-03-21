@@ -8,6 +8,8 @@ import qualified Models.DataBase as BD
 import qualified Persistence.Persistence as Persistence
 import qualified Controllers.PacienteController as PControl
 import qualified Controllers.AutenticationController as Autenticator
+import qualified Controllers.ClinicaController as CControl
+
 
 import Data.Char ( toUpper )
 import Control.Concurrent (threadDelay)
@@ -39,7 +41,7 @@ inicial dados = do
         inicialMedico dados
 
     else if toUpper (head op) == 'S' then do
-        Persistence.encerrar dados
+        Persistence.salvaTodos dados
         putStrLn "Saindo..."
         -- | Aqui vai a função que encerra o programa.
 
@@ -71,7 +73,7 @@ cadastraPaciente dados = do
     dadosP <- leituraDadosPaciente
     senha <- prompt "Senha > "
     putStrLn ("Pacinte cadastrado com sucesso! Seu id é: " ++ (show (BD.idAtualPaciente dados)))
-    threadDelay 3000000  -- waits for 1 second
+    threadDelay 2000000  -- waits for 1 second
 
     loginPaciente dados { BD.pacientes = (BD.pacientes dados) ++ [PControl.criaPaciente (BD.idAtualPaciente dados) dadosP],
     BD.loginsPacientes = (BD.loginsPacientes dados) ++ [(BD.idAtualPaciente dados, senha)],
@@ -90,22 +92,22 @@ loginPaciente dados = do
     let aut = Autenticator.autentica(BD.loginsPacientes dados) (read id) senha
 
     if aut then do
-        menuPaciente dados
+        menuPaciente (read id) dados
     else do
         putStrLn "ID ou senha incorretos"
         threadDelay 1000000  -- waits for 1 second
         inicialPaciente dados
 
 
-menuPaciente :: BD.BD -> IO()
-menuPaciente dados = do
+menuPaciente :: Int -> BD.BD -> IO()
+menuPaciente idPac dados = do
     limpaTela
     putStrLn (tituloI "DASHBOARD PACIENTE")
     putStrLn (dashboardPaciente)
     op <- prompt "Opção > "
 
     if toUpper (head op) == 'M' then do
-        menuPaciente dados
+        menuPaciente idPac dados
 
     -- | opção Ver Agendamento
     -- | opção Receitas / Laudos / Solicitações de Exames
@@ -115,7 +117,7 @@ menuPaciente dados = do
 
     else do
         putStrLn "Opção inválida"
-        menuPaciente dados
+        menuPaciente idPac dados
 
 
 inicialClinica :: BD.BD -> IO()
@@ -160,24 +162,24 @@ loginClinica dados = do
 
     let aut = Autenticator.autentica (BD.loginsClinica dados) (read idC) senha
     if aut then do
-        menuClinica dados
+        menuClinica (read idC) dados
     else do
         putStrLn "ID ou senha incorretos"
         threadDelay 1000000  -- waits for 1 second
         inicialClinica dados
 
-menuClinica :: BD.BD -> IO()
-menuClinica dados = do
+menuClinica :: Int -> BD.BD -> IO()
+menuClinica idC dados = do
     limpaTela
     putStrLn (tituloI "DASHBOARD CLÍNICA")
     putStrLn (dashboardClinica)
     op <- prompt "Opção > "
 
     if toUpper (head op) == 'C' then do
-        cadastraMedico 1 dados -- |idClinica na vdd
+        cadastraMedico idC dados
 
     else if toUpper (head op) == 'V' then do
-        visualizaInformacaoClinica dados
+        visualizaInformacaoClinica idC dados
     
     -- | Adicionar opção de abrir o dashboard de analises da clinica
 
@@ -186,43 +188,49 @@ menuClinica dados = do
 
     else do
         putStrLn "Opção inválida"
-        menuClinica dados
+        menuClinica idC dados
 
-visualizaInformacaoClinica :: BD.BD -> IO()
-visualizaInformacaoClinica dados = do
+visualizaInformacaoClinica :: Int -> BD.BD -> IO()
+visualizaInformacaoClinica idC dados = do
     limpaTela
     putStrLn (tituloI "INFORMAÇÕES DA CLÍNICA")
     putStrLn (visualizarInformacaoClinica)
     op <- prompt "Opção > "
 
     if toUpper (head op) == 'A' then do
-        menuClinica dados
+        menuClinica idC dados
         -- visualiza agendamentos
     else if toUpper (head op) == 'P' then do
-        menuClinica dados
+        menuClinica idC dados
         -- visualiza pacientes
     else if toUpper (head op) == 'M' then do
-        menuClinica dados
+        menuClinica idC dados
         -- visualiza medicos
     else if toUpper (head op) == 'V' then do
-        menuClinica dados
+        menuClinica idC dados
     
     else do
         putStrLn "Opção inválida"
-        visualizaInformacaoClinica dados
+        visualizaInformacaoClinica idC dados
 
 
 cadastraMedico :: Int -> BD.BD -> IO()
 cadastraMedico idClinica dados = do
     limpaTela
     putStrLn (tituloI "CADASTRO DE MÉDICO")
-    dadosM <- leituraDadosMedico idClinica
+    dadosM <- leituraDadosMedico
     senha <- prompt "Senha > "
-    putStrLn "Médico cadastrada com sucesso!"
-    threadDelay 1000000  -- waits for 1 second
+    putStrLn ""
 
-    -- | Aqui vai a função que verifica se a médico pode ser criado.
-    menuClinica dados
+    putStrLn ("Clínica cadastrado com sucesso! Seu id é: " ++ (show (BD.idAtualMedico dados)))
+
+    let medico = CControl.criaMedico idClinica (BD.idAtualMedico dados) dadosM
+    threadDelay 2000000  -- waits for 1 second
+
+    menuClinica idClinica dados { BD.medicos = (BD.medicos dados) ++ [medico],
+    BD.loginsMedico = (BD.loginsMedico dados) ++ [(BD.idAtualMedico dados, senha)],
+    BD.idAtualMedico = (BD.idAtualMedico dados) + 1
+    }
 
 inicialMedico :: BD.BD -> IO()
 inicialMedico dados = do
@@ -232,59 +240,64 @@ inicialMedico dados = do
 
     op2 <- prompt "Opção > "
     if toUpper (head op2) == 'L' then do
-        loginMedico
+        loginMedico dados
     else if toUpper (head op2) == 'V' then do
         inicial dados
     else do
         putStrLn "Opção inválida"
         inicialMedico dados
 
-loginMedico :: IO()
-loginMedico = do
+loginMedico :: BD.BD -> IO()
+loginMedico dados = do
     limpaTela
     putStrLn (tituloI "LOGIN DE MÉDICO")
-    crm <- prompt "CRM > "
+    idM <- prompt "ID > "
     senha <- prompt "Senha > "
+    putStrLn ""
 
-    -- | Aqui vai a função que verifica se o médico existe e se a senha está correta.
-    -- | Se estiver, direciona pro dashboard/menu de médico, caso não volta pra parte de médico.
-    menuMedico 1
+    let aut = Autenticator.autentica (BD.loginsMedico dados) (read idM) senha
+    if aut then do
+        menuMedico (read idM) dados
+    else do
+        putStrLn "ID ou senha incorretos"
+        threadDelay 2000000  -- waits for 1 second
+        inicialMedico dados
 
-menuMedico :: Int -> IO()
-menuMedico dados = do
+menuMedico :: Int  -> BD.BD -> IO()
+menuMedico idM dados = do
     limpaTela
     putStrLn (tituloI "DASHBOARD MÉDICO")
     putStrLn (dashboardMedico)
     op <- prompt "Opção > "
 
     if toUpper (head op) == 'V' then do
-        menuMedico 1
+        menuMedico idM dados
 
     -- | opção Ver Agendamento  (do médico)
     else if toUpper (head op) == 'E' then do
-        menuMedico 1
+        menuMedico idM dados
         -- | opção Emitir (receitas, laudos, solicitação de exames)
     else if toUpper (head op) == 'S' then do
-        menuMedico 1
+        inicial dados
 
     else do
         putStrLn "Opção inválida"
-        menuMedico 1
+        menuMedico idM dados
 
-emitirMedico :: IO()
-emitirMedico = do
+emitirMedico :: Int  -> BD.BD -> IO()
+emitirMedico idM dados = do
     putStrLn emissaoMedico
     op <- prompt "Opção > "
 
     if toUpper (head op) == 'R' then do
-        menuMedico 1
+        menuMedico idM dados
         -- | opção Receita
     else if toUpper (head op) == 'S' then do
-        menuMedico 1
+        menuMedico idM dados
         -- | opção Solicitação de Exame
     else if toUpper (head op) == 'L' then do
-        menuMedico 1
+        menuMedico idM dados
         -- | opção Laudo Médico
     else do
         putStrLn "Opção inválida"
-        emitirMedico
+        emitirMedico idM dados

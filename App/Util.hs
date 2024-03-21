@@ -75,8 +75,8 @@ visualizarInformacaoClinica =   " [A] - Agendamentos\n"
                             ++ " [V] - Voltar\n"
 
 
-leituraDadosMedico :: Int -> IO [String]
-leituraDadosMedico idClinica = do
+leituraDadosMedico :: IO [String]
+leituraDadosMedico = do
     sequence [prompt "Nome > ",
               prompt "CRM > ",
               prompt "Especialidade > ",

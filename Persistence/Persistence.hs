@@ -13,6 +13,8 @@ carregaTodos = do
     novoBanco4 <- carregaLoginsClinica novoBanco3
     return novoBanco4
 
+
+
 carregaPacientes :: BD.BD -> IO BD.BD
 carregaPacientes dados = do
     conteudo <- leConteudo "pacientes.txt"
@@ -59,12 +61,26 @@ salvaLoginsClinica dados = do
     let loginsStr = BD.loginsClinicaToString loginsClinica ""
     escreveConteudo "loginsclinicas.txt" loginsStr
 
+salvaMedicos :: BD.BD -> IO ()
+salvaMedicos dados = do
+    let medicos = BD.medicos dados
+    let medicosStr = BD.medicosToString medicos ""
+    escreveConteudo "medicos.txt" medicosStr
+
+salvaLoginsMedico :: BD.BD -> IO ()
+salvaLoginsMedico dados = do
+    let loginsMedico = BD.loginsMedico dados
+    let loginsStr = BD.loginsMedicoToString loginsMedico ""
+    escreveConteudo "loginsmedicos.txt" loginsStr
+
 salvaTodos :: BD.BD -> IO ()
 salvaTodos dados = do
     salvaLoginsClinica dados
     salvaLoginsPaciente dados
+    salvaLoginsMedico dados
     salvaPacientes dados
     salvaClinicas dados
+    salvaMedicos dados
 
 
 -- Função para salvar os pacientes no arquivo
