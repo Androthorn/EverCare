@@ -11,8 +11,9 @@ carregaTodos = do
     novoBanco2 <- carregaLoginsPaciente novoBanco
     novoBanco3 <- carregaClinicas novoBanco2
     novoBanco4 <- carregaLoginsClinica novoBanco3
-    return novoBanco4
-
+    novoBanco5 <- carregaMedicos novoBanco4
+    novoBanco6 <- carregaLoginsMedico novoBanco5
+    return novoBanco6
 
 
 carregaPacientes :: BD.BD -> IO BD.BD
@@ -37,11 +38,23 @@ carregaLoginsClinica dados = do
     return (dados {BD.loginsClinica = BD.stringToLoginsClinica $ split conteudo '\n' "",
                    BD.idAtualClinica = length (BD.stringToLoginsClinica $ split conteudo '\n' "") + 1})
 
+carregaMedicos :: BD.BD -> IO BD.BD
+carregaMedicos dados = do
+    conteudo <- leConteudo "medicos.txt"
+    return (dados {BD.medicos = BD.stringToMedicos $ split conteudo '\n' ""})
+
+carregaLoginsMedico :: BD.BD -> IO BD.BD
+carregaLoginsMedico dados = do
+    conteudo <- leConteudo "loginsmedicos.txt"
+    return (dados {BD.loginsMedico = BD.stringToLoginsMedico $ split conteudo '\n' "",
+                   BD.idAtualMedico = length (BD.stringToLoginsMedico $ split conteudo '\n' "") + 1})
+
+
 salvaPacientes :: BD.BD -> IO ()
 salvaPacientes dados = do
     let pacientes = BD.pacientes dados
     let pacientesStr = BD.pacientesToString pacientes ""
-    escreveConteudo "loginspacientes.txt" pacientesStr
+    escreveConteudo "pacientes.txt" pacientesStr
 
 salvaLoginsPaciente :: BD.BD -> IO ()
 salvaLoginsPaciente dados = do

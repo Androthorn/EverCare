@@ -43,6 +43,7 @@ leituraDadosPaciente = do
               prompt "Data de Nascimento > ",
               prompt "Endereço > ",
               prompt "Tipo Sanguineo > ",
+              prompt "Plano de Saúde > ",
               prompt "Cardiopata (S ou N) > ",
               prompt "Hipertenso (S ou N) > ",
               prompt "Diabético (S ou N) > "]
@@ -56,10 +57,9 @@ dashboardPaciente =   " [M] - Marcar Consultas\n"
 leituraDadosClinica :: IO [String]
 leituraDadosClinica = do
     sequence [prompt "Nome > ",
-              prompt "CNPJ > ",
               prompt "Endereço > ",
-              prompt "Planos Vinculados > ",
               prompt "Horários de Funcionamento > ",
+              prompt "Planos Vinculados > ",
               prompt "Contato > "]
 
 dashboardClinica :: String

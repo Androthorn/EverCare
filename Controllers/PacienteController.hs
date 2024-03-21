@@ -15,6 +15,3 @@ Cria um paciente.
 -}
 criaPaciente :: Int -> [String] -> Paciente
 criaPaciente idP infos = read (intercalate ";" ([show (idP)] ++ infos)) :: Paciente
-
-criaPacienteJaID [String] -> Paciente
-criaPacienteJaID infos = read (intercalate ";" infos) :: Paciente
