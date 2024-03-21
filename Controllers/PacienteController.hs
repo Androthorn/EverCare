@@ -42,3 +42,4 @@ Essa função filtra uma lista de laudos com base no id do paciente.
 consultarLaudo :: Int -> [Laudo] -> [Laudo]
 consultarLaudo _ [] = []
 consultarLaudo idPaciente laudos = filter (\laudo -> Laudo.id laudo == idPaciente) laudos
+
