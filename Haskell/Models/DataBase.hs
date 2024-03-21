@@ -1,8 +1,8 @@
-module Models.DataBase where
+module Haskell.Models.DataBase where
 
-import qualified Models.Paciente as Paciente
-import qualified Models.Medico as Medico
-import Models.Clinica
+import qualified Haskell.Models.Paciente as Paciente
+import qualified Haskell.Models.Medico as Medico
+import Haskell.Models.Clinica
 
 data BD = BD {
     pacientes :: [Paciente.Paciente],

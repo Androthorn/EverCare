@@ -1,7 +1,7 @@
-module Models.Clinica where
+module Haskell.Models.Clinica where
 
 import Prelude hiding (id)
-import App.Util (split)
+import Haskell.App.Util (split)
 
 
 data Clinica = Clinica {

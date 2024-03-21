@@ -1,10 +1,10 @@
-module Controllers.ClinicaController(
+module Haskell.Controllers.ClinicaController(
     criaClinica,
     cadastraMedico
 ) where
 import Data.List ( intercalate )
-import qualified Models.Clinica as Clinica
-import qualified Models.Medico as Medico
+import qualified Haskell.Models.Clinica as Clinica
+import qualified Haskell.Models.Medico as Medico
     
 {-
 Cria um clinica.

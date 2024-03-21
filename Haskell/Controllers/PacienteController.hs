@@ -2,16 +2,18 @@
 {-# HLINT ignore "Eta reduce" #-}
 {-# HLINT ignore "Redundant bracket" #-}
 {-# HLINT ignore "Use :" #-}
-module Controllers.PacienteController (
+module Haskell.Controllers.PacienteController (
     criaPaciente
 ) where
 
-import qualified Models.DataBase as BD
-import Models.Paciente
-import qualified Models.Medico as Medico
-import Models.Laudo as Laudo
-import App.Util
+import qualified Haskell.Models.DataBase as BD
+import Haskell.Models.Paciente
+import qualified Haskell.Models.Medico as Medico
+import Haskell.Models.Laudo as Laudo
+import Haskell.App.Util
 import Data.List (intercalate)
+import qualified Haskell.Models.Receita as Receita
+
 
 {-
 Cria um paciente.
@@ -42,4 +44,14 @@ Essa função filtra uma lista de laudos com base no id do paciente.
 consultarLaudo :: Int -> [Laudo] -> [Laudo]
 consultarLaudo _ [] = []
 consultarLaudo idPaciente laudos = filter (\laudo -> Laudo.id laudo == idPaciente) laudos
+
+{-
+Essa função filtra uma lista de receitas com base no id do paciente.
+@param idPaciente: O id do paciente que se deseja encontrar nas receitas.
+@param receitas: Uma lista de receitas que será filtrada.
+@return Uma lista de receitas que possuem o id do paciente desejado.
+-}
+consultarReceita :: Int -> [Receita.Receita] -> [Receita.Receita]
+consultarReceita _ [] = []
+consultarReceita idPaciente receita = filter (\receita -> Receita.idPaciente receita == idPaciente) receita
 

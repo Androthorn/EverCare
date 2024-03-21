@@ -1,15 +1,14 @@
 module Haskell.Model.Exame where
-import App.Utils
+import Haskell.App.Util (split)
 import Prelude hiding (id)
-import Data.Dates
+-- import Data.Dates
 
 data Exame = Exame {
     id :: Int,
     idPaciente :: Int,
     idMedico :: Int,
     tipo :: String,
-    dia :: DateTime,
-    resultado :: String
+    dia :: String
 }
 
 --Ajeitar o tipo da data
@@ -19,26 +18,24 @@ toString e =
     show (id e) ++ ";" ++
     show (idPaciente e) ++ ";" ++
     show (idMedico e) ++ ";" ++
-    show (idUBS e) ++ ";" ++
     tipo e ++ ";" ++
-    resultado e ++ ";" ++
-    dateTimeToString (dia e)
+    show (dia e)
     
 
 instance Show Exame where
-    show (Exame id idP idM t d ) = "----------------------------\n" ++
+    show (Exame id idP idM t d) = "----------------------------\n" ++
                                         "EXAME " ++ (show id) ++ "\n" ++
                                         "Paciente: " ++ (show idP) ++ "\n" ++
                                         "Médico responsável: " ++ (show idM) ++ "\n" ++
                                         "Tipo do exame: " ++ t ++ "\n" ++
-                                        "Data: " ++ (dateTimeToString d) ++ "\n"
+                                        "Data: " ++ (show d) ++ "\n"
 
 instance Read Exame where
     readsPrec _ str = do
-    let l = split str ';' ""
-    let id = read (l !! 0) :: Int
-    let idPaciente = read (l !! 1) :: Int
-    let idMedico = read (l !! 2) :: Int
-    let tipo = l !! 3
-    let dia = read (l !! 4) :: DateTime
-    [(Exame id idPaciente idMedico tipo dia, "")]
+        let l = split str ';' ""
+        let id = read (l !! 0) :: Int
+        let idPaciente = read (l !! 1) :: Int
+        let idMedico = read (l !! 2) :: Int
+        let tipo = l !! 3
+        let dia = read (l !! 4) :: String
+        [(Exame id idPaciente idMedico tipo dia, "")]

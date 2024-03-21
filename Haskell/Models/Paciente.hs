@@ -1,6 +1,6 @@
-module Models.Paciente where
+module Haskell.Models.Paciente where
     
-import App.Util (boolToString, split)
+import Haskell.App.Util (boolToString, split)
 
 import Prelude hiding (id)
 import Data.Char (toUpper)

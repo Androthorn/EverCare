@@ -3,11 +3,11 @@
 {-# HLINT ignore "Redundant if" #-}
 
 
-import App.Util
-import qualified Models.DataBase as BD
-import qualified Persistence.Persistence as Persistence
-import qualified Controllers.PacienteController as PControl
-import qualified Controllers.AutenticationController as Autenticator
+import Haskell.App.Util
+import qualified Haskell.Models.DataBase as BD
+import qualified Haskell.Persistence.Persistence as Persistence
+import qualified Haskell.Controllers.PacienteController as PControl
+import qualified Haskell.Controllers.AutenticationController as Autenticator
 
 import Data.Char ( toUpper )
 import Control.Concurrent (threadDelay)

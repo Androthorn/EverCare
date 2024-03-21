@@ -1,7 +1,7 @@
-module Persistence.Persistence where
+module Haskell.Persistence.Persistence where
 
-import qualified Models.DataBase as BD
-import App.Util (split)
+import qualified Haskell.Models.DataBase as BD
+import Haskell.App.Util (split)
 import System.IO
 
 carregaTodos :: IO BD.BD
@@ -23,19 +23,32 @@ carregaLoginsPaciente dados = do
 
 
 -- Função para salvar os pacientes no arquivo
+-- encerrar :: BD.BD -> IO ()
+-- encerrar dados = do
+--     let path = "Persistence/"
+--     let pacientes = BD.pacientes dados
+--     let loginsPacientes = BD.loginsPacientes dados
+
+--     withFile "Persistence/loginspacientes.txt" ReadWriteMode $ \handle -> do
+--         let loginsStr = BD.loginsPacientesToString loginsPacientes ""
+--         hPutStr handle loginsStr  -- Escreve no arquivo
+
+--     withFile "Persistence/pacientes.txt" ReadWriteMode $ \handle -> do
+--         let pacientesStr = BD.pacientesToString pacientes ""
+--         hPutStr handle pacientesStr  -- Escreve no arquivo
+
 encerrar :: BD.BD -> IO ()
 encerrar dados = do
     let path = "Persistence/"
     let pacientes = BD.pacientes dados
     let loginsPacientes = BD.loginsPacientes dados
 
-    withFile "Persistence/loginspacientes.txt" ReadWriteMode $ \handle -> do
-        let loginsStr = BD.loginsPacientesToString loginsPacientes ""
-        hPutStr handle loginsStr  -- Escreve no arquivo
+    -- Escreve loginsPacientes no arquivo
+    writeFile "Persistence/loginspacientes.txt" (BD.loginsPacientesToString loginsPacientes "")
 
-    withFile "Persistence/pacientes.txt" ReadWriteMode $ \handle -> do
-        let pacientesStr = BD.pacientesToString pacientes ""
-        hPutStr handle pacientesStr  -- Escreve no arquivo
+    -- Escreve pacientes no arquivo
+    writeFile "Persistence/pacientes.txt" (BD.pacientesToString pacientes "")
+
 
 leConteudo :: String -> IO String
 leConteudo arquivo = readFile ("Persistence/" ++ arquivo)

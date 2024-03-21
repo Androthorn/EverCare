@@ -1,4 +1,4 @@
-module App.Util where
+module Haskell.App.Util where
 
 import System.Process (system)
 import System.IO (stdout, hFlush)

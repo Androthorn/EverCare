@@ -1,5 +1,5 @@
-module Models.Laudo where
-import App.Util (split)
+module Haskell.Models.Laudo where
+import Haskell.App.Util (split)
 import Prelude hiding (id)
 
 data Laudo = Laudo {

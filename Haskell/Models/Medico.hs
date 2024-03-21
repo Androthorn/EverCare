@@ -1,6 +1,6 @@
-module Models.Medico where
+module Haskell.Models.Medico where
 
-import App.Util (boolToString, split)
+import Haskell.App.Util (boolToString, split)
   
 import Prelude hiding(id)
 
