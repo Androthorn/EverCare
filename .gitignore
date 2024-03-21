@@ -1,6 +1,6 @@
 # Arquivos compilados Haskell
 *.o
 *.hi
-
+mainTeste.hs
 # Arquivos executáveis
 *.exe

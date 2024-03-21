@@ -1,6 +1,6 @@
-module Util where
+module App.Util where
 
-import System.Process
+import System.Process (system)
 import System.IO (stdout, hFlush)
 
 titulo :: String
@@ -39,27 +39,41 @@ leituraDadosPaciente :: IO [String]
 leituraDadosPaciente = do
     sequence [prompt "Nome > ",
               prompt "CPF > ",
+              prompt "Sexo > ",
               prompt "Data de Nascimento > ",
-              prompt "Peso > ",
-              prompt "Altura > ",
+              prompt "Endereço > ",
               prompt "Tipo Sanguineo > ",
-              prompt "Endereço > "]
+              prompt "Cardiopata (S ou N) > ",
+              prompt "Hipertenso (S ou N) > ",
+              prompt "Diabético (S ou N) > "]
 
 dashboardPaciente :: String
 dashboardPaciente =   " [M] - Marcar Consultas\n"
                     ++" [V] - Ver Agendamentos\n"
+                    ++" [R] - Receitas / Laudos / Solicitação de Exames\n"
                     ++" [S] - Sair\n"
 
 leituraDadosClinica :: IO [String]
 leituraDadosClinica = do
     sequence [prompt "Nome > ",
               prompt "CNPJ > ",
-              prompt "Endereço > "]
+              prompt "Endereço > ",
+              prompt "Planos Vinculados > ",
+              prompt "Horários de Funcionamento > ",
+              prompt "Contato > "]
 
 dashboardClinica :: String
 dashboardClinica = " [C] - Cadastrar Médico\n"
-                 ++" [V] - Ver Médicos\n"
+                 ++" [V] - Ver Informações\n"
+                 ++" [D] - Dashboard\n"
                  ++" [S] - Sair\n"
+
+visualizarInformacaoClinica :: String
+visualizarInformacaoClinica =   " [A] - Agendamentos\n"
+                            ++ " [P] - Pacientes\n"
+                            ++ " [M] - Médicos\n"
+                            ++ " [V] - Voltar\n"
+
 
 leituraDadosMedico :: Int -> IO [String]
 leituraDadosMedico idClinica = do
@@ -71,7 +85,13 @@ leituraDadosMedico idClinica = do
 
 dashboardMedico :: String
 dashboardMedico = " [V] - Ver Agendamentos\n"
+                ++" [E] - Emitir\n"
                 ++" [S] - Sair\n"
+
+emissaoMedico :: String
+emissaoMedico = " [R] - Receita\n"
+             ++ " [S] - Solicitação de Exame\n"
+             ++ " [L] - Laudo Médico\n"
 
 -- | Clear the terminal screen
 limpaTela :: IO ()
@@ -84,3 +104,14 @@ prompt text = do
     putStr text
     hFlush stdout
     getLine
+
+boolToString :: Bool -> String
+boolToString True = "S"
+boolToString False = "N"
+
+split :: String -> Char -> String -> [String]
+split "" _ "" = []
+split "" _ aux = [aux]
+split (h : t) sep aux | h == sep && aux == "" = split t sep aux
+                  | h == sep = [aux] ++ split t sep ""
+                  | otherwise = split t sep (aux ++ [h])

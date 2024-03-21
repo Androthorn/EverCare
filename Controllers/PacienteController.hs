@@ -1,3 +1,6 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Eta reduce" #-}
+{-# HLINT ignore "Redundant bracket" #-}
 module Controllers.PacienteController (
     criaPaciente
 ) where
@@ -16,6 +19,7 @@ Cria um paciente.
 -}
 criaPaciente :: Int -> [String] -> Paciente
 criaPaciente idP infos = read (intercalate ";" ([show (idP)] ++ infos)) :: Paciente
+
 {-
 Essa função filtra uma lista de médicos com base na especialidade desejada.
 @param especialidadeDesejada: A especialidade que se deseja encontrar nos médicos.
@@ -24,5 +28,5 @@ Essa função filtra uma lista de médicos com base na especialidade desejada.
 -}
 
 filtrarMedicosPorEspecialidade :: String -> [Medico.Medico] -> [Medico.Medico]
-filtrarMedicosPorEspecialidade medicos especialidadeDesejada =
+filtrarMedicosPorEspecialidade especialidadeDesejada medicos  =
     filter (\medico -> Medico.especialidade medico == especialidadeDesejada) medicos
