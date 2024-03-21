@@ -2,7 +2,7 @@ module Haskell.Models.DataBase where
 
 import qualified Haskell.Models.Paciente as Paciente
 import qualified Haskell.Models.Medico as Medico
-import qualified Haskell.Models.Clinica as Clinicas
+import qualified Haskell.Models.Clinica as Clinica
 import Haskell.App.Util (split)
 import System.IO
 import System.Directory

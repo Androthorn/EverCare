@@ -1,6 +1,6 @@
 module Haskell.Controllers.ClinicaController(
     criaClinica,
-    cadastraMedico
+    criaMedico
 ) where
 import Data.List ( intercalate )
 import qualified Haskell.Models.Clinica as Clinica
@@ -22,8 +22,8 @@ Cria um médico
 @param informs: informações do médico
 @return médico cadastrado
 -}
-cadastraMedico :: Int -> Int -> [String] -> Medico.Medico
-cadastraMedico idC idM informs = read (intercalate ";" ([show (idC), show (idM)] ++ informs)) :: Medico.Medico
+criaMedico :: Int -> Int -> [String] -> Medico.Medico
+criaMedico idC idM informs = read (intercalate ";" ([show (idC), show (idM)] ++ informs)) :: Medico.Medico
 
 
 

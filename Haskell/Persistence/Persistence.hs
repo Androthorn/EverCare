@@ -123,27 +123,24 @@ encerrar dados = do
     -- Escreve pacientes no arquivo
     writeFile "Persistence/pacientes.txt" (BD.pacientesToString pacientes "")
 
-<<<<<<< HEAD:Haskell/Persistence/Persistence.hs
-=======
-    withFile "Persistence/loginsclinicas.txt" ReadWriteMode $ \handle -> do
+    withFile "Haskell/Persistence/loginsclinicas.txt" ReadWriteMode $ \handle -> do
         let loginsClinica = BD.loginsClinica dados
         let loginsStr = BD.loginsClinicaToString loginsClinica ""
         hPutStr handle loginsStr  -- Escreve no arquivo
 
-    withFile "Persistence/pacientes.txt" ReadWriteMode $ \handle -> do
+    withFile "Haskell/Persistence/pacientes.txt" ReadWriteMode $ \handle -> do
         let pacientesStr = BD.pacientesToString pacientes ""
         hPutStr handle pacientesStr  -- Escreve no arquivo
->>>>>>> feature/cabal:Persistence/Persistence.hs
 
-    withFile "Persistence/clinicas.txt" ReadWriteMode $ \handle -> do
+    withFile "Haskell/Persistence/clinicas.txt" ReadWriteMode $ \handle -> do
         let clinicas = BD.clinicas dados
         let clinicasStr = BD.clinicasToString clinicas ""
         hPutStr handle clinicasStr  -- Escreve no arquivo
 
 
 leConteudo :: String -> IO String
-leConteudo arquivo = readFile ("Persistence/" ++ arquivo)
+leConteudo arquivo = readFile ("Haskell/Persistence/" ++ arquivo)
 
 escreveConteudo :: String -> String -> IO ()
-escreveConteudo arquivo conteudo = writeFile ("Persistence/" ++ arquivo) conteudo
+escreveConteudo arquivo conteudo = writeFile ("Haskell/Persistence/" ++ arquivo) conteudo
 

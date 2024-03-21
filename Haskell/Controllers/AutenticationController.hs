@@ -1,4 +1,4 @@
-module Controllers.AutenticationController (
+module Haskell.Controllers.AutenticationController (
     autentica
 ) where
 
