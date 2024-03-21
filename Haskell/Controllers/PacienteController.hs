@@ -6,7 +6,7 @@ module Haskell.Controllers.PacienteController (
     criaPaciente
 ) where
 
-import qualified Haskell.Models.DataBase as BD
+import qualified Haskell.Models.BD as BD
 import Haskell.Models.Paciente
 import qualified Haskell.Models.Medico as Medico
 import Haskell.Models.Laudo as Laudo

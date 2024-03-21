@@ -1,0 +1,11 @@
+-------------------
+Id do Paciente: 1
+Nome Completo: a
+Cpf: a
+Sexo: a
+Data de nascimento: a
+Endere‡o: a
+Tipo sangu¡neo: a
+Cardiopata? N
+Hipertenso? N
+Diab‚tico? N

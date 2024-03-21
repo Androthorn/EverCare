@@ -4,23 +4,26 @@
 
 
 import Haskell.App.Util
-import qualified Haskell.Models.DataBase as BD
+import qualified Haskell.Models.BD as BD
 import qualified Haskell.Persistence.Persistence as Persistence
 import qualified Haskell.Controllers.PacienteController as PControl
 import qualified Haskell.Controllers.AutenticationController as Autenticator
 import qualified Haskell.Controllers.ClinicaController as CControl
+import qualified Haskell.Models.Paciente as Paciente
 
 import Data.Char ( toUpper )
 import Control.Concurrent (threadDelay)
 import Text.XHtml (menu)
 import Control.Monad.RWS.Lazy (MonadState(put))
-import System.IO (utf8, hSetEncoding, stdout)
+import System.IO
+import System.Directory
+import System.Process (system)
 import Data.List (sort)
 
 
 main :: IO ()
 main = do
-    dados <- Persistence.carregaTodos
+    dados <- BD.novoBanco
     inicial dados
 
 inicial :: BD.BD -> IO()
@@ -40,7 +43,7 @@ inicial dados = do
         inicialMedico dados
 
     else if toUpper (head op) == 'S' then do
-        Persistence.salvaTodos dados
+        --Persistence.salvaTodos dados
         putStrLn "Saindo..."
         -- | Aqui vai a função que encerra o programa.
 
@@ -74,7 +77,10 @@ cadastraPaciente dados = do
     putStrLn ("Pacinte cadastrado com sucesso! Seu id é: " ++ (show (BD.idAtualPaciente dados)))
     threadDelay 2000000  -- waits for 1 second
 
-    loginPaciente dados { BD.pacientes = (BD.pacientes dados) ++ [PControl.criaPaciente (BD.idAtualPaciente dados) dadosP],
+    let paciente = PControl.criaPaciente (BD.idAtualPaciente dados) dadosP
+    BD.pacienteNoArquivo "Haskell/Persistence/pacientes.txt" paciente
+
+    loginPaciente dados { BD.pacientes = (BD.pacientes dados) ++ [paciente],
     BD.loginsPacientes = (BD.loginsPacientes dados) ++ [(BD.idAtualPaciente dados, senha)],
     BD.idAtualPaciente = (BD.idAtualPaciente dados) + 1
     }

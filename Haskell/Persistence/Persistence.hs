@@ -1,6 +1,6 @@
 module Haskell.Persistence.Persistence where
 
-import qualified Haskell.Models.DataBase as BD
+import qualified Haskell.Models.BD as BD
 import Haskell.App.Util (split)
 import System.IO
 import System.Directory

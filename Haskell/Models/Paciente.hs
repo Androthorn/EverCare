@@ -1,9 +1,14 @@
-module Haskell.Models.Paciente where
+module Haskell.Models.Paciente (
+    Paciente (..),
+    toString
+) where
     
 import Haskell.App.Util (boolToString, split)
 
 import Prelude hiding (id)
 import Data.Char (toUpper)
+import Data.Maybe (mapMaybe)
+
 
 data Paciente = Paciente {
     id :: Int,
@@ -31,7 +36,6 @@ toString p = show (id p) ++ ";" ++
              show (cardiopata p) ++ ";" ++
              show (hipertenso p) ++ ";" ++
              show (diabetico p)
-
 
 instance Show Paciente where
     show (Paciente id n cpf dtn s e ps ts c h db) = "-------------------\n" ++

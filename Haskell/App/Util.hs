@@ -1,7 +1,8 @@
 module Haskell.App.Util where
 
 import System.Process (system)
-import System.IO (stdout, hFlush)
+import System.IO (hFlush, stdout)
+import Text.Read (readMaybe)
 
 titulo :: String
 titulo = " -------------------------------------------------\n"
