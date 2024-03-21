@@ -26,3 +26,5 @@ Essa função filtra uma lista de médicos com base na especialidade desejada.
 filtrarMedicosPorEspecialidade :: String -> [Medico.Medico] -> [Medico.Medico]
 filtrarMedicosPorEspecialidade medicos especialidadeDesejada =
     filter (\medico -> Medico.especialidade medico == especialidadeDesejada) medicos
+
+
