@@ -78,7 +78,8 @@ cadastraPaciente dados = do
     threadDelay 2000000  -- waits for 1 second
 
     let paciente = PControl.criaPaciente (BD.idAtualPaciente dados) dadosP
-    BD.pacienteNoArquivo "Haskell/Persistence/pacientes.txt" paciente
+    BD.escreveNoArquivo "Haskell/Persistence/pacientes.txt" (Paciente.toString paciente)
+    --BD.pacienteNoArquivo "Haskell/Persistence/pacientes.txt" paciente
     --let loginsPaciente = (BD.idAtualPaciente dados, senha)
     --BD.loginsPacienteNoArquivo "Haskell/Persistence/loginsPacientes.txt" loginsPaciente
 

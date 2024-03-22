@@ -78,6 +78,10 @@ uploadClinicas path = do
     let clinicasList = stringToClinicas linhas
     return clinicasList
 
+escreveNoArquivo :: FilePath -> String -> IO ()
+escreveNoArquivo path conteudo = do
+    appendFile path (conteudo ++ "\n")
+    
 pacienteNoArquivo :: FilePath -> Paciente.Paciente -> IO ()
 pacienteNoArquivo path paciente = do
     appendFile path ((Paciente.toString paciente) ++ "\n")
