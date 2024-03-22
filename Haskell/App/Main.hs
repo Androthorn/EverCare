@@ -10,6 +10,7 @@ import qualified Haskell.Controllers.PacienteController as PControl
 import qualified Haskell.Controllers.AutenticationController as Autenticator
 import qualified Haskell.Controllers.ClinicaController as CControl
 import qualified Haskell.Models.Paciente as Paciente
+import qualified Haskell.Models.Clinica as Clinica
 
 import Data.Char ( toUpper )
 import Control.Concurrent (threadDelay)
@@ -151,18 +152,19 @@ cadastraClinica dados = do
     limpaTela
     putStrLn (tituloI "CADASTRO DE CLÍNICA")
     dadosC <- leituraDadosClinica
-    senha <- prompt "Senha > "
+    --senha <- prompt "Senha > "
 
     putStrLn ("Clínica cadastrado com sucesso! Seu id é: " ++ (show (BD.idAtualClinica dados)))
     
     threadDelay 2000000  -- waits for 1 second
 
     let clinica = CControl.criaClinica (BD.idAtualClinica dados) dadosC
-    BD.clinicaNoArquivo "Haskell/Persistence/clinicas.txt" clinica
-    let loginsClinica = (BD.idAtualPaciente dados, senha)
+    --BD.clinicaNoArquivo "Haskell/Persistence/clinicas.txt" clinica
+    BD.escreveNoArquivo "Haskell/Persistence/clinicas.txt" (Clinica.toString clinica)
+    --let loginsClinica = (BD.idAtualPaciente dados, senha)
     
     loginClinica dados { BD.clinicas = (BD.clinicas dados) ++ [clinica],
-    BD.loginsClinica = (BD.loginsClinica dados) ++ [loginsClinica],
+   -- BD.loginsClinica = (BD.loginsClinica dados) ++ [loginsClinica],
     BD.idAtualClinica = (BD.idAtualClinica dados) + 1
     }
 
@@ -172,11 +174,12 @@ loginClinica dados = do
     putStrLn (tituloI "LOGIN DE CLÍNICA")
     idC <- prompt "ID > "
     senha <- prompt "Senha > "
-    putStrLn ""
 
-    let aut = Autenticator.autentica (BD.loginsClinica dados) (read idC) senha
+    let aut = Autenticator.autenticaClinica (BD.clinicas dados) (read idC) senha
+    --let aut = Autenticator.autentica (BD.loginsClinica dados) (read idC) senha
     if aut then do
         menuClinica (read idC) dados
+
     else do
         putStrLn "ID ou senha incorretos"
         threadDelay 1000000  -- waits for 1 second

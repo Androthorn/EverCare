@@ -10,7 +10,8 @@ data Clinica = Clinica {
     endereço :: String,
     horarios :: String,
     planos :: String,
-    contato :: String
+    contato :: String,
+    senha :: String
     
 }
 
@@ -21,16 +22,19 @@ toString u =
          (endereço u) ++ ";" ++
          (horarios u) ++ ";" ++
          (planos u) ++ ";" ++
-         (contato u)
+         (contato u) ++ ";" ++
+         (senha u)
 
 instance Show Clinica where
-    show (Clinica id n e h p c) = "----------------------------\n" ++
+    show (Clinica id n e h p c _) = "----------------------------\n" ++
                         "Clinica  " ++ (show id) ++ "\n" ++
                         "Nome: " ++ n ++ "\n" ++
                         "Endereço: " ++ e ++ "\n" ++
                         "Horários: " ++ h ++ "\n" ++
                         "Planos: " ++ p ++ "\n" ++
-                        "Contato: " ++ c
+                        "Contato: " ++ "\n" ++
+                        "Senha: **********" ++ "\n" ++
+                        "-------------------\n"
 
 
 instance Read Clinica where
@@ -42,4 +46,5 @@ instance Read Clinica where
         let horarios = clinica !! 3
         let planos = clinica !! 4
         let contato = clinica !! 5
-        [(Clinica id nome endereco horarios planos contato, "")]
+        let senha = clinica !! 6
+        [(Clinica id nome endereco horarios planos contato senha, "")]

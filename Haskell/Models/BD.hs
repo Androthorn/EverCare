@@ -40,7 +40,7 @@ novoBanco :: IO BD
 novoBanco = do
     let pacientesIO = uploadPacientes "Haskell/Persistence/pacientes.txt"
     let clinicaIO = uploadClinicas "Haskell/Persistence/clinicas.txt"
-    let loginsPacientesIO = uploadLoginsPacientes "Haskell/Persistence/loginsPacientes.txt"
+    let loginsPacientesIO = uploadLoginsPacientes "Haskell/Persistence/loginspacientes.txt"
     pacientes <- pacientesIO
     clinicas <- clinicaIO
     loginsPacientes <- loginsPacientesIO

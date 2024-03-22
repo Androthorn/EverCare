@@ -62,7 +62,8 @@ leituraDadosClinica = do
               prompt "Endereço > ",
               prompt "Horários de Funcionamento > ",
               prompt "Planos Vinculados > ",
-              prompt "Contato > "]
+              prompt "Contato > ",
+              prompt "Senha > "]
 
 dashboardClinica :: String
 dashboardClinica = " [C] - Cadastrar Médico\n"
