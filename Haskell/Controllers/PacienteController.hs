@@ -2,6 +2,7 @@
 {-# HLINT ignore "Eta reduce" #-}
 {-# HLINT ignore "Redundant bracket" #-}
 {-# HLINT ignore "Use :" #-}
+
 module Haskell.Controllers.PacienteController (
     criaPaciente
 ) where

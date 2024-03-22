@@ -1,4 +1,6 @@
 module Haskell.Models.Receita where
+
+
 import Haskell.App.Util (split)
 import Prelude hiding (id)
 

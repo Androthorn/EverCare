@@ -1,7 +1,7 @@
 module Haskell.Models.Medico where
 
 import Haskell.App.Util (boolToString, split)
-  
+
 import Prelude hiding(id)
 
 

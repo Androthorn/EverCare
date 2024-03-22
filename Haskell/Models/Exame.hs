@@ -1,7 +1,8 @@
 module Haskell.Model.Exame where
+
+    
 import Haskell.App.Util (split)
 import Prelude hiding (id)
--- import Data.Dates
 
 data Exame = Exame {
     id :: Int,

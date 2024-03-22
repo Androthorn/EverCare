@@ -2,6 +2,7 @@ module Haskell.Controllers.ClinicaController(
     criaClinica,
     criaMedico
 ) where
+
 import Data.List ( intercalate )
 import qualified Haskell.Models.Clinica as Clinica
 import qualified Haskell.Models.Medico as Medico

@@ -3,6 +3,8 @@ module Haskell.Models.BD where
 import qualified Haskell.Models.Paciente as Paciente
 import qualified Haskell.Models.Medico as Medico
 import qualified Haskell.Models.Clinica as Clinica
+
+
 import System.IO
 import System.Directory
 import Text.Read (readMaybe)
