@@ -1,7 +1,6 @@
 module Haskell.Models.Paciente (
     Paciente (..),
-    toString,
-    idAndSenha
+    toString
 ) where
     
 import Haskell.App.Util (boolToString, split)
@@ -25,9 +24,6 @@ data Paciente = Paciente {
     diabetico :: Bool,
     senha :: String
 }
-
-idAndSenha :: Paciente -> (Int, String)
-idAndSenha p = (id p, senha p)
 
 toString :: Paciente -> String
 toString p = show (id p) ++ ";" ++

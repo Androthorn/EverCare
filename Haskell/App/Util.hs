@@ -83,7 +83,8 @@ leituraDadosMedico = do
     sequence [prompt "Nome > ",
               prompt "CRM > ",
               prompt "Especialidade > ",
-              prompt "Horário de atendimento > "] -- | Pensar como fazer aqui.
+              prompt "Horário de atendimento > ",
+              prompt "Senha > "]
 
 
 dashboardMedico :: String

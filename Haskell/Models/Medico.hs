@@ -6,12 +6,13 @@ import Prelude hiding(id)
 
 
 data Medico = Medico {
+    clinica :: Int,
     id :: Int,
     nome :: String,
     crm :: String,
-    clinica :: Int,
     especialidade :: String,
-    horarios :: String
+    horarios :: String, 
+    senha :: String
 }
 
 toString :: Medico -> String
@@ -20,24 +21,29 @@ toString m = show (clinica m) ++ ";" ++
              nome m ++ ";" ++
              crm m ++ ";" ++
              especialidade m ++ ";" ++
-             show (horarios m)
+             horarios m ++ ";" ++
+             senha m
 
 instance Show Medico where
-    show (Medico id nome crm clinica esp _) =  "----------------------------\n" ++
+    show (Medico clinica id nome crm esp horario _) =  "----------------------------\n" ++
                                             "Médico " ++ (show id) ++ "\n" ++
                                             "Nome: " ++ nome ++ "\n" ++
                                             "CRM: " ++ crm ++ "\n" ++
                                             "Clínica: " ++ (show clinica) ++ "\n" ++
-                                            "Especialidade: " ++ esp ++ "\n"
+                                            "Especialidade: " ++ esp ++ "\n" ++
+                                            "Horários de Atendimento: " ++ horario ++ "\n" ++
+                                            "Senha: **********" ++ "\n" ++
+                                            "-------------------\n"
 
 instance Read Medico where
     readsPrec _ str = do
         let medico = split str ';' ""
+        let clinica = read (medico !! 0) :: Int
         let id = read (medico !! 1) :: Int
         let nome = medico !! 2
         let crm = medico !! 3
-        let clinica = read (medico !! 0) :: Int
         let especialidade = medico !! 4
-        let horarios = if (length medico == 6) then read (medico !! 5) :: String else ""
+        let horarios = if (length medico == 7) then medico !! 5 else ""
+        let senha = if (length medico == 7) then medico !! 6 else ""
 
-        [(Medico id nome crm clinica especialidade horarios, "")]
+        [(Medico clinica id nome crm especialidade horarios senha, "")]

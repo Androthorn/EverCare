@@ -13,9 +13,6 @@ data BD = BD {
     pacientes :: [Paciente.Paciente],
     medicos :: [Medico.Medico],
     clinicas :: [Clinica.Clinica],
-    loginsPacientes :: [(Int, String)],
-    loginsClinica :: [(Int, String)],
-    loginsMedico :: [(Int, String)],
     idAtualPaciente :: Int,
     idAtualMedico :: Int,
     idAtualClinica :: Int
@@ -28,9 +25,6 @@ novoBD = BD {
     pacientes = [],
     medicos = [],
     clinicas = [],
-    loginsPacientes = [],
-    loginsClinica = [],
-    loginsMedico = [],
     idAtualPaciente = 1,
     idAtualMedico = 1,
     idAtualClinica = 1
@@ -40,19 +34,16 @@ novoBanco :: IO BD
 novoBanco = do
     let pacientesIO = uploadPacientes "Haskell/Persistence/pacientes.txt"
     let clinicaIO = uploadClinicas "Haskell/Persistence/clinicas.txt"
-    let loginsPacientesIO = uploadLoginsPacientes "Haskell/Persistence/loginspacientes.txt"
+    let medicosIO = uploadMedicos "Haskell/Persistence/medicos.txt"
     pacientes <- pacientesIO
     clinicas <- clinicaIO
-    loginsPacientes <- loginsPacientesIO
+    medicos <- medicosIO
     let bd = BD {
             pacientes = pacientes,
-            medicos = [],
+            medicos = medicos,
             clinicas = clinicas,
-            loginsPacientes = loginsPacientes,
-            loginsClinica = [],
-            loginsMedico = [],
             idAtualPaciente = length pacientes + 1,
-            idAtualMedico = 1,
+            idAtualMedico = length medicos + 1,
             idAtualClinica = length clinicas + 1
         }
     return bd
@@ -64,13 +55,6 @@ uploadPacientes path = do
     let pacientsList = stringToPacientes linhas
     return pacientsList
 
-uploadLoginsPacientes :: FilePath -> IO [(Int, String)]
-uploadLoginsPacientes path = do
-    conteudo <- readFile path
-    let linhas = lines conteudo
-    let loginsList = stringToLoginsPaciente linhas
-    return loginsList
-
 uploadClinicas :: FilePath -> IO [Clinica.Clinica]
 uploadClinicas path = do
     conteudo <- readFile path
@@ -78,27 +62,23 @@ uploadClinicas path = do
     let clinicasList = stringToClinicas linhas
     return clinicasList
 
+uploadMedicos :: FilePath -> IO [Medico.Medico]
+uploadMedicos path = do
+    conteudo <- readFile path
+    let linhas = lines conteudo
+    let medicosList = stringToMedicos linhas
+    return medicosList
+
 escreveNoArquivo :: FilePath -> String -> IO ()
 escreveNoArquivo path conteudo = do
+    handle <- openFile path AppendMode
+    hSetEncoding handle utf8
+    hPutStrLn handle conteudo
+    hClose handle
+
+escreveNoArquivo2 :: FilePath -> String -> IO ()
+escreveNoArquivo2 path conteudo = do
     appendFile path (conteudo ++ "\n")
-    
-pacienteNoArquivo :: FilePath -> Paciente.Paciente -> IO ()
-pacienteNoArquivo path paciente = do
-    appendFile path ((Paciente.toString paciente) ++ "\n")
-
-loginsPacienteNoArquivo :: FilePath -> (Int, String) -> IO ()
-loginsPacienteNoArquivo path (id, senha) = do
-    appendFile path ((show (id, senha)) ++ "\n")
-
-medicoNoArquivo :: FilePath -> Medico.Medico -> IO ()
-medicoNoArquivo path medico = do
-    appendFile path ((Medico.toString medico) ++ "\n")
-
-
-clinicaNoArquivo :: FilePath -> Clinica.Clinica -> IO ()
-clinicaNoArquivo path clinica = do
-    appendFile path ((Clinica.toString clinica) ++ "\n")
-
 
 
 pacientesToString :: [Paciente.Paciente] -> String -> String
@@ -124,27 +104,3 @@ medicosToString (x:xs) str = str ++ (Medico.toString x) ++ "\n" ++ medicosToStri
 stringToMedicos :: [String] -> [Medico.Medico]
 stringToMedicos [] = []
 stringToMedicos l = map read l :: [Medico.Medico]
-
-loginsPacientesToString :: [(Int, String)] -> String -> String
-loginsPacientesToString [] str = str
-loginsPacientesToString (x:xs) str = str ++ (show x) ++ "\n" ++ loginsPacientesToString xs str
-
-stringToLoginsPaciente :: [String] -> [(Int, String)]
-stringToLoginsPaciente [] = []
-stringToLoginsPaciente l = map read l :: [(Int, String)]
-
-loginsClinicaToString :: [(Int, String)] -> String -> String
-loginsClinicaToString [] str = str
-loginsClinicaToString (x:xs) str = str ++ (show x) ++ "\n" ++ loginsClinicaToString xs str
-
-stringToLoginsClinica :: [String] -> [(Int, String)]
-stringToLoginsClinica [] = []
-stringToLoginsClinica l = map read l :: [(Int, String)]
-
-loginsMedicoToString :: [(Int, String)] -> String -> String
-loginsMedicoToString [] str = str
-loginsMedicoToString (x:xs) str = str ++ (show x) ++ "\n" ++ loginsMedicoToString xs str
-
-stringToLoginsMedico :: [String] -> [(Int, String)]
-stringToLoginsMedico [] = []
-stringToLoginsMedico l = map read l :: [(Int, String)]

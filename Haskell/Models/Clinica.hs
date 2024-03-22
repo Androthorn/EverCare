@@ -1,4 +1,7 @@
-module Haskell.Models.Clinica where
+module Haskell.Models.Clinica (
+    Clinica (..),
+    toString
+) where
 
 import Prelude hiding (id)
 import Haskell.App.Util (split)
@@ -12,7 +15,6 @@ data Clinica = Clinica {
     planos :: String,
     contato :: String,
     senha :: String
-    
 }
 
 toString :: Clinica -> String

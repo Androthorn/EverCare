@@ -23,7 +23,7 @@ Cria um médico
 @return médico cadastrado
 -}
 criaMedico :: Int -> Int -> [String] -> Medico.Medico
-criaMedico idC idM informs = read (intercalate ";" ([show (idC), show (idM)] ++ informs)) :: Medico.Medico
+criaMedico idC idM informs = read (intercalate ";" ([show (idC)] ++ [show (idM)] ++ informs)) :: Medico.Medico
 
 
 

@@ -1,16 +1,16 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Redundant bracket" #-}
 {-# HLINT ignore "Redundant if" #-}
-
+{-# LANGUAGE OverloadedStrings #-}
 
 import Haskell.App.Util
 import qualified Haskell.Models.BD as BD
-import qualified Haskell.Persistence.Persistence as Persistence
 import qualified Haskell.Controllers.PacienteController as PControl
 import qualified Haskell.Controllers.AutenticationController as Autenticator
 import qualified Haskell.Controllers.ClinicaController as CControl
 import qualified Haskell.Models.Paciente as Paciente
 import qualified Haskell.Models.Clinica as Clinica
+import qualified Haskell.Models.Medico as Medico
 
 import Data.Char ( toUpper )
 import Control.Concurrent (threadDelay)
@@ -44,9 +44,8 @@ inicial dados = do
         inicialMedico dados
 
     else if toUpper (head op) == 'S' then do
-        --Persistence.salvaTodos dados
         putStrLn "Saindo..."
-        -- | Aqui vai a função que encerra o programa.
+        threadDelay 1000000  -- waits for 1 second
 
     else do
         putStrLn "Opção inválida"
@@ -74,20 +73,15 @@ cadastraPaciente dados = do
     limpaTela
     putStrLn (tituloI "CADASTRO DE PACIENTE")
     dadosP <- leituraDadosPaciente
-    --senha <- prompt "Senha > "
+
     putStrLn ("Paciente cadastrado com sucesso! Seu id é: " ++ (show (BD.idAtualPaciente dados)))
-    threadDelay 2000000  -- waits for 1 second
+    threadDelay 2000000  -- waits for 2 second
 
     let paciente = PControl.criaPaciente (BD.idAtualPaciente dados) dadosP
     BD.escreveNoArquivo "Haskell/Persistence/pacientes.txt" (Paciente.toString paciente)
-    --BD.pacienteNoArquivo "Haskell/Persistence/pacientes.txt" paciente
-    --let loginsPaciente = (BD.idAtualPaciente dados, senha)
-    --BD.loginsPacienteNoArquivo "Haskell/Persistence/loginsPacientes.txt" loginsPaciente
 
     loginPaciente dados { BD.pacientes = (BD.pacientes dados) ++ [paciente],
-    --BD.loginsPacientes = (BD.loginsPacientes dados) ++ [loginsPaciente],
-    BD.idAtualPaciente = (BD.idAtualPaciente dados) + 1
-    }
+                          BD.idAtualPaciente = (BD.idAtualPaciente dados) + 1 }
 
 
 loginPaciente :: BD.BD -> IO()
@@ -97,15 +91,13 @@ loginPaciente dados = do
     id <- prompt "ID > "
     senha <- prompt "Senha > "
     putStrLn ""
-
-    --let aut = Autenticator.autentica(BD.loginsPacientes dados) (read id) senha
+    
     let aut = Autenticator.autenticaPaciente (BD.pacientes dados) (read id) senha
-
     if aut then do
         menuPaciente (read id) dados
     else do
         putStrLn "ID ou senha incorretos"
-        threadDelay 1000000  -- waits for 1 second
+        threadDelay 1000000
         inicialPaciente dados
 
 
@@ -152,21 +144,15 @@ cadastraClinica dados = do
     limpaTela
     putStrLn (tituloI "CADASTRO DE CLÍNICA")
     dadosC <- leituraDadosClinica
-    --senha <- prompt "Senha > "
 
     putStrLn ("Clínica cadastrado com sucesso! Seu id é: " ++ (show (BD.idAtualClinica dados)))
-    
     threadDelay 2000000  -- waits for 1 second
 
     let clinica = CControl.criaClinica (BD.idAtualClinica dados) dadosC
-    --BD.clinicaNoArquivo "Haskell/Persistence/clinicas.txt" clinica
     BD.escreveNoArquivo "Haskell/Persistence/clinicas.txt" (Clinica.toString clinica)
-    --let loginsClinica = (BD.idAtualPaciente dados, senha)
     
     loginClinica dados { BD.clinicas = (BD.clinicas dados) ++ [clinica],
-   -- BD.loginsClinica = (BD.loginsClinica dados) ++ [loginsClinica],
-    BD.idAtualClinica = (BD.idAtualClinica dados) + 1
-    }
+                         BD.idAtualClinica = (BD.idAtualClinica dados) + 1}
 
 loginClinica :: BD.BD -> IO()
 loginClinica dados = do
@@ -176,10 +162,8 @@ loginClinica dados = do
     senha <- prompt "Senha > "
 
     let aut = Autenticator.autenticaClinica (BD.clinicas dados) (read idC) senha
-    --let aut = Autenticator.autentica (BD.loginsClinica dados) (read idC) senha
     if aut then do
         menuClinica (read idC) dados
-
     else do
         putStrLn "ID ou senha incorretos"
         threadDelay 1000000  -- waits for 1 second
@@ -236,18 +220,15 @@ cadastraMedico idClinica dados = do
     limpaTela
     putStrLn (tituloI "CADASTRO DE MÉDICO")
     dadosM <- leituraDadosMedico
-    senha <- prompt "Senha > "
-    putStrLn ""
 
-    putStrLn ("Clínica cadastrado com sucesso! Seu id é: " ++ (show (BD.idAtualMedico dados)))
+    putStrLn ("Médico cadastrado com sucesso! O id é: " ++ (show (BD.idAtualMedico dados)))
 
     let medico = CControl.criaMedico idClinica (BD.idAtualMedico dados) dadosM
+    BD.escreveNoArquivo "Haskell/Persistence/medicos.txt" (Medico.toString medico)
     threadDelay 2000000  -- waits for 1 second
 
     menuClinica idClinica dados { BD.medicos = (BD.medicos dados) ++ [medico],
-    BD.loginsMedico = (BD.loginsMedico dados) ++ [(BD.idAtualMedico dados, senha)],
-    BD.idAtualMedico = (BD.idAtualMedico dados) + 1
-    }
+                                  BD.idAtualMedico = (BD.idAtualMedico dados) + 1}
 
 inicialMedico :: BD.BD -> IO()
 inicialMedico dados = do
@@ -272,12 +253,13 @@ loginMedico dados = do
     senha <- prompt "Senha > "
     putStrLn ""
 
-    let aut = Autenticator.autentica (BD.loginsMedico dados) (read idM) senha
+
+    let aut = Autenticator.autenticaMedico (BD.medicos dados) (read idM) senha
     if aut then do
         menuMedico (read idM) dados
     else do
         putStrLn "ID ou senha incorretos"
-        threadDelay 2000000  -- waits for 1 second
+        threadDelay 2000000
         inicialMedico dados
 
 menuMedico :: Int  -> BD.BD -> IO()
