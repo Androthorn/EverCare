@@ -73,15 +73,17 @@ cadastraPaciente dados = do
     limpaTela
     putStrLn (tituloI "CADASTRO DE PACIENTE")
     dadosP <- leituraDadosPaciente
-    senha <- prompt "Senha > "
-    putStrLn ("Pacinte cadastrado com sucesso! Seu id é: " ++ (show (BD.idAtualPaciente dados)))
+    --senha <- prompt "Senha > "
+    putStrLn ("Paciente cadastrado com sucesso! Seu id é: " ++ (show (BD.idAtualPaciente dados)))
     threadDelay 2000000  -- waits for 1 second
 
     let paciente = PControl.criaPaciente (BD.idAtualPaciente dados) dadosP
     BD.pacienteNoArquivo "Haskell/Persistence/pacientes.txt" paciente
+    --let loginsPaciente = (BD.idAtualPaciente dados, senha)
+    --BD.loginsPacienteNoArquivo "Haskell/Persistence/loginsPacientes.txt" loginsPaciente
 
     loginPaciente dados { BD.pacientes = (BD.pacientes dados) ++ [paciente],
-    BD.loginsPacientes = (BD.loginsPacientes dados) ++ [(BD.idAtualPaciente dados, senha)],
+    --BD.loginsPacientes = (BD.loginsPacientes dados) ++ [loginsPaciente],
     BD.idAtualPaciente = (BD.idAtualPaciente dados) + 1
     }
 
@@ -94,7 +96,8 @@ loginPaciente dados = do
     senha <- prompt "Senha > "
     putStrLn ""
 
-    let aut = Autenticator.autentica(BD.loginsPacientes dados) (read id) senha
+    --let aut = Autenticator.autentica(BD.loginsPacientes dados) (read id) senha
+    let aut = Autenticator.autenticaPaciente (BD.pacientes dados) (read id) senha
 
     if aut then do
         menuPaciente (read id) dados
@@ -150,10 +153,15 @@ cadastraClinica dados = do
     senha <- prompt "Senha > "
 
     putStrLn ("Clínica cadastrado com sucesso! Seu id é: " ++ (show (BD.idAtualClinica dados)))
-    threadDelay 2000000  -- waits for 1 second
     
-    loginClinica dados { BD.clinicas = (BD.clinicas dados) ++ [CControl.criaClinica (BD.idAtualClinica dados) dadosC],
-    BD.loginsClinica = (BD.loginsClinica dados) ++ [(BD.idAtualClinica dados, senha)],
+    threadDelay 2000000  -- waits for 1 second
+
+    let clinica = CControl.criaClinica (BD.idAtualClinica dados) dadosC
+    BD.clinicaNoArquivo "Haskell/Persistence/clinicas.txt" clinica
+    let loginsClinica = (BD.idAtualPaciente dados, senha)
+    
+    loginClinica dados { BD.clinicas = (BD.clinicas dados) ++ [clinica],
+    BD.loginsClinica = (BD.loginsClinica dados) ++ [loginsClinica],
     BD.idAtualClinica = (BD.idAtualClinica dados) + 1
     }
 

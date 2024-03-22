@@ -39,7 +39,7 @@ instance Read Clinica where
         let id = read (clinica !! 0) :: Int
         let nome = clinica !! 1
         let endereco = clinica !! 2
-        let horarios = read (clinica !! 3) :: String
+        let horarios = clinica !! 3
         let planos = clinica !! 4
         let contato = clinica !! 5
         [(Clinica id nome endereco horarios planos contato, "")]

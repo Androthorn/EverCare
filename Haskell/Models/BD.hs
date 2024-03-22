@@ -21,8 +21,6 @@ data BD = BD {
     idAtualClinica :: Int
 } deriving (Show)
 
-novoBanco :: IO BD
-novoBanco = return novoBD
 
 -- Função que cria um novo BD
 novoBD :: BD
@@ -38,11 +36,55 @@ novoBD = BD {
     idAtualClinica = 1
 }
 
+novoBanco :: IO BD
+novoBanco = do
+    let pacientesIO = uploadPacientes "Haskell/Persistence/pacientes.txt"
+    let clinicaIO = uploadClinicas "Haskell/Persistence/clinicas.txt"
+    let loginsPacientesIO = uploadLoginsPacientes "Haskell/Persistence/loginsPacientes.txt"
+    pacientes <- pacientesIO
+    clinicas <- clinicaIO
+    loginsPacientes <- loginsPacientesIO
+    let bd = BD {
+            pacientes = pacientes,
+            medicos = [],
+            clinicas = clinicas,
+            loginsPacientes = loginsPacientes,
+            loginsClinica = [],
+            loginsMedico = [],
+            idAtualPaciente = length pacientes + 1,
+            idAtualMedico = 1,
+            idAtualClinica = length clinicas + 1
+        }
+    return bd
 
+uploadPacientes :: FilePath -> IO [Paciente.Paciente]
+uploadPacientes path = do
+    conteudo <- readFile path
+    let linhas = lines conteudo
+    let pacientsList = stringToPacientes linhas
+    return pacientsList
+
+uploadLoginsPacientes :: FilePath -> IO [(Int, String)]
+uploadLoginsPacientes path = do
+    conteudo <- readFile path
+    let linhas = lines conteudo
+    let loginsList = stringToLoginsPaciente linhas
+    return loginsList
+
+uploadClinicas :: FilePath -> IO [Clinica.Clinica]
+uploadClinicas path = do
+    conteudo <- readFile path
+    let linhas = lines conteudo
+    let clinicasList = stringToClinicas linhas
+    return clinicasList
 
 pacienteNoArquivo :: FilePath -> Paciente.Paciente -> IO ()
 pacienteNoArquivo path paciente = do
     appendFile path ((Paciente.toString paciente) ++ "\n")
+
+loginsPacienteNoArquivo :: FilePath -> (Int, String) -> IO ()
+loginsPacienteNoArquivo path (id, senha) = do
+    appendFile path ((show (id, senha)) ++ "\n")
 
 medicoNoArquivo :: FilePath -> Medico.Medico -> IO ()
 medicoNoArquivo path medico = do

@@ -1,6 +1,7 @@
 module Haskell.Models.Paciente (
     Paciente (..),
-    toString
+    toString,
+    idAndSenha
 ) where
     
 import Haskell.App.Util (boolToString, split)
@@ -21,8 +22,12 @@ data Paciente = Paciente {
     tipoSanguineo :: String,
     cardiopata :: Bool,
     hipertenso :: Bool,
-    diabetico :: Bool
+    diabetico :: Bool,
+    senha :: String
 }
+
+idAndSenha :: Paciente -> (Int, String)
+idAndSenha p = (id p, senha p)
 
 toString :: Paciente -> String
 toString p = show (id p) ++ ";" ++
@@ -35,10 +40,12 @@ toString p = show (id p) ++ ";" ++
              tipoSanguineo p ++ ";" ++
              show (cardiopata p) ++ ";" ++
              show (hipertenso p) ++ ";" ++
-             show (diabetico p)
+             show (diabetico p) ++ ";" ++
+             senha p
+
 
 instance Show Paciente where
-    show (Paciente id n cpf dtn s e ps ts c h db) = "-------------------\n" ++
+    show (Paciente id n cpf dtn s e ps ts c h db _) = "-------------------\n" ++
                     "Id do Paciente: " ++ (show id) ++ "\n" ++
                     "Nome Completo: " ++ n ++ "\n" ++
                     "Cpf: " ++ cpf ++ "\n" ++
@@ -48,7 +55,9 @@ instance Show Paciente where
                     "Tipo sanguíneo: " ++ ts ++ "\n" ++
                     "Cardiopata? " ++ boolToString c ++ "\n"++
                     "Hipertenso? " ++ boolToString h ++ "\n" ++
-                    "Diabético? " ++ boolToString db
+                    "Diabético? " ++ boolToString db ++ "\n" ++
+                    "Senha: ********" ++ "\n" ++
+                    "-------------------\n"
 
 instance Read Paciente where
     readsPrec _ str = do
@@ -64,4 +73,5 @@ instance Read Paciente where
         let cardiopata = if (toUpper $ head (paciente !! 8)) == 'S' then True else False
         let diabetico =  if (toUpper $ head (paciente !! 9)) == 'S' then True else False
         let hipertenso = if (toUpper $ head (paciente !! 10)) == 'S' then True else False
-        [(Paciente id nome cpf sexo dataNascimento endereco planoDeSaude tipoSanguineo cardiopata diabetico hipertenso, "")]
+        let senha = paciente !! 11
+        return (Paciente id nome cpf sexo dataNascimento endereco planoDeSaude tipoSanguineo cardiopata diabetico hipertenso senha, "")
