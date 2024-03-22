@@ -47,7 +47,8 @@ leituraDadosPaciente = do
               prompt "Plano de Saúde > ",
               prompt "Cardiopata (S ou N) > ",
               prompt "Hipertenso (S ou N) > ",
-              prompt "Diabético (S ou N) > "]
+              prompt "Diabético (S ou N) > ",
+              prompt "Senha > "]
 
 dashboardPaciente :: String
 dashboardPaciente =   " [M] - Marcar Consultas\n"
