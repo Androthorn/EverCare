@@ -11,6 +11,7 @@ import qualified Haskell.Controllers.ClinicaController as CControl
 import qualified Haskell.Models.Paciente as Paciente
 import qualified Haskell.Models.Clinica as Clinica
 import qualified Haskell.Models.Medico as Medico
+import qualified Haskell.Models.Consulta as Consulta
 
 import Data.Char ( toUpper )
 import Control.Concurrent (threadDelay)
@@ -20,6 +21,7 @@ import System.IO
 import System.Directory
 import System.Process (system)
 import Data.List (sort)
+
 
 
 main :: IO ()
@@ -68,6 +70,19 @@ inicialPaciente dados = do
         putStrLn "Opção inválida"
         inicialPaciente dados
 
+cadastraConsulta :: BD.BD -> IO()
+cadastraConsulta dados = do
+    limpaTela
+    putStr (tituloI "AGENDAMENTO DE CONSULTA")
+    dadosCons <- leituraDadosConsulta
+
+    putStrLn ("Consulta marcada com sucesso! o id da consulta é: " ++ (show (BD.idAtualConsulta dados)))
+    threadDelay 2000000  -- waits for 2 seconds
+
+    let consulta = PControl.criaConsulta (BD.idAtualConsulta dados) dadosCons
+    BD.escreveNoArquivo "Haskell/Persistence/consultas.txt" (Consulta.toString consulta) 
+
+
 cadastraPaciente :: BD.BD -> IO()
 cadastraPaciente dados = do
     limpaTela
@@ -82,6 +97,7 @@ cadastraPaciente dados = do
 
     loginPaciente dados { BD.pacientes = (BD.pacientes dados) ++ [paciente],
                           BD.idAtualPaciente = (BD.idAtualPaciente dados) + 1 }
+    inicialPaciente dados
 
 
 loginPaciente :: BD.BD -> IO()
@@ -109,7 +125,7 @@ menuPaciente idPac dados = do
     op <- prompt "Opção > "
 
     if toUpper (head op) == 'M' then do
-        menuPaciente idPac dados
+        cadastraConsulta dados
 
     -- | opção Ver Agendamento
     -- | opção Receitas / Laudos / Solicitações de Exames

@@ -16,9 +16,11 @@ data BD = BD {
     pacientes :: [Paciente.Paciente],
     medicos :: [Medico.Medico],
     clinicas :: [Clinica.Clinica],
+    consultas :: [Consulta.Consulta],
     idAtualPaciente :: Int,
     idAtualMedico :: Int,
-    idAtualClinica :: Int
+    idAtualClinica :: Int,
+    idAtualConsulta :: Int
 } deriving (Show)
 
 
@@ -28,9 +30,11 @@ novoBD = BD {
     pacientes = [],
     medicos = [],
     clinicas = [],
+    consultas = [],
     idAtualPaciente = 1,
     idAtualMedico = 1,
-    idAtualClinica = 1
+    idAtualClinica = 1,
+    idAtualConsulta = 1
 }
 
 novoBanco :: IO BD
@@ -38,16 +42,20 @@ novoBanco = do
     let pacientesIO = uploadPacientes "Haskell/Persistence/pacientes.txt"
     let clinicaIO = uploadClinicas "Haskell/Persistence/clinicas.txt"
     let medicosIO = uploadMedicos "Haskell/Persistence/medicos.txt"
+    let consultasIO = uploadConsultas "Haskell/Persistence/consultas.txt"
     pacientes <- pacientesIO
     clinicas <- clinicaIO
     medicos <- medicosIO
+    consultas <- consultasIO
     let bd = BD {
             pacientes = pacientes,
             medicos = medicos,
             clinicas = clinicas,
+            consultas = consultas,
             idAtualPaciente = length pacientes + 1,
             idAtualMedico = length medicos + 1,
-            idAtualClinica = length clinicas + 1
+            idAtualClinica = length clinicas + 1,
+            idAtualConsulta = length consultas +1
         }
     return bd
 

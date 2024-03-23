@@ -1,16 +1,19 @@
 module Haskell.Models.Consulta where
 
+import Data.Char
+import Data.Maybe
 import Data.Time.Clock
 import Data.Time.Format
 import Data.Time.LocalTime
     ( utcToLocalTime, hoursToTimeZone, TimeZone )
+import Haskell.App.Util 
 
 data Consulta = Consulta {
     consId :: Int,
-    idPaciente :: Int,
-    idClinica :: Int,  
-    idMedico :: Int,
-    dataConsulta :: UTCTime,
+    idPaciente :: String,
+    idClinica :: String,  
+    idMedico :: String,
+    dataConsulta :: String,
     horario :: String
 }
 
@@ -20,30 +23,36 @@ toString cons =
     show (idPaciente cons) ++ ";" ++ 
     show (idMedico cons) ++ ";" ++
     show (idClinica cons) ++ ";" ++
-    formatarDataHoraBrasileira (dataConsulta cons) ++ ";" ++
+    show (dataConsulta cons) ++ ";" ++
     horario cons
 
 consultaParaUsuario :: Consulta -> String
-consultaParaUsuario cons = "A consulta " ++ (show (consId cons)) ++ " do paciente " ++ (show (idPaciente cons)) ++ " com o(a) médico(a) " ++ (show (idMedico cons)) ++ " em " ++ formatarDataHoraBrasileira (dataConsulta cons) ++ " às " ++ horario cons
+consultaParaUsuario cons = "A consulta " ++ show (consId cons) ++ " do paciente " ++ show (idPaciente cons) ++ " com o(a) médico(a) " ++ show (idMedico cons) ++ " em " ++  dataConsulta cons ++ " às " ++ horario cons
 
 instance Show Consulta where
-    show consulta = "Foi marcada a consulta { ID: " ++ show (consId consulta) ++
-                    ", idPaciente: " ++ show (idPaciente consulta) ++
-                    ", idClinica: " ++ show (idClinica consulta) ++
-                    ", idMedico: " ++ show (idMedico consulta) ++
-                    ", dataConsulta: " ++ show (formatarDataHoraBrasileira (dataConsulta consulta)) ++
-                    ", horario: " ++ horario consulta ++ " }"
+    show (Consulta idCons idPac idClin idMed dataC hora) = "-------------------\n" ++
+                    "Id da Consulta: " ++ show idCons ++ "\n" ++
+                    "Nome do paciente: " ++ idPac ++ "\n" ++
+                    "Nome da Clínica: "  ++ idClin ++ "\n" ++
+                    "Nome do Médico: " ++ idMed ++ "\n" ++
+                    "Data da consulta" ++ dataC ++ "\n" ++
+                    "Hora da consulta" ++ hora ++ "\n" ++
+                    "-------------------\n"
 
 instance Read Consulta where
-    readsPrec _ input =
-        let [(id', resto1)] = reads input
-            [(idPaciente', resto2)] = reads resto1
-            [(idClinica', resto3)] = reads resto2
-            [(idMedico', resto4)] = reads resto3
-            [(dataConsulta', resto5)] = reads resto4
-            [(horario', resto6)] = reads resto5
-        in [(Consulta id' idPaciente' idClinica' idMedico' dataConsulta' horario', resto6)]
+    readsPrec :: Int -> ReadS Consulta
+    readsPrec _ str = do
+        let consulta = split str ';' ""
+        let consultaId = read (consulta !! 0) :: Int
+        let nomePaciente = consulta !! 1
+        let nomeClinica = consulta !! 2
+        let nomeMedico = consulta !! 3
+        let datas = consulta !! 4
+        let hora = consulta !! 5
+        return (Consulta consultaId nomePaciente nomeClinica nomeMedico datas hora, "")
 
+
+--funcoes legado para (talvez) futuro uso
 fusoBr :: TimeZone
 fusoBr = hoursToTimeZone (-3)
 

@@ -4,7 +4,8 @@
 {-# HLINT ignore "Use :" #-}
 
 module Haskell.Controllers.PacienteController (
-    criaPaciente
+    criaPaciente,
+    criaConsulta
 ) where
 
 import qualified Haskell.Models.BD as BD
@@ -14,6 +15,7 @@ import Haskell.Models.Laudo as Laudo
 import Haskell.App.Util
 import Data.List (intercalate)
 import qualified Haskell.Models.Receita as Receita
+import Haskell.Models.Consulta (Consulta(Consulta))
 
 
 {-
@@ -24,6 +26,15 @@ Cria um paciente.
 -}
 criaPaciente :: Int -> [String] -> Paciente
 criaPaciente idP infos = read (intercalate ";" ([show (idP)] ++ infos)) :: Paciente
+
+{-
+Cria um paciente.
+@param idC: Inteiro que representa o id da consulta.
+@param infos: Lista de strings que contém as informações da consulta.
+@return consulta criada.
+-}
+criaConsulta :: Int -> [String] -> Consulta
+criaConsulta idC infos = read (intercalate ";" ([show (idC)] ++ infos)) :: Consulta
 
 {-
 Essa função filtra uma lista de médicos com base na especialidade desejada.
