@@ -75,7 +75,7 @@ cadastraPaciente dados = do
     dadosP <- leituraDadosPaciente
 
     putStrLn ("Paciente cadastrado com sucesso! Seu id é: " ++ (show (BD.idAtualPaciente dados)))
-    threadDelay 2000000  -- waits for 2 second
+    threadDelay 2000000  -- waits for 2 seconds
 
     let paciente = PControl.criaPaciente (BD.idAtualPaciente dados) dadosP
     BD.escreveNoArquivo "Haskell/Persistence/pacientes.txt" (Paciente.toString paciente)

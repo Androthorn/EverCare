@@ -3,6 +3,7 @@ module Haskell.Models.BD where
 import qualified Haskell.Models.Paciente as Paciente
 import qualified Haskell.Models.Medico as Medico
 import qualified Haskell.Models.Clinica as Clinica
+import qualified Haskell.Models.Consulta as Consulta
 
 
 import System.IO
@@ -71,6 +72,13 @@ uploadMedicos path = do
     let medicosList = stringToMedicos linhas
     return medicosList
 
+uploadConsultas :: FilePath -> IO [Consulta.Consulta]
+uploadConsultas path = do
+    conteudo <- readFile path
+    let linhas = lines conteudo
+    let consultasList = stringToConsultas linhas
+    return consultasList
+
 escreveNoArquivo :: FilePath -> String -> IO ()
 escreveNoArquivo path conteudo = do
     handle <- openFile path AppendMode
@@ -98,6 +106,14 @@ clinicasToString (x:xs) str = str ++ (Clinica.toString x) ++ "\n" ++ clinicasToS
 stringToClinicas :: [String] -> [Clinica.Clinica]
 stringToClinicas [] = []
 stringToClinicas l = map read l :: [Clinica.Clinica]
+
+consultasToString :: [Consulta.Consulta] -> String -> String
+consultasToString [] str = str
+consultasToString (x:xs) str = str ++ (Consulta.toString x) ++ "\n" ++ consultasToString xs str
+
+stringToConsultas :: [String] -> [Consulta.Consulta]
+stringToConsultas [] = []
+stringToConsultas l = map read l :: [Consulta.Consulta]
 
 medicosToString :: [Medico.Medico] -> String -> String
 medicosToString [] str = str
