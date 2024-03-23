@@ -183,13 +183,22 @@ menuClinica idC dados = do
         visualizaInformacaoClinica idC dados
     
     -- | Adicionar opção de abrir o dashboard de analises da clinica
-
+    else if toUpper (head op) == 'D' then do
+        dashBoardC idC dados
     else if toUpper (head op) == 'S' then do
         inicial dados
 
     else do
         putStrLn "Opção inválida"
         menuClinica idC dados
+
+dashBoardC :: Int -> BD.BD -> IO()
+dashBoardC idC dados = do
+    limpaTela
+    putStrLn (tituloI "DASHBOARD CLÍNICA")
+    putStrLn (CControl.dashboardC idC (BD.medicos dados))
+    prompt "Pressione Enter para voltar"
+    menuClinica idC dados
 
 visualizaInformacaoClinica :: Int -> BD.BD -> IO()
 visualizaInformacaoClinica idC dados = do
@@ -205,8 +214,7 @@ visualizaInformacaoClinica idC dados = do
         menuClinica idC dados
         -- visualiza pacientes
     else if toUpper (head op) == 'M' then do
-        menuClinica idC dados
-        -- visualiza medicos
+        visualizaMedicos idC dados
     else if toUpper (head op) == 'V' then do
         menuClinica idC dados
     
@@ -214,6 +222,14 @@ visualizaInformacaoClinica idC dados = do
         putStrLn "Opção inválida"
         visualizaInformacaoClinica idC dados
 
+
+visualizaMedicos :: Int -> BD.BD -> IO()
+visualizaMedicos idC dados = do
+    limpaTela
+    putStrLn (tituloI "MÉDICOS")
+    putStrLn (CControl.verMedico idC (BD.medicos dados))
+    prompt "Pressione Enter para voltar"
+    menuClinica idC dados
 
 cadastraMedico :: Int -> BD.BD -> IO()
 cadastraMedico idClinica dados = do
@@ -230,6 +246,12 @@ cadastraMedico idClinica dados = do
     menuClinica idClinica dados { BD.medicos = (BD.medicos dados) ++ [medico],
                                   BD.idAtualMedico = (BD.idAtualMedico dados) + 1}
 
+-- dashboardC :: Int -> BD.BD -> IO()
+-- dashboardC idC dados = do
+--     limpaTela
+--     putStrLn (tituloI "DASHBOARD CLÍNICA")
+--     let med = sort (CControl.consultarMedico idC (BD.medicos dados))
+--     putStrLn (med)
 inicialMedico :: BD.BD -> IO()
 inicialMedico dados = do
     limpaTela
