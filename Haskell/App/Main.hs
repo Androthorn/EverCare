@@ -21,6 +21,8 @@ import System.IO
 import System.Directory
 import System.Process (system)
 import Data.List (sort)
+import GHC.RTS.Flags (MiscFlags(disableDelayedOsMemoryReturn))
+import Haskell.Models.BD (BD(idAtualPaciente))
 
 
 
@@ -80,7 +82,10 @@ cadastraConsulta dados = do
     threadDelay 2000000  -- waits for 2 seconds
 
     let consulta = PControl.criaConsulta (BD.idAtualConsulta dados) dadosCons
-    BD.escreveNoArquivo "Haskell/Persistence/consultas.txt" (Consulta.toString consulta) 
+    BD.escreveNoArquivo "Haskell/Persistence/consultas.txt" (Consulta.toString consulta)
+
+--tive algum problema com a lógica de voltar direto para o menu do paciente, acho que é necessária o id dele e eu tive problemas com isso. Portanto, voltei pra o menu inicial.
+    inicial dados
 
 
 cadastraPaciente :: BD.BD -> IO()
