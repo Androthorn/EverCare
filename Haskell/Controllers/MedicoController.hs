@@ -4,7 +4,7 @@ import qualified Haskell.Models.BD as BD
 import qualified Haskell.Models.Medico as Medico
 import qualified Haskell.Models.Laudo as Laudo
 import Haskell.App.Util
-import Data.List (intercalate)
+import Data.List (intercalate, find)
 import qualified Haskell.Models.Receita as Receita
 import qualified Haskell.Models.Receita as Laudo
 
@@ -29,3 +29,15 @@ Essa função filtra uma lista de receitas com base no id do paciente.
 consultarReceita :: Int -> [Receita.Receita] -> [Receita.Receita]
 consultarReceita _ [] = []
 consultarReceita idPaciente receitas = filter (\receita -> Receita.idPaciente receita == idPaciente) receitas
+
+{- 
+Essa função retorna o ID do medico dado o seu nome.
+@param name: nome do medico
+@param medicos: lista de medicos cadastrados
+@return o ID do medico
+-}
+getMedicoId :: String -> [Medico.Medico] -> Int
+getMedicoId name medicos = 
+    case find (\medico -> Medico.nome medico == name) medicos of
+        Just medico -> Medico.id medico
+        Nothing -> error "paciente not found"

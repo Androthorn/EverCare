@@ -2,7 +2,7 @@
 1;2;Dra. Maria Santos;54321;Pediatra;9:00-17:00;123
 2;3;Dr. Carlos Oliveira;67890;Cardiologista;8:00-15:00;123
 3;4;Dra. Ana Souza;13579;Dermatologista;11:00-19:00;123
-4;4;Dr. Pedro Costa;24680;Ortopedista;10:30-18:30;123
-1;5;Dra. Camila Oliveira;98765;Ginecologista;9:00-17:00;123
-2;3;Dr. Rafael Santos;54321;Neurologista;13:00-20:00;123
-3;3;Dra. Laura Mendes;45678;Pediatra;8:00-16:00;123
+4;5;Dr. Pedro Costa;24680;Ortopedista;10:30-18:30;123
+1;6;Dra. Camila Oliveira;98765;Ginecologista;9:00-17:00;123
+2;7;Dr. Rafael Santos;54321;Neurologista;13:00-20:00;123
+3;8;Dra. Laura Mendes;45678;Pediatra;8:00-16:00;123

@@ -5,15 +5,20 @@
 
 module Haskell.Controllers.PacienteController (
     criaPaciente,
-    criaConsulta
+    criaConsulta,
+    filtrarMedicosPorEspecialidade,
+    consultarLaudo,
+    consultarReceita,
+    getPacienteId,
+    getPacienteName
 ) where
 
 import qualified Haskell.Models.BD as BD
-import Haskell.Models.Paciente
+import qualified Haskell.Models.Paciente as Paciente
 import qualified Haskell.Models.Medico as Medico
 import Haskell.Models.Laudo as Laudo
 import Haskell.App.Util
-import Data.List (intercalate)
+import Data.List (intercalate, find)
 import qualified Haskell.Models.Receita as Receita
 import Haskell.Models.Consulta (Consulta(Consulta))
 
@@ -24,8 +29,8 @@ Cria um paciente.
 @param infos: Lista de strings que contém as informações do paciente.
 @return paciente criado.
 -}
-criaPaciente :: Int -> [String] -> Paciente
-criaPaciente idP infos = read (intercalate ";" ([show (idP)] ++ infos)) :: Paciente
+criaPaciente :: Int -> [String] -> Paciente.Paciente
+criaPaciente idP infos = read (intercalate ";" ([show (idP)] ++ infos)) :: Paciente.Paciente
 
 {-
 Cria um paciente.
@@ -67,3 +72,26 @@ consultarReceita :: Int -> [Receita.Receita] -> [Receita.Receita]
 consultarReceita _ [] = []
 consultarReceita idPaciente receita = filter (\receita -> Receita.idPaciente receita == idPaciente) receita
 
+{- 
+Essa função retorna o ID do paciente dado o seu nome.
+@param name: nome do paciente
+@param pacientes: lista de pacientes cadastrados
+@return o ID do paciente
+-}
+getPacienteId :: String -> [Paciente.Paciente] -> Int
+getPacienteId name pacientes = 
+    case find (\paciente -> Paciente.nome paciente == name) pacientes of
+        Just paciente -> Paciente.id paciente
+        Nothing -> error "paciente not found"
+
+{-
+Essa função retorna o nome do paciente dado o seu ID.
+@param idPaciente: ID do paciente
+@param pacientes: lista de pacientes cadastrados
+@return o nome do paciente
+-}
+getPacienteName :: Int -> [Paciente.Paciente] -> String
+getPacienteName idPaciente pacientes = 
+    case find (\paciente -> Paciente.id paciente == idPaciente) pacientes of
+        Just paciente -> Paciente.nome paciente
+        Nothing -> error "paciente not found"

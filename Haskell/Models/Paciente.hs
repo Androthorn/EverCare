@@ -71,3 +71,4 @@ instance Read Paciente where
         let hipertenso = if (toUpper $ head (paciente !! 10)) == 'S' then True else False
         let senha = paciente !! 11
         return (Paciente id nome cpf sexo dataNascimento endereco planoDeSaude tipoSanguineo cardiopata diabetico hipertenso senha, "")
+

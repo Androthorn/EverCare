@@ -72,22 +72,6 @@ inicialPaciente dados = do
         putStrLn "Opção inválida"
         inicialPaciente dados
 
-cadastraConsulta :: BD.BD -> IO()
-cadastraConsulta dados = do
-    limpaTela
-    putStr (tituloI "AGENDAMENTO DE CONSULTA")
-    dadosCons <- leituraDadosConsulta
-
-    putStrLn ("Consulta marcada com sucesso! o id da consulta é: " ++ (show (BD.idAtualConsulta dados)))
-    threadDelay 2000000  -- waits for 2 seconds
-
-    let consulta = PControl.criaConsulta (BD.idAtualConsulta dados) dadosCons
-    BD.escreveNoArquivo "Haskell/Persistence/consultas.txt" (Consulta.toString consulta)
-
---tive algum problema com a lógica de voltar direto para o menu do paciente, acho que é necessária o id dele e eu tive problemas com isso. Portanto, voltei pra o menu inicial.
-    inicial dados
-
-
 cadastraPaciente :: BD.BD -> IO()
 cadastraPaciente dados = do
     limpaTela
@@ -130,7 +114,7 @@ menuPaciente idPac dados = do
     op <- prompt "Opção > "
 
     if toUpper (head op) == 'M' then do
-        cadastraConsulta dados
+        cadastraConsulta idPac dados
 
     -- | opção Ver Agendamento
     -- | opção Receitas / Laudos / Solicitações de Exames
@@ -141,6 +125,21 @@ menuPaciente idPac dados = do
     else do
         putStrLn "Opção inválida"
         menuPaciente idPac dados
+
+cadastraConsulta :: Int -> BD.BD -> IO()
+cadastraConsulta idPac dados = do
+    limpaTela
+    putStr (tituloI "AGENDAMENTO DE CONSULTA")
+    dadosCons <- leituraDadosConsulta
+
+    putStrLn ("Consulta marcada com sucesso! o id da consulta é: " ++ (show (BD.idAtualConsulta dados)))
+    threadDelay 2000000
+
+    let nomePac = (PControl.getPacienteName idPac (BD.pacientes dados))
+    let consulta = PControl.criaConsulta (BD.idAtualConsulta dados) ([nomePac] ++ dadosCons)
+    BD.escreveNoArquivo "Haskell/Persistence/consultas.txt" (Consulta.toString consulta)
+
+    menuPaciente idPac dados
 
 
 inicialClinica :: BD.BD -> IO()

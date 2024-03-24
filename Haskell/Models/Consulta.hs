@@ -4,37 +4,37 @@ import Data.Char
 import Data.Maybe
 import Data.Time.Clock
 import Data.Time.Format
-import Data.Time.LocalTime
-    ( utcToLocalTime, hoursToTimeZone, TimeZone )
+import Data.Time.LocalTime ( utcToLocalTime, hoursToTimeZone, TimeZone )
 import Haskell.App.Util 
 
 data Consulta = Consulta {
-    consId :: Int,
-    idPaciente :: String,
-    idClinica :: String,  
-    idMedico :: String,
+    idConsulta :: Int,
+    nomePaciente :: String,
+    nomeClinica :: String,  
+    nomeMedico :: String,
     dataConsulta :: String,
     horario :: String
 }
 
+consultaParaUsuario :: Consulta -> String
+consultaParaUsuario cons = "A consulta " ++ show (idConsulta cons) ++ " do paciente " ++ show (nomePaciente cons) ++ " com o(a) médico(a) " ++ show (nomeMedico cons) ++ " em " ++  dataConsulta cons ++ " às " ++ horario cons
+
+
 toString :: Consulta -> String
 toString cons =
-    show (consId cons) ++ ";" ++
-    show (idPaciente cons) ++ ";" ++ 
-    show (idMedico cons) ++ ";" ++
-    show (idClinica cons) ++ ";" ++
-    show (dataConsulta cons) ++ ";" ++
+    show (idConsulta cons) ++ ";" ++
+    nomePaciente cons ++ ";" ++ 
+    nomeClinica cons ++ ";" ++
+    nomeMedico cons ++ ";" ++
+    dataConsulta cons ++ ";" ++
     horario cons
 
-consultaParaUsuario :: Consulta -> String
-consultaParaUsuario cons = "A consulta " ++ show (consId cons) ++ " do paciente " ++ show (idPaciente cons) ++ " com o(a) médico(a) " ++ show (idMedico cons) ++ " em " ++  dataConsulta cons ++ " às " ++ horario cons
-
 instance Show Consulta where
-    show (Consulta idCons idPac idClin idMed dataC hora) = "-------------------\n" ++
+    show (Consulta idCons nomePac nomeClin nomeMed dataC hora) = "-------------------\n" ++
                     "Id da Consulta: " ++ show idCons ++ "\n" ++
-                    "Nome do paciente: " ++ idPac ++ "\n" ++
-                    "Nome da Clínica: "  ++ idClin ++ "\n" ++
-                    "Nome do Médico: " ++ idMed ++ "\n" ++
+                    "Nome do paciente: " ++ nomePac ++ "\n" ++
+                    "Nome da Clínica: "  ++ nomeClin ++ "\n" ++
+                    "Nome do Médico: " ++ nomeMed ++ "\n" ++
                     "Data da consulta" ++ dataC ++ "\n" ++
                     "Hora da consulta" ++ hora ++ "\n" ++
                     "-------------------\n"
