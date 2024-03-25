@@ -54,7 +54,19 @@ dashboardPaciente :: String
 dashboardPaciente =   " [M] - Marcar Consultas\n"
                     ++" [V] - Ver Agendamentos\n"
                     ++" [R] - Receitas / Laudos / Solicitação de Exames\n"
+                    ++" [B] - Buscar\n"
                     ++" [S] - Sair\n"
+
+buscarP :: String
+buscarP = " [M] - Nome do Médico Específica\n" 
+        ++" [C] - Nome da Clínica Especifica\n"
+        ++" [P] - Plano de Saúde\n"
+        ++" [H] - Horário\n"
+        ++" [E] - Especialidade\n"
+        ++" [T] - Tipo de Agendamento\n"
+        ++" [A] - Avaliação acima de (0-10)\n"
+        ++" [S] - Sintoma\n"
+        ++" [V] - Voltar\n"
 
 leituraDadosClinica :: IO [String]
 leituraDadosClinica = do

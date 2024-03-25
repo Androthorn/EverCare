@@ -62,6 +62,8 @@ consultarLaudo :: Int -> [Laudo] -> [Laudo]
 consultarLaudo _ [] = []
 consultarLaudo idPaciente laudos = filter (\laudo -> Laudo.id laudo == idPaciente) laudos
 
+
+
 {-
 Essa função filtra uma lista de receitas com base no id do paciente.
 @param idPaciente: O id do paciente que se deseja encontrar nas receitas.

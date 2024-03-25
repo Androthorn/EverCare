@@ -4,6 +4,7 @@ import qualified Haskell.Models.Paciente as Paciente
 import qualified Haskell.Models.Medico as Medico
 import qualified Haskell.Models.Clinica as Clinica
 import qualified Haskell.Models.Consulta as Consulta
+import qualified Haskell.Models.Chat as Chat
 
 
 import System.IO
@@ -17,6 +18,7 @@ data BD = BD {
     medicos :: [Medico.Medico],
     clinicas :: [Clinica.Clinica],
     consultas :: [Consulta.Consulta],
+    chats :: [Chat.Chat],
     idAtualPaciente :: Int,
     idAtualMedico :: Int,
     idAtualClinica :: Int,
@@ -31,6 +33,7 @@ novoBD = BD {
     medicos = [],
     clinicas = [],
     consultas = [],
+    chats = [],
     idAtualPaciente = 1,
     idAtualMedico = 1,
     idAtualClinica = 1,
@@ -43,15 +46,18 @@ novoBanco = do
     let clinicaIO = uploadClinicas "Haskell/Persistence/clinicas.txt"
     let medicosIO = uploadMedicos "Haskell/Persistence/medicos.txt"
     let consultasIO = uploadConsultas "Haskell/Persistence/consultas.txt"
+    let chatsIO = uploadChats "Haskell/Persistence/chats.txt"
     pacientes <- pacientesIO
     clinicas <- clinicaIO
     medicos <- medicosIO
     consultas <- consultasIO
+    chats <- chatsIO
     let bd = BD {
             pacientes = pacientes,
             medicos = medicos,
             clinicas = clinicas,
             consultas = consultas,
+            chats = chats,
             idAtualPaciente = length pacientes + 1,
             idAtualMedico = length medicos + 1,
             idAtualClinica = length clinicas + 1,
@@ -87,6 +93,13 @@ uploadConsultas path = do
     let consultasList = stringToConsultas linhas
     return consultasList
 
+uploadChats :: FilePath -> IO [Chat.Chat]
+uploadChats path = do
+    conteudo <- readFile path
+    let linhas = lines conteudo
+    let chatsList = stringToChats linhas
+    return chatsList
+
 escreveNoArquivo :: FilePath -> String -> IO ()
 escreveNoArquivo path conteudo = do
     handle <- openFile path AppendMode
@@ -110,6 +123,10 @@ stringToPacientes l = map read l :: [Paciente.Paciente]
 clinicasToString :: [Clinica.Clinica] -> String -> String
 clinicasToString [] str = str
 clinicasToString (x:xs) str = str ++ (Clinica.toString x) ++ "\n" ++ clinicasToString xs str
+
+stringToChats :: [String] -> [Chat.Chat]
+stringToChats [] = []
+stringToChats l = map read l :: [Chat.Chat]
 
 stringToClinicas :: [String] -> [Clinica.Clinica]
 stringToClinicas [] = []

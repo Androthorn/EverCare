@@ -116,6 +116,8 @@ menuPaciente idPac dados = do
     if toUpper (head op) == 'M' then do
         cadastraConsulta idPac dados
 
+    else if toUpper (head op) == 'B' then do
+        buscar idPac dados
     -- | opção Ver Agendamento
     -- | opção Receitas / Laudos / Solicitações de Exames
 
@@ -125,6 +127,68 @@ menuPaciente idPac dados = do
     else do
         putStrLn "Opção inválida"
         menuPaciente idPac dados
+
+buscar :: Int -> BD.BD -> IO()
+buscar idPac dados = do
+    limpaTela
+    putStrLn (tituloI "BUSCAR")
+    putStrLn (buscarP)
+    op <- prompt "Opção > "
+
+    if toUpper (head op) == 'M' then do
+        nomeMedico <- prompt "Nome do Médico > "
+        putStrLn (PControl.filtrarPorMedico nomeMedico (BD.medicos dados))
+        prompt "Pressione Enter para voltar"
+        menuPaciente idPac dados
+
+    else if toUpper (head op) == 'C' then do
+        nomeClinica <- prompt "Nome da Clínica > "
+        putStrLn (PControl.filtrarPorClinica nomeClinica (BD.clinicas dados))
+        prompt "Pressione Enter para voltar"
+        menuPaciente idPac dados
+
+    else if toUpper (head op) == 'P' then do
+        plano <- prompt "Plano de Saúde ou Particular > "
+        putStrLn (PControl.filtrarClinicaPorPlanoSaude plano (BD.clinicas dados))
+        prompt "Pressione Enter para voltar"
+        menuPaciente idPac dados
+
+    else if toUpper (head op) == 'H' then do
+        horario <- prompt "Horário > "
+        putStrLn (PControl.buscarHorario horario (BD.consultas dados))
+        prompt "Pressione Enter para voltar"
+        menuPaciente idPac dados
+
+    else if toUpper (head op) == 'E' then do
+        especialidade <- prompt "Especialidade > "
+        putStrLn (PControl.filtrarMedicosPorEspecialidade especialidade (BD.medicos dados))
+        prompt "Pressione Enter para voltar"
+        menuPaciente idPac dados
+
+    else if toUpper (head op) == 'T' then do
+        tipo <- prompt "Tipo do Agendamento ( (A)gendamento ou (O)rdem de Chegada ) > "
+        putStrLn (PControl.filtrarClinicasPorAgendamento tipo (BD.clinicas dados))
+        prompt "Pressione Enter para voltar"
+        menuPaciente idPac dados
+    
+    else if toUpper (head op) == 'A' then do
+        acima <- prompt "Avaliação acima de (0-10) > "
+        putStrLn (PControl.filtrarClinicasPorAvaliacao acima (BD.clinicas dados))
+        prompt "Pressione Enter para voltar"
+        menuPaciente idPac dados
+
+    else if toUpper (head op) == 'S' then do
+        sintoma <- prompt "Sintoma > "
+        putStrLn (PControl.filtrarPorSintoma sintoma (BD.medicos dados))
+        prompt "Pressione Enter para voltar"
+        menuPaciente idPac dados
+
+    else if toUpper (head op) == 'V' then do
+        menuPaciente idPac dados
+    else do
+        putStrLn "Opção inválida"
+        buscar idPac dados
+
 
 cadastraConsulta :: Int -> BD.BD -> IO()
 cadastraConsulta idPac dados = do
