@@ -58,13 +58,8 @@ dashboardPaciente =   " [B] - Buscar\n"
                     ++" [B] - Buscar\n"
                     ++" [S] - Sair\n"
 
-<<<<<<< HEAD
 dashboardBuscaMedico :: String
 dashboardBuscaMedico = " [M] - Nome do Médico Específica\n" 
-=======
-buscarP :: String
-buscarP = " [M] - Nome do Médico Específica\n" 
->>>>>>> vivi
         ++" [C] - Nome da Clínica Especifica\n"
         ++" [P] - Plano de Saúde\n"
         ++" [H] - Horário\n"
@@ -74,10 +69,6 @@ buscarP = " [M] - Nome do Médico Específica\n"
         ++" [S] - Sintoma\n"
         ++" [V] - Voltar\n"
 
-<<<<<<< HEAD
-
-=======
->>>>>>> vivi
 leituraDadosClinica :: IO [String]
 leituraDadosClinica = do
     sequence [prompt "Nome > ",
