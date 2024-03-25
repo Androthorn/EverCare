@@ -7,6 +7,9 @@ module Haskell.Controllers.PacienteController (
     criaPaciente,
     criaConsulta,
     filtrarMedicosPorEspecialidade,
+    filtrarPorClinica,
+    filtrarClinicasPorPlanoDeSaude,
+    filtrarClinicasPorAgendamento,
     consultarLaudo,
     consultarReceita,
     getPacienteId,
@@ -16,11 +19,13 @@ module Haskell.Controllers.PacienteController (
 import qualified Haskell.Models.BD as BD
 import qualified Haskell.Models.Paciente as Paciente
 import qualified Haskell.Models.Medico as Medico
-import Haskell.Models.Laudo as Laudo
-import Haskell.App.Util
-import Data.List (intercalate, find)
+import qualified Haskell.Models.Clinica as Clinica
 import qualified Haskell.Models.Receita as Receita
-import Haskell.Models.Consulta (Consulta(Consulta))
+import qualified Haskell.Models.Consulta as Consulta
+import qualified Haskell.Models.Laudo as Laudo
+import Haskell.App.Util
+
+import Data.List (intercalate, find)
 
 
 {-
@@ -38,8 +43,8 @@ Cria um paciente.
 @param infos: Lista de strings que contém as informações da consulta.
 @return consulta criada.
 -}
-criaConsulta :: Int -> [String] -> Consulta
-criaConsulta idC infos = read (intercalate ";" ([show (idC)] ++ infos)) :: Consulta
+criaConsulta :: Int -> [String] -> Consulta.Consulta
+criaConsulta idC infos = read (intercalate ";" ([show (idC)] ++ infos)) :: Consulta.Consulta
 
 {-
 Essa função filtra uma lista de médicos com base na especialidade desejada.
@@ -47,10 +52,37 @@ Essa função filtra uma lista de médicos com base na especialidade desejada.
 @param medicos: Uma lista de médicos que será filtrada.
 @return Uma lista de médicos que possuem a especialidade desejada.
 -}
-
 filtrarMedicosPorEspecialidade :: String -> [Medico.Medico] -> [Medico.Medico]
 filtrarMedicosPorEspecialidade especialidadeDesejada medicos  =
     filter (\medico -> Medico.especialidade medico == especialidadeDesejada) medicos
+
+{-Essa função filtra a clinica especifica desejeda.
+@param nomeEspecifico: a clinica desejada
+@param clinicas: a lista das clinias qu serão filtradas
+@return a clinica desjada
+-}
+filtrarPorClinica :: String -> [Clinica.Clinica] -> [Clinica.Clinica]
+filtrarPorClinica nomeEspecifico clinicas = 
+    filter (\clinica -> Clinica.nome clinica == nomeEspecifico) clinicas
+
+{-Essa função filtra uma lista de clínicas com base no plano de saúde desejado.
+   @param planoSaudeDesejado: O plano de saúde desejado.
+   @param clinicas: A lista de clínicas que será filtrada.
+   @return A lista de clínicas que aceitam o plano de saúde desejado.
+-}
+filtrarClinicasPorPlanoDeSaude :: String -> [Clinica.Clinica] -> [Clinica.Clinica]
+filtrarClinicasPorPlanoDeSaude planoSaudeDesejado clinicas =
+    filter (\clinica -> elem planoSaudeDesejado (Clinica.planos clinica)) clinicas
+
+{-Essa função filtra uma lista de clínicas com base no tipo de agendamento desejado.
+   @param tipoAgendamentoDesejado: O tipo de agendamento desejado (por exemplo, "hora marcada" ou "ordem de chegada").
+   @param clinicas: A lista de clínicas que será filtrada.
+   @return A lista de clínicas que oferecem o tipo de agendamento desejado.
+-}
+filtrarClinicasPorAgendamento :: String -> [Clinica.Clinica] -> [Clinica.Clinica]
+filtrarClinicasPorAgendamento tipoAgendamentoDesejado clinicas =
+    filter (\clinica -> Clinica.metodoAgendamento clinica == tipoAgendamentoDesejado) clinicas
+
 
 {-
 Essa função filtra uma lista de laudos com base no id do paciente.
@@ -58,7 +90,7 @@ Essa função filtra uma lista de laudos com base no id do paciente.
 @param laudos: Uma lista de laudos que será filtrada.
 @return Uma lista de laudos que possuem o id do paciente desejado.
 -}
-consultarLaudo :: Int -> [Laudo] -> [Laudo]
+consultarLaudo :: Int -> [Laudo.Laudo] -> [Laudo.Laudo]
 consultarLaudo _ [] = []
 consultarLaudo idPaciente laudos = filter (\laudo -> Laudo.id laudo == idPaciente) laudos
 

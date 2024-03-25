@@ -130,3 +130,18 @@ medicosToString (x:xs) str = str ++ (Medico.toString x) ++ "\n" ++ medicosToStri
 stringToMedicos :: [String] -> [Medico.Medico]
 stringToMedicos [] = []
 stringToMedicos l = map read l :: [Medico.Medico]
+
+
+horariosMarcados :: BD -> Int -> String -> [String]
+horariosMarcados bd idMedico dia =
+    let consultasDoDia = filter (\consulta -> Consulta.dataConsulta consulta == dia) (consultas bd)
+        consultasDoMedico = filter (\consulta -> Consulta.idMedico consulta == idMedico) consultasDoDia
+    in consultasToHorarios consultasDoMedico
+
+horariosDisponiveis :: BD -> Int -> String -> [String]
+horariosDisponiveis bd idMedico dia =
+    let horarios = ["08:00", "09:00", "10:00", "11:00", "14:00", "15:00", "16:00", "17:00"]
+    in filter (\horario -> notElem horario (horariosMarcados bd idMedico dia)) horarios
+
+consultasToHorarios :: [Consulta.Consulta] -> [String]
+consultasToHorarios consultas = map (\consulta -> Consulta.horario consulta) consultas

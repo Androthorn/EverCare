@@ -51,10 +51,17 @@ leituraDadosPaciente = do
               prompt "Senha > "]
 
 dashboardPaciente :: String
-dashboardPaciente =   " [M] - Marcar Consultas\n"
+dashboardPaciente =   " [B] - Buscar Médicos\n"
+                    ++" [M] - Marcar Consultas\n"
                     ++" [V] - Ver Agendamentos\n"
                     ++" [R] - Receitas / Laudos / Solicitação de Exames\n"
                     ++" [S] - Sair\n"
+
+dashboardBuscaMedico :: String
+dashboardBuscaMedico = " [E] - Especialidade\n"
+                     ++" [C] - Clinica\n"
+                     ++" [P] - Plano de Saúde\n"
+                     ++" [V] - Voltar\n"
 
 leituraDadosClinica :: IO [String]
 leituraDadosClinica = do
@@ -62,6 +69,7 @@ leituraDadosClinica = do
               prompt "Endereço > ",
               prompt "Horários de Funcionamento > ",
               prompt "Planos Vinculados > ",
+              prompt "Método de Agendamento > ",
               prompt "Contato > ",
               prompt "Senha > "]
 
@@ -126,3 +134,13 @@ split "" _ aux = [aux]
 split (h : t) sep aux | h == sep && aux == "" = split t sep aux
                   | h == sep = [aux] ++ split t sep ""
                   | otherwise = split t sep (aux ++ [h])
+
+
+formataLista :: Show t => [t] -> String
+formataLista [] = ""
+formataLista (x:xs) = (show x) ++ "\n" ++ (formataLista xs)
+
+imprime :: Show t => [t] -> IO ()
+imprime l = do
+    putStrLn (formataLista l)
+    return ()

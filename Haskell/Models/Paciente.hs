@@ -52,7 +52,6 @@ instance Show Paciente where
                     "Cardiopata? " ++ boolToString c ++ "\n"++
                     "Hipertenso? " ++ boolToString h ++ "\n" ++
                     "Diabético? " ++ boolToString db ++ "\n" ++
-                    "Senha: ********" ++ "\n" ++
                     "-------------------\n"
 
 instance Read Paciente where

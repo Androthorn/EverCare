@@ -1,5 +1,1 @@
-1;CenterMed;Rua Estreita;8:00-17:00;UnoMed, Particular;83988889999;123
-2;MediClin;Rua ABC;9:00-18:00;Particular;83099988;123
-3;SantaMedica;Rua Campos;13:00-18:00;Bradesca, UnoMed;83776698;123
-4;Saúde Total;Avenida Principal;7:30-16:30;SaúdeSeguro, Particular;85771234567;123
-5;Clínica Popular;Rua das Flores;10:00-19:00;PopularCare, Particular;81123456789;123
+1;Otorrino;Rua;8:00-12:00;Unimed, Bradesco, HapVida;A;83;123

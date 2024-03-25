@@ -100,6 +100,7 @@ loginPaciente dados = do
     let aut = Autenticator.autenticaPaciente (BD.pacientes dados) (read id) senha
     if aut then do
         menuPaciente (read id) dados
+        limpaTela
     else do
         putStrLn "ID ou senha incorretos"
         threadDelay 1000000
@@ -108,12 +109,14 @@ loginPaciente dados = do
 
 menuPaciente :: Int -> BD.BD -> IO()
 menuPaciente idPac dados = do
-    limpaTela
     putStrLn (tituloI "DASHBOARD PACIENTE")
     putStrLn (dashboardPaciente)
     op <- prompt "Opção > "
 
-    if toUpper (head op) == 'M' then do
+    if toUpper (head op) == 'B' then do
+        buscaMedico idPac dados
+
+    else if toUpper (head op) == 'M' then do
         cadastraConsulta idPac dados
 
     -- | opção Ver Agendamento
@@ -125,21 +128,63 @@ menuPaciente idPac dados = do
     else do
         putStrLn "Opção inválida"
         menuPaciente idPac dados
+        limpaTela
+
+buscaMedico :: Int -> BD.BD -> IO()
+buscaMedico idPac dados = do
+    limpaTela
+    putStrLn (tituloI "BUSCA DE MÉDICO")
+    putStrLn (dashboardBuscaMedico)
+    op <- prompt "Opção > "
+
+    if toUpper (head op) == 'E' then do
+        especialidade <- prompt "Especialidade > "
+        let medicos = PControl.filtrarMedicosPorEspecialidade especialidade (BD.medicos dados)
+        imprime medicos
+        menuPaciente idPac dados
+
+    else if toUpper (head op) == 'C' then do
+        clinica <- prompt "Clinica > "
+        let clinicas = PControl.filtrarPorClinica clinica (BD.clinicas dados)
+        imprime clinicas
+        menuPaciente idPac dados
+
+    else if toUpper (head op) == 'P' then do
+        plano <- prompt "Plano de Saúde > "
+        let clinicas = PControl.filtrarClinicasPorPlanoDeSaude plano (BD.clinicas dados)
+        imprime clinicas
+        menuPaciente idPac dados
+
+    else if toUpper (head op) == 'V' then do
+        menuPaciente idPac dados
+        limpaTela
+
+    else do
+        putStrLn "Opção inválida"
+        buscaMedico idPac dados
 
 cadastraConsulta :: Int -> BD.BD -> IO()
 cadastraConsulta idPac dados = do
     limpaTela
     putStr (tituloI "AGENDAMENTO DE CONSULTA")
-    dadosCons <- leituraDadosConsulta
+    idC <- prompt "ID da Clínica > "
+    idM <- prompt "ID do Médico > "
+    dia <- prompt "Data da Consulta > "
+    putStrLn "\nHorários disponíveis: \n"
+    let horarios = BD.horariosDisponiveis dados (read idM) dia
+    imprime horarios
+
+    horario <- prompt "Horário > "
 
     putStrLn ("Consulta marcada com sucesso! o id da consulta é: " ++ (show (BD.idAtualConsulta dados)))
     threadDelay 2000000
 
-    let nomePac = (PControl.getPacienteName idPac (BD.pacientes dados))
-    let consulta = PControl.criaConsulta (BD.idAtualConsulta dados) ([nomePac] ++ dadosCons)
+    let dadosCons = [show idPac, idC, idM, dia, horario]
+    let consulta = PControl.criaConsulta (BD.idAtualConsulta dados) (dadosCons)
     BD.escreveNoArquivo "Haskell/Persistence/consultas.txt" (Consulta.toString consulta)
 
-    menuPaciente idPac dados
+    menuPaciente idPac dados { BD.consultas = (BD.consultas dados) ++ [consulta],
+                               BD.idAtualConsulta = (BD.idAtualConsulta dados) + 1 }
 
 
 inicialClinica :: BD.BD -> IO()
