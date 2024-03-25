@@ -51,17 +51,23 @@ leituraDadosPaciente = do
               prompt "Senha > "]
 
 dashboardPaciente :: String
-dashboardPaciente =   " [B] - Buscar Médicos\n"
+dashboardPaciente =   " [B] - Buscar\n"
                     ++" [M] - Marcar Consultas\n"
                     ++" [V] - Ver Agendamentos\n"
                     ++" [R] - Receitas / Laudos / Solicitação de Exames\n"
                     ++" [S] - Sair\n"
 
 dashboardBuscaMedico :: String
-dashboardBuscaMedico = " [E] - Especialidade\n"
-                     ++" [C] - Clinica\n"
-                     ++" [P] - Plano de Saúde\n"
-                     ++" [V] - Voltar\n"
+dashboardBuscaMedico = " [M] - Nome do Médico Específica\n" 
+        ++" [C] - Nome da Clínica Especifica\n"
+        ++" [P] - Plano de Saúde\n"
+        ++" [H] - Horário\n"
+        ++" [E] - Especialidade\n"
+        ++" [T] - Tipo de Agendamento\n"
+        ++" [A] - Avaliação acima de (0-10)\n"
+        ++" [S] - Sintoma\n"
+        ++" [V] - Voltar\n"
+
 
 leituraDadosClinica :: IO [String]
 leituraDadosClinica = do
@@ -85,6 +91,7 @@ dashboardClinica = " [C] - Cadastrar Médico\n"
                  ++" [V] - Ver Informações\n"
                  ++" [D] - Dashboard\n"
                  ++" [S] - Sair\n"
+
 
 visualizarInformacaoClinica :: String
 visualizarInformacaoClinica =   " [A] - Agendamentos\n"
