@@ -124,9 +124,69 @@ menuPaciente idPac dados = do
     else if toUpper (head op) == 'S' then do
         inicial dados
 
+    else if toUpper (head op) == 'C' then do
+        chatsPac idPac dados
+
     else do
         putStrLn "Opção inválida"
         menuPaciente idPac dados
+
+chatsPac :: Int -> BD.BD -> IO()
+chatsPac idPac dados = do
+    limpaTela
+    putStrLn (tituloI "CHAT PACIENTE")
+    putStrLn (chatP)
+    op <- prompt "Opção > "
+
+    if toUpper (head op) == 'C' then do
+        criarChatP idPac dados
+
+    else if toUpper (head op) == 'V' then do
+        visualizaTodosChatsPac idPac dados
+
+    else if toUpper (head op) == 'A' then do
+        abrirConversaPac idPac dados
+
+    else if toUpper (head op) == 'S' then do
+        menuPaciente idPac dados
+
+    else do
+        putStrLn "Opção inválida"
+        chatsPac idPac dados
+
+criarChatP :: Int -> BD.BD -> IO()
+criarChatP idPac dados = do
+    limpaTela
+    putStrLn (tituloI "MANDAR MENSAGEM")
+    nomeMedico <- prompt "Nome do Médico > "
+    mensagem <- prompt "Mensagem > "
+
+    let idMedico = (PControl.getMedicoId nomeMedico (BD.medicos dados))
+    let chat = PControl.criaChatP idPac idMedico mensagem
+    BD.escreveNoArquivo "Haskell/Persistence/chats.txt" (Paciente.Chat.toString chat)
+
+    putStrLn "Mensagem enviada com sucesso!"
+    threadDelay 2000000
+    menuPaciente idPac dados
+
+
+visualizaTodosChatsPac :: Int -> BD.BD -> IO()
+visualizaTodosChatsPac idPac dados = do
+    limpaTela
+    putStrLn (tituloI "CHATS DO PACIENTE")
+    putStrLn (PControl.listarChats idPac (BD.chats dados))
+    prompt "Pressione Enter para voltar"
+    menuPaciente idPac dados
+
+abrirConversaPac :: Int -> BD.BD -> IO()
+abrirConversaPac idChat dados = do
+    limpaTela
+    putStrLn (tituloI "CHAT PACIENTE")
+    nomeMedico <- prompt "Id do Chat >"
+    putStrLn (PControl.abrirConversa idChat (BD.chats dados))
+    mensagem <- prompt "Responder > "
+
+    menuPaciente idPac dados
 
 buscar :: Int -> BD.BD -> IO()
 buscar idPac dados = do

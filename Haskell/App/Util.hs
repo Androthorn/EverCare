@@ -55,7 +55,14 @@ dashboardPaciente =   " [M] - Marcar Consultas\n"
                     ++" [V] - Ver Agendamentos\n"
                     ++" [R] - Receitas / Laudos / Solicitação de Exames\n"
                     ++" [B] - Buscar\n"
+                    ++" [C] - Chats\n"
                     ++" [S] - Sair\n"
+
+chatP :: String
+chatP = " [C] - Criar Chat com Médico\n"
+      ++" [V] - Ver Chats Ativos\n"
+      ++" [A] - Abrir conversa\n"
+      ++" [S] - Sair\n"
 
 buscarP :: String
 buscarP = " [M] - Nome do Médico Específica\n" 
