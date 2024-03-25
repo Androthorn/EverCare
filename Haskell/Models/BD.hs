@@ -5,12 +5,16 @@ import qualified Haskell.Models.Medico as Medico
 import qualified Haskell.Models.Clinica as Clinica
 import qualified Haskell.Models.Consulta as Consulta
 import qualified Haskell.Models.Chat as Chat
+import qualified Haskell.Models.Exame as Exame
+import qualified Haskell.Models.Laudo as Laudo
+import qualified Haskell.Models.Receita as Receita
 
 
 import System.IO
 import System.Directory
 import Text.Read (readMaybe)
 import Data.Maybe (mapMaybe)
+import Distribution.Compat.CharParsing (CharParsing(string))
 
 
 data BD = BD {
@@ -19,6 +23,9 @@ data BD = BD {
     clinicas :: [Clinica.Clinica],
     consultas :: [Consulta.Consulta],
     chats :: [Chat.Chat],
+    exames:: [Exame.Exame],
+    laudos :: [Laudo.Laudo],
+    receitas :: [Receita.Receita],
     idAtualPaciente :: Int,
     idAtualMedico :: Int,
     idAtualClinica :: Int,
@@ -34,6 +41,9 @@ novoBD = BD {
     clinicas = [],
     consultas = [],
     chats = [],
+    exames = [],
+    receitas = [],
+    laudos = [],
     idAtualPaciente = 1,
     idAtualMedico = 1,
     idAtualClinica = 1,
@@ -47,23 +57,50 @@ novoBanco = do
     let medicosIO = uploadMedicos "Haskell/Persistence/medicos.txt"
     let consultasIO = uploadConsultas "Haskell/Persistence/consultas.txt"
     let chatsIO = uploadChats "Haskell/Persistence/chats.txt"
+    let examesIO = uploadExames "Haskell/Persistence/exames.txt"
+    let laudosIO = uploadLaudos "Haskell/Persistence/laudos.txt"
+    let receitasIO = uploadReceitas "Haskell/Persistence/receitas.txt"
     pacientes <- pacientesIO
     clinicas <- clinicaIO
     medicos <- medicosIO
     consultas <- consultasIO
     chats <- chatsIO
+    exames <- examesIO
+    laudos <- laudosIO
+    receitas <- receitasIO
     let bd = BD {
             pacientes = pacientes,
             medicos = medicos,
             clinicas = clinicas,
             consultas = consultas,
             chats = chats,
+            exames = exames,
+            laudos = laudos,
+            receitas = receitas,
             idAtualPaciente = length pacientes + 1,
             idAtualMedico = length medicos + 1,
             idAtualClinica = length clinicas + 1,
             idAtualConsulta = length consultas +1
         }
     return bd
+
+uploadReceitas :: FilePath -> IO [Receita.Receita]
+uploadReceitas path = do
+    conteudo <- readFile path
+    let linhas = lines conteudo
+    let receitasList = stringToReceitas linhas
+    return receitasList
+
+uploadLaudos :: FilePath -> IO [Laudo.Laudo]
+uploadLaudos path = do
+    conteudo <- readFile path
+    let linhas = lines conteudo
+    let laudosList = stringToLaudos linhas
+    return laudosList
+
+stringToLaudos :: [String] -> [Laudo.Laudo]
+stringToLaudos [] = []
+stringToLaudos l = map read l :: [Laudo.Laudo]
 
 uploadPacientes :: FilePath -> IO [Paciente.Paciente]
 uploadPacientes path = do
@@ -100,6 +137,17 @@ uploadChats path = do
     let chatsList = stringToChats linhas
     return chatsList
 
+uploadExames :: FilePath -> IO [Exame.Exame]
+uploadExames path = do
+    conteudo <- readFile path
+    let linhas = lines conteudo
+    let examesList = stringToExames linhas
+    return examesList
+
+stringToExames :: [String] -> [Exame.Exame]
+stringToExames [] = []
+stringToExames l = map read l :: [Exame.Exame]
+
 escreveNoArquivo :: FilePath -> String -> IO ()
 escreveNoArquivo path conteudo = do
     handle <- openFile path AppendMode
@@ -111,6 +159,9 @@ escreveNoArquivo2 :: FilePath -> String -> IO ()
 escreveNoArquivo2 path conteudo = do
     appendFile path (conteudo ++ "\n")
 
+stringToReceitas :: [String] -> [Receita.Receita]
+stringToReceitas [] = []
+stringToReceitas l = map read l :: [Receita.Receita]
 
 pacientesToString :: [Paciente.Paciente] -> String -> String
 pacientesToString [] str = str

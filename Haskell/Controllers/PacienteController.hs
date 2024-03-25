@@ -14,6 +14,8 @@ module Haskell.Controllers.PacienteController (
     filtrarMedicoPorSintoma,
     consultarLaudo,
     consultarReceita,
+    consultarAgendamento,
+    consultarSolicitacao,
     getPacienteId,
     getPacienteName
 ) where
@@ -25,8 +27,9 @@ import qualified Haskell.Models.Clinica as Clinica
 import qualified Haskell.Models.Receita as Receita
 import qualified Haskell.Models.Consulta as Consulta
 import qualified Haskell.Models.Laudo as Laudo
+import qualified Haskell.Models.Exame as Exame
 import Haskell.App.Util
-
+import Data.Char ( toLower )
 import Data.List (intercalate, find)
 
 
@@ -100,20 +103,22 @@ filtrarClinicasPorAgendamento tipoAgendamentoDesejado clinicas =
 @return uma lista de médicos filtrada de acordo com o sintoma.
 -}
 filtrarMedicoPorSintoma :: String -> [Medico.Medico] -> [Medico.Medico]
-filtrarMedicoPorSintoma sintoma medicos
+filtrarMedicoPorSintoma sint medicos
     | sintoma == "dor nas costas" || sintoma == "dor lombar" || sintoma == "dor na mão" || sintoma == "dor no pé" || sintoma == "dor na ombro" = filtrarMedicosPorEspecialidade "Ortopedista" medicos
-    | sintoma == "enxaqueca" || sintoma == "dor de cabeça" = filtrarMedicosPorEspecialidade "Neurologia" medicos
+    | sintoma == "enxaqueca" || sintoma == "dor de cabeça" = filtrarMedicosPorEspecialidade "Neurologista" medicos
     | sintoma == "dor de garganta" || sintoma == "nariz entupido" || sintoma == "sinusite" || sintoma == "dor de ouvido" = filtrarMedicosPorEspecialidade "Otorrinolaingologista" medicos
     | sintoma == "menstruação desrregulada" || sintoma == "gravidez" || sintoma == "cólica" = filtrarMedicosPorEspecialidade "Ginecologista" medicos
     | sintoma == "espinhas" || sintoma == "queda de cabelo" || sintoma == "mancha na pele" = filtrarMedicosPorEspecialidade "Dermatologista" medicos
     | sintoma == "desconforto abdominal" || sintoma == "azia" || sintoma == "gastrite" = filtrarMedicosPorEspecialidade "Gastroenterologia" medicos
     | sintoma == "febre" || sintoma == "tosse" || sintoma == "resfriado" || sintoma == "dor de garganta" = filtrarMedicosPorEspecialidade "Clínico Geral" medicos
-    | sintoma == "pressão alta" || sintoma == "pressão baixa" = filtrarMedicosPorEspecialidade "Cardiologia" medicos
-    | sintoma == "ansiedade" || sintoma == "depressão" = filtrarMedicosPorEspecialidade "Psiquiatria" medicos
-    | sintoma == "visão embaçada" || sintoma == "olho vermelho" || sintoma == "coceira nos olhos" = filtrarMedicosPorEspecialidade "Oftalmologia" medicos
-    | sintoma == "queda de pressão" || sintoma == "desmaio" = filtrarMedicosPorEspecialidade "Cardiologia" medicos
-    | sintoma == "dor nos rins" || sintoma == "sangue na urina" || sintoma == "dificuldade para urinar" = filtrarMedicosPorEspecialidade "Urologia" medicos
+    | sintoma == "pressão alta" || sintoma == "pressão baixa" = filtrarMedicosPorEspecialidade "Cardiologista" medicos
+    | sintoma == "ansiedade" || sintoma == "depressão" = filtrarMedicosPorEspecialidade "Psiquiatra" medicos
+    | sintoma == "visão embaçada" || sintoma == "olho vermelho" || sintoma == "coceira nos olhos" = filtrarMedicosPorEspecialidade "Oftalmologista" medicos
+    | sintoma == "queda de pressão" || sintoma == "desmaio" = filtrarMedicosPorEspecialidade "Cardiologista" medicos
+    | sintoma == "dor nos rins" || sintoma == "sangue na urina" || sintoma == "dificuldade para urinar" = filtrarMedicosPorEspecialidade "Urologista" medicos
     | otherwise = []
+    where 
+        sintoma = map toLower sint
 
 {-
 Essa função filtra uma lista de laudos com base no id do paciente.
@@ -137,7 +142,14 @@ consultarReceita :: Int -> [Receita.Receita] -> [Receita.Receita]
 consultarReceita _ [] = []
 consultarReceita idPaciente receita = filter (\receita -> Receita.idPaciente receita == idPaciente) receita
 
+consultarSolicitacao :: Int -> [Exame.Exame] -> [Exame.Exame]
+consultarSolicitacao _ [] = []
+consultarSolicitacao idPaciente exames = filter (\exame -> Exame.idPaciente exame == idPaciente) exames
 
+
+consultarAgendamento :: Int -> [Consulta.Consulta] -> [Consulta.Consulta]
+consultarAgendamento _ [] = []
+consultarAgendamento idPaciente consultas = filter (\consulta -> Consulta.idPaciente consulta == idPaciente) consultas
 
 {- 
 Essa função retorna o ID do paciente dado o seu nome.

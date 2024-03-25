@@ -8,6 +8,8 @@ import qualified Haskell.Models.BD as BD
 import qualified Haskell.Controllers.PacienteController as PControl
 import qualified Haskell.Controllers.AutenticationController as Autenticator
 import qualified Haskell.Controllers.ClinicaController as CControl
+import qualified Haskell.Controllers.MedicoController as MControl
+
 import qualified Haskell.Models.Paciente as Paciente
 import qualified Haskell.Models.Clinica as Clinica
 import qualified Haskell.Models.Medico as Medico
@@ -121,7 +123,12 @@ menuPaciente idPac dados = do
 
     else if toUpper (head op) == 'B' then do
         buscar idPac dados
-    -- | opção Ver Agendamento
+    
+    else if toUpper (head op) == 'V' then do
+        verAgendamento idPac dados
+
+    else if toUpper (head op) == 'R' then do
+        verPosConsulta idPac dados
     -- | opção Receitas / Laudos / Solicitações de Exames
 
     else if toUpper (head op) == 'S' then do
@@ -130,6 +137,47 @@ menuPaciente idPac dados = do
     else do
         putStrLn "Opção inválida"
         menuPaciente idPac dados
+
+verPosConsulta :: Int -> BD.BD -> IO()
+verPosConsulta idPac dados = do
+    limpaTela
+    putStrLn (tituloI "RECEITAS / LAUDOS / SOLICITAÇÕES DE EXAMES")
+    putStrLn (emissaoPaciente)
+    op <- prompt "Opção > "
+
+    if toUpper (head op) == 'R' then do
+        let resultado = PControl.consultarReceita idPac (BD.receitas dados)
+        imprime resultado
+        prompt "Pressione Enter para voltar"
+        menuPaciente idPac dados
+
+    else if toUpper (head op) == 'L' then do
+        let resultado = PControl.consultarLaudo idPac (BD.laudos dados)
+        imprime resultado
+        prompt "Pressione Enter para voltar"
+        menuPaciente idPac dados
+
+    else if toUpper (head op) == 'S' then do
+        let resultado = PControl.consultarSolicitacao idPac (BD.exames dados)
+        imprime resultado
+        prompt "Pressione Enter para voltar"
+        menuPaciente idPac dados
+
+    else if toUpper (head op) == 'V' then do
+        menuPaciente idPac dados
+
+    else do
+        putStrLn "Opção inválida"
+        verPosConsulta idPac dados
+
+verAgendamento :: Int -> BD.BD -> IO()
+verAgendamento idPac dados = do
+    limpaTela
+    putStrLn (tituloI "AGENDAMENTOS")
+    let consultas = PControl.consultarAgendamento idPac (BD.consultas dados)
+    putStrLn (show consultas)
+    prompt "Pressione Enter para voltar"
+    menuPaciente idPac dados
 
 buscar :: Int -> BD.BD -> IO()
 buscar idPac dados = do
@@ -396,7 +444,7 @@ menuMedico idM dados = do
     op <- prompt "Opção > "
 
     if toUpper (head op) == 'V' then do
-        menuMedico idM dados
+        verAgendamentoM idM dados
 
     -- | opção Ver Agendamento  (do médico)
     else if toUpper (head op) == 'E' then do
@@ -408,6 +456,24 @@ menuMedico idM dados = do
     else do
         putStrLn "Opção inválida"
         menuMedico idM dados
+
+verAgendamentoM:: Int -> BD.BD -> IO()
+verAgendamentoM idM dados = do
+    limpaTela
+    putStrLn (tituloI "AGENDAMENTOS")
+    let consultas = MControl.acessarConsultas idM (BD.consultas dados)
+    imprime consultas
+    prompt "Pressione Enter para voltar"
+    menuMedico idM dados
+
+
+-- visualizaMedicos :: Int -> BD.BD -> IO()
+-- visualizaMedicos idC dados = do
+--     limpaTela
+--     putStrLn (tituloI "MÉDICOS")
+--     putStrLn (CControl.verMedico idC (BD.medicos dados))
+--     prompt "Pressione Enter para voltar"
+--     menuClinica idC dados
 
 emitirMedico :: Int  -> BD.BD -> IO()
 emitirMedico idM dados = do

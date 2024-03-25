@@ -58,6 +58,12 @@ dashboardPaciente =   " [B] - Buscar\n"
                     ++" [B] - Buscar\n"
                     ++" [S] - Sair\n"
 
+emissaoPaciente :: String
+emissaoPaciente = " [R] - Receita\n"
+               ++ " [S] - Solicitação de Exame\n"
+               ++ " [L] - Laudo Médico\n"
+               ++ " [V] - Voltar\n"
+
 dashboardBuscaMedico :: String
 dashboardBuscaMedico = " [M] - Nome do Médico Específica\n" 
         ++" [C] - Nome da Clínica Especifica\n"

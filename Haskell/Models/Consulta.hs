@@ -31,8 +31,8 @@ instance Show Consulta where
                     "Nome do paciente: " ++ show idPac ++ "\n" ++
                     "Nome da Clínica: "  ++ show idClin ++ "\n" ++
                     "Nome do Médico: " ++ show idMed ++ "\n" ++
-                    "Data da consulta" ++ dataC ++ "\n" ++
-                    "Hora da consulta" ++ hora ++ "\n" ++
+                    "Data da consulta: " ++ dataC ++ "\n" ++
+                    "Hora da consulta: " ++ hora ++ "\n" ++
                     "-------------------\n"
 
 instance Read Consulta where
