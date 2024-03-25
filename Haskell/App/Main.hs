@@ -200,39 +200,6 @@ buscar idPac dados = do
         putStrLn "Opção inválida"
         buscar idPac dados
 
-buscaMedico :: Int -> BD.BD -> IO()
-buscaMedico idPac dados = do
-    limpaTela
-    putStrLn (tituloI "BUSCA DE MÉDICO")
-    putStrLn (dashboardBuscaMedico)
-    op <- prompt "Opção > "
-
-    if toUpper (head op) == 'E' then do
-        especialidade <- prompt "Especialidade > "
-        let medicos = PControl.filtrarMedicosPorEspecialidade especialidade (BD.medicos dados)
-        imprime medicos
-        menuPaciente idPac dados
-
-    else if toUpper (head op) == 'C' then do
-        clinica <- prompt "Clinica > "
-        let clinicas = PControl.filtrarPorClinica clinica (BD.clinicas dados)
-        imprime clinicas
-        menuPaciente idPac dados
-
-    else if toUpper (head op) == 'P' then do
-        plano <- prompt "Plano de Saúde > "
-        let clinicas = PControl.filtrarClinicasPorPlanoDeSaude plano (BD.clinicas dados)
-        imprime clinicas
-        menuPaciente idPac dados
-
-    else if toUpper (head op) == 'V' then do
-        menuPaciente idPac dados
-        limpaTela
-
-    else do
-        putStrLn "Opção inválida"
-        buscaMedico idPac dados
-
 cadastraConsulta :: Int -> BD.BD -> IO()
 cadastraConsulta idPac dados = do
     limpaTela
