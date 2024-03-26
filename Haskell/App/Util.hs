@@ -128,7 +128,7 @@ emissaoMedico = " [R] - Receita\n"
 -- | Clear the terminal screen
 limpaTela :: IO ()
 limpaTela = do
-    _ <- system "clear"
+    -- _ <- system "clear"
     return ()
 
 prompt :: String -> IO String

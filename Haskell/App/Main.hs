@@ -209,30 +209,29 @@ buscar idPac dados = do
         buscar idPac dados
 
 
--- É NECESSARIA A IMPLEMENTAÇÃO DESSA FUNÇÃO E RESOLVER COMO IMPLEMENTAR 
--- O LOCAL TIME E O LOCAL DATE (essas funcoes estao no fim do arquivo)
--- ACREDITO QUE POSSA SER DIRETAMENTE AQUI NO MAIN UMA VEZ QUE SE TRATA DE UMA FUNCAO IO. 
--- POR ENQUANTO VOU DEIXAR AQUI COMENTADO
-
-
 cadastraAvaliacao :: Int -> BD.BD -> IO ()
 cadastraAvaliacao idPac dados = do
     limpaTela
     putStrLn (tituloI "AVALIAÇÃO DE ATENDIMENTO")
     dadosAval <- leituraDadosAvaliacao
+    print dadosAval
 
     putStrLn ("Avaliação cadastrada com sucesso!")
     threadDelay 2000000
 
-    timeZoneBR <- getCurrentTimeZone
-    currentTime <- getCurrentTime
-    let formattedTime = formatTime defaultTimeLocale "%Y-%m-%d %H:%M:%S" (utcToZonedTime timeZoneBR currentTime)
+    -- timeZoneBR <- getCurrentTimeZone
+    -- currentTime <- getCurrentTime
+    -- let formattedTime = formatTime defaultTimeLocale "%Y-%m-%d %H:%M:%S" (utcToZonedTime timeZoneBR currentTime)
 
-    let avaliacao = PControl.criaAvaliacao (BD.idAtualAvaliacao dados) dadosAval
-    BD.escreveNoArquivo "Haskell/Persistence/avaliacoes.txt" (Avaliacao.toString avaliacao ++ ";" ++ formattedTime)
+    
+    let avaliacao = PControl.criaAvaliacao (BD.idAtualAvaliacao dados) idPac dadosAval
+    imprime (Avaliacao.toString avaliacao)
+    BD.escreveNoArquivo "Haskell/Persistence/avaliacoes.txt" (Avaliacao.toString avaliacao)
 
-    loginPaciente dados { BD.avaliacoes = (BD.avaliacoes dados) ++ [avaliacao],
+    menuPaciente idPac dados  { BD.avaliacoes = (BD.avaliacoes dados) ++ [avaliacao],
                           BD.idAtualAvaliacao = (BD.idAtualAvaliacao dados) + 1 }
+
+                    
    
 
 cadastraConsulta :: Int -> BD.BD -> IO()

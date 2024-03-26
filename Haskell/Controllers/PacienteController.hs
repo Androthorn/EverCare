@@ -30,6 +30,7 @@ import qualified Haskell.Models.Avaliacao as Avaliacao
 import Haskell.App.Util
 
 import Data.List (intercalate, find)
+import Haskell.Models.Avaliacao (Avaliacao(Avaliacao))
 
 {-
 Cria um paciente.
@@ -46,9 +47,18 @@ Cria uma avaliação.
 @param infos: Lista de strings que contém as informações da avaliação.
 @return avaliação criada.
 -}
-criaAvaliacao :: Int -> [String] -> Avaliacao.Avaliacao
-criaAvaliacao idA infos = read (intercalate ";" ([show (idA)] ++ infos)) :: Avaliacao.Avaliacao
+criaAvaliacao :: Int -> Int -> [String] -> Avaliacao.Avaliacao
+criaAvaliacao idA idP infos = Avaliacao.Avaliacao idA idP idMed nota texto
+    where
+        idMed = read (head infos) :: Int
+        nota = read (infos !! 1) :: Int 
+        texto = last infos
 
+-- emiteReceita :: Int -> Int -> [String] -> Receita.Receita
+-- emiteReceita id idMedico infos = Receita.Receita id idMedico idPaciente texto
+--     where
+--         idPaciente = read (head infos) :: Int
+--         texto = unwords (tail infos)
 {-
 Cria um paciente.
 @param idC: Inteiro que representa o id da consulta.

@@ -77,7 +77,9 @@ novoBanco = do
 uploadAvaliacoes :: FilePath -> IO [Avaliacao.Avaliacao]
 uploadAvaliacoes path = do
     conteudo <- readFile path
+    putStrLn  "lendo"
     let linhas = lines conteudo
+    putStrLn  "linhas"
     let avaliacoesList = stringToAvaliacoes linhas
     return avaliacoesList
 
@@ -118,10 +120,7 @@ uploadChats path = do
 
 escreveNoArquivo :: FilePath -> String -> IO ()
 escreveNoArquivo path conteudo = do
-    handle <- openFile path AppendMode
-    hSetEncoding handle utf8
-    hPutStrLn handle conteudo
-    hClose handle
+    appendFile path (conteudo ++ "\n")
 
 escreveNoArquivo2 :: FilePath -> String -> IO ()
 escreveNoArquivo2 path conteudo = do

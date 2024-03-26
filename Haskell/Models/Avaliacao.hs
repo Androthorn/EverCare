@@ -13,7 +13,7 @@ data Avaliacao = Avaliacao
 
 toString :: Avaliacao -> String
 toString m = show (idAvaliacao m) ++ ";" ++
-             show (idPac m) ++ ";" ++
+             show (idPac m) ++ ";" ++             
              show (idMed m) ++ ";" ++
              show (nota m) ++ ";" ++
              comentario m 
@@ -35,5 +35,4 @@ instance Read Avaliacao where
         let idMed = read (avaliacao !! 2) :: Int
         let nota = read (avaliacao !! 3) :: Int
         let comentario = avaliacao !! 4
-        let dataHora = getCurrentTime -- Get the current time and date
         [(Avaliacao idAvaliacao idPac idMed nota comentario , "")]
