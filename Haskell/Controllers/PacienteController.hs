@@ -17,7 +17,8 @@ module Haskell.Controllers.PacienteController (
     consultarAgendamento,
     consultarSolicitacao,
     getPacienteId,
-    getPacienteName
+    getPacienteName,
+    getPacienteOID
 ) where
 
 import qualified Haskell.Models.BD as BD
@@ -31,6 +32,7 @@ import qualified Haskell.Models.Exame as Exame
 import Haskell.App.Util
 import Data.Char ( toLower )
 import Data.List (intercalate, find)
+import qualified Control.Applicative as ID
 
 
 {-
@@ -161,6 +163,18 @@ getPacienteId :: String -> [Paciente.Paciente] -> Int
 getPacienteId name pacientes = 
     case find (\paciente -> Paciente.nome paciente == name) pacientes of
         Just paciente -> Paciente.id paciente
+        Nothing -> error "paciente not found"
+
+{-
+Essa função retorna o Paciente dado o seu ID.
+@param idPaciente: ID do paciente
+@param pacientes: lista de pacientes cadastrados
+@return o paciente
+-}
+getPacienteOID :: Int -> [Paciente.Paciente] -> Paciente.Paciente
+getPacienteOID idPaciente pacientes = 
+    case find (\paciente -> Paciente.id paciente == idPaciente) pacientes of
+        Just paciente -> paciente
         Nothing -> error "paciente not found"
 
 {-

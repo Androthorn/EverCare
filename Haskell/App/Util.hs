@@ -54,8 +54,7 @@ dashboardPaciente :: String
 dashboardPaciente =   " [B] - Buscar\n"
                     ++" [M] - Marcar Consultas\n"
                     ++" [V] - Ver Agendamentos\n"
-                    ++" [R] - Receitas / Laudos / Solicitação de Exames\n"
-                    ++" [B] - Buscar\n"
+                    ++" [R] - Ver Receitas / Laudos / Solicitação de Exames\n"
                     ++" [S] - Sair\n"
 
 emissaoPaciente :: String
@@ -92,6 +91,11 @@ leituraDadosConsulta = do
               prompt "Data da consulta > ",
               prompt "Horário > "]
 
+leituraEmissaoReceita :: IO [String]
+leituraEmissaoReceita = do
+    sequence [prompt "ID do Paciente > ",
+              prompt "Remédios e Instruções > "]
+
 dashboardClinica :: String
 dashboardClinica = " [C] - Cadastrar Médico\n"
                  ++" [V] - Ver Informações\n"
@@ -124,6 +128,7 @@ emissaoMedico :: String
 emissaoMedico = " [R] - Receita\n"
              ++ " [S] - Solicitação de Exame\n"
              ++ " [L] - Laudo Médico\n"
+             ++ " [V] - Voltar\n"
 
 -- | Clear the terminal screen
 limpaTela :: IO ()

@@ -14,6 +14,9 @@ import qualified Haskell.Models.Paciente as Paciente
 import qualified Haskell.Models.Clinica as Clinica
 import qualified Haskell.Models.Medico as Medico
 import qualified Haskell.Models.Consulta as Consulta
+import qualified Haskell.Models.Receita as Receita
+import qualified Haskell.Models.Laudo as Laudo
+import qualified Haskell.Models.Exame as Exame
 
 import Data.Char ( toUpper )
 import Control.Concurrent (threadDelay)
@@ -170,12 +173,13 @@ verPosConsulta idPac dados = do
         putStrLn "Opção inválida"
         verPosConsulta idPac dados
 
+
 verAgendamento :: Int -> BD.BD -> IO()
 verAgendamento idPac dados = do
     limpaTela
     putStrLn (tituloI "AGENDAMENTOS")
     let consultas = PControl.consultarAgendamento idPac (BD.consultas dados)
-    putStrLn (show consultas)
+    imprime consultas
     prompt "Pressione Enter para voltar"
     menuPaciente idPac dados
 
@@ -348,7 +352,7 @@ dashBoardC :: Int -> BD.BD -> IO()
 dashBoardC idC dados = do
     limpaTela
     putStrLn (tituloI "DASHBOARD CLÍNICA")
-    putStrLn (CControl.dashboardC idC (BD.medicos dados))
+    putStrLn (CControl.dashboardC idC (BD.medicos dados) (BD.consultas dados))
     prompt "Pressione Enter para voltar"
     menuClinica idC dados
 
@@ -360,13 +364,14 @@ visualizaInformacaoClinica idC dados = do
     op <- prompt "Opção > "
 
     if toUpper (head op) == 'A' then do
-        menuClinica idC dados
-        -- visualiza agendamentos
+        visualizaConsultas idC dados
+
     else if toUpper (head op) == 'P' then do
-        menuClinica idC dados
-        -- visualiza pacientes
+        visualizaPacientes idC dados
+
     else if toUpper (head op) == 'M' then do
         visualizaMedicos idC dados
+
     else if toUpper (head op) == 'V' then do
         menuClinica idC dados
     
@@ -374,11 +379,26 @@ visualizaInformacaoClinica idC dados = do
         putStrLn "Opção inválida"
         visualizaInformacaoClinica idC dados
 
+visualizaConsultas :: Int -> BD.BD -> IO()
+visualizaConsultas idC dados = do
+    limpaTela
+    putStrLn (tituloI "CLÍNICA - CONSULTAS")
+    putStrLn (CControl.verConsultas idC (BD.consultas dados))
+    prompt "Pressione Enter para voltar"
+    menuClinica idC dados
+
+visualizaPacientes :: Int -> BD.BD -> IO()
+visualizaPacientes idC dados = do
+    limpaTela
+    putStrLn (tituloI "CLÍNICA - PACIENTES")
+    putStrLn (CControl.verPaciente idC (BD.consultas dados) (BD.pacientes dados))
+    prompt "Pressione Enter para voltar"
+    menuClinica idC dados
 
 visualizaMedicos :: Int -> BD.BD -> IO()
 visualizaMedicos idC dados = do
     limpaTela
-    putStrLn (tituloI "MÉDICOS")
+    putStrLn (tituloI "CLÍNICA - MÉDICOS")
     putStrLn (CControl.verMedico idC (BD.medicos dados))
     prompt "Pressione Enter para voltar"
     menuClinica idC dados
@@ -446,16 +466,83 @@ menuMedico idM dados = do
     if toUpper (head op) == 'V' then do
         verAgendamentoM idM dados
 
-    -- | opção Ver Agendamento  (do médico)
     else if toUpper (head op) == 'E' then do
-        menuMedico idM dados
-        -- | opção Emitir (receitas, laudos, solicitação de exames)
+        emitirM idM dados
     else if toUpper (head op) == 'S' then do
         inicial dados
 
     else do
         putStrLn "Opção inválida"
         menuMedico idM dados
+
+emitirM :: Int  -> BD.BD -> IO()
+emitirM idM dados = do
+    limpaTela
+    putStrLn emissaoMedico
+    op <- prompt "Opção > "
+
+    if toUpper (head op) == 'R' then do
+        emitirReceita idM dados
+    
+    else if toUpper (head op) == 'S' then do
+        emitirExame idM dados
+    
+    else if toUpper (head op) == 'L' then do
+        emitirLaudo idM dados
+
+    else if toUpper (head op) == 'V' then do
+        menuMedico idM dados
+    else do
+        putStrLn "Opção inválida"
+        emitirM idM dados
+
+emitirLaudo :: Int -> BD.BD -> IO()
+emitirLaudo idM dados = do
+    limpaTela
+    putStrLn (tituloI "EMISSÃO DE LAUDO")
+    idP <- prompt "ID do Paciente > "
+    texto <- prompt "Texto > "
+
+    putStrLn ("Laudo emitido com sucesso! O id do laudo é: " ++ (show (BD.idAtualLaudo dados)))
+    threadDelay 2000000  -- waits for 2 seconds
+
+    let laudo = MControl.emiteLaudo (BD.idAtualLaudo dados) idM (read idP) texto
+    BD.escreveNoArquivo "Haskell/Persistence/laudos.txt" (Laudo.toString laudo)
+
+    menuMedico idM dados { BD.laudos = (BD.laudos dados) ++ [laudo],
+                          BD.idAtualLaudo = (BD.idAtualLaudo dados) + 1 }
+
+emitirExame :: Int -> BD.BD -> IO()
+emitirExame idM dados = do
+    limpaTela
+    putStrLn (tituloI "SOLICITAÇÃO DE EXAME")
+    idP <- prompt "ID do Paciente > "
+    tipo <- prompt "Tipo do Exame > "
+    dia <- prompt "Dia do Exame > "
+
+    putStrLn ("Solicitação de Exame feita com sucesso! O id da solicitação é: " ++ (show (BD.idAtualExame dados)))
+    threadDelay 2000000  -- waits for 2 seconds
+
+    let exame = MControl.solicitaExame (BD.idAtualExame dados) idM (read idP) tipo dia
+    BD.escreveNoArquivo "Haskell/Persistence/exames.txt" (Exame.toString exame)
+
+    menuMedico idM dados { BD.exames = (BD.exames dados) ++ [exame],
+                          BD.idAtualExame = (BD.idAtualExame dados) + 1 }
+
+emitirReceita :: Int -> BD.BD -> IO()
+emitirReceita idM dados = do
+    limpaTela
+    putStrLn (tituloI "EMISSÃO DE RECEITA")
+    receitaLeitura <- leituraEmissaoReceita
+
+    putStrLn ("Receita emitida com sucesso! O id da receita é: " ++ (show (BD.idAtualReceita dados)))
+    threadDelay 2000000  -- waits for 2 seconds
+
+    let receita = MControl.emiteReceita (BD.idAtualReceita dados) idM receitaLeitura
+    BD.escreveNoArquivo "Haskell/Persistence/receitas.txt" (Receita.toString receita)
+
+    menuMedico idM dados { BD.receitas = (BD.receitas dados) ++ [receita],
+                          BD.idAtualReceita = (BD.idAtualReceita dados) + 1 }
 
 verAgendamentoM:: Int -> BD.BD -> IO()
 verAgendamentoM idM dados = do
@@ -466,29 +553,3 @@ verAgendamentoM idM dados = do
     prompt "Pressione Enter para voltar"
     menuMedico idM dados
 
-
--- visualizaMedicos :: Int -> BD.BD -> IO()
--- visualizaMedicos idC dados = do
---     limpaTela
---     putStrLn (tituloI "MÉDICOS")
---     putStrLn (CControl.verMedico idC (BD.medicos dados))
---     prompt "Pressione Enter para voltar"
---     menuClinica idC dados
-
-emitirMedico :: Int  -> BD.BD -> IO()
-emitirMedico idM dados = do
-    putStrLn emissaoMedico
-    op <- prompt "Opção > "
-
-    if toUpper (head op) == 'R' then do
-        menuMedico idM dados
-        -- | opção Receita
-    else if toUpper (head op) == 'S' then do
-        menuMedico idM dados
-        -- | opção Solicitação de Exame
-    else if toUpper (head op) == 'L' then do
-        menuMedico idM dados
-        -- | opção Laudo Médico
-    else do
-        putStrLn "Opção inválida"
-        emitirMedico idM dados

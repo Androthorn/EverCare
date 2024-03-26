@@ -1,4 +1,4 @@
-module Controllers.MedicoController (
+module Haskell.Controllers.MedicoController (
     getMedicoId,
     acessarConsultas,
     emiteReceita,
@@ -35,13 +35,16 @@ acessarConsultas :: Int -> [Consulta.Consulta] -> [Consulta.Consulta]
 acessarConsultas _ [] = []
 acessarConsultas idMedico consultas = filter (\consulta -> Consulta.idMedico consulta == idMedico) consultas
 
-emiteReceita :: Int -> Int -> Int -> String -> Receita.Receita
-emiteReceita id idMedico idPaciente texto = read (intercalate ";" ([show (idMedico), show (idPaciente)] ++ [texto])) :: Receita.Receita
+emiteReceita :: Int -> Int -> [String] -> Receita.Receita
+emiteReceita id idMedico infos = Receita.Receita id idMedico idPaciente texto
+    where
+        idPaciente = read (head infos) :: Int
+        texto = unwords (tail infos)
 
 emiteLaudo :: Int -> Int -> Int -> String -> Laudo.Laudo
 emiteLaudo id idMedico idPaciente texto = read (intercalate ";" ([show (id), show (idMedico), show (idPaciente)] ++ [texto])) :: Laudo.Laudo
 
-
 solicitaExame :: Int -> Int -> Int -> String -> String -> Exame.Exame
-solicitaExame id idMedico idPaciente tipo dia = read (intercalate ";" ([show (id), show (idMedico), show (idPaciente)] ++ [tipo] ++ [dia])) :: Exame.Exame
+solicitaExame id idMedico idPaciente tipo dia = Exame.Exame id idPaciente idMedico tipo dia
+
 

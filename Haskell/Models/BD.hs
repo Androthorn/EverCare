@@ -29,7 +29,11 @@ data BD = BD {
     idAtualPaciente :: Int,
     idAtualMedico :: Int,
     idAtualClinica :: Int,
-    idAtualConsulta :: Int
+    idAtualConsulta :: Int,
+    idAtualExame :: Int,
+    idAtualLaudo :: Int,
+    idAtualReceita :: Int,
+    idAtualChat :: Int
 } deriving (Show)
 
 
@@ -47,7 +51,11 @@ novoBD = BD {
     idAtualPaciente = 1,
     idAtualMedico = 1,
     idAtualClinica = 1,
-    idAtualConsulta = 1
+    idAtualConsulta = 1,
+    idAtualExame = 1,
+    idAtualLaudo = 1,
+    idAtualReceita = 1,
+    idAtualChat = 1
 }
 
 novoBanco :: IO BD
@@ -80,7 +88,11 @@ novoBanco = do
             idAtualPaciente = length pacientes + 1,
             idAtualMedico = length medicos + 1,
             idAtualClinica = length clinicas + 1,
-            idAtualConsulta = length consultas +1
+            idAtualConsulta = length consultas +1,
+            idAtualExame = length exames + 1,
+            idAtualLaudo = length laudos + 1,
+            idAtualReceita = length receitas + 1,
+            idAtualChat = length chats + 1
         }
     return bd
 
