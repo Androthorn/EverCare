@@ -4,7 +4,8 @@
 module Haskell.Controllers.ChatController(
     criarChat,
     verChatsPaciente,
-    verChatEspecifico
+    verChatEspecifico,
+    showChat
 ) where
 
 import Data.List ( intercalate )

@@ -37,27 +37,6 @@ data BD = BD {
 } deriving (Show)
 
 
--- Função que cria um novo BD
-novoBD :: BD
-novoBD = BD {
-    pacientes = [],
-    medicos = [],
-    clinicas = [],
-    consultas = [],
-    chats = [],
-    exames = [],
-    receitas = [],
-    laudos = [],
-    idAtualPaciente = 1,
-    idAtualMedico = 1,
-    idAtualClinica = 1,
-    idAtualConsulta = 1,
-    idAtualExame = 1,
-    idAtualLaudo = 1,
-    idAtualReceita = 1,
-    idAtualChat = 1
-}
-
 novoBanco :: IO BD
 novoBanco = do
     let pacientesIO = uploadPacientes "Haskell/Persistence/pacientes.txt"
@@ -160,15 +139,15 @@ stringToExames :: [String] -> [Exame.Exame]
 stringToExames [] = []
 stringToExames l = map read l :: [Exame.Exame]
 
-escreveNoArquivo :: FilePath -> String -> IO ()
-escreveNoArquivo path conteudo = do
+escreveNoArquivo2 :: FilePath -> String -> IO ()
+escreveNoArquivo2 path conteudo = do
     handle <- openFile path AppendMode
     hSetEncoding handle utf8
     hPutStrLn handle conteudo
     hClose handle
 
-escreveNoArquivo2 :: FilePath -> String -> IO ()
-escreveNoArquivo2 path conteudo = do
+escreveNoArquivo :: FilePath -> String -> IO ()
+escreveNoArquivo path conteudo = do
     appendFile path (conteudo ++ "\n")
 
 stringToReceitas :: [String] -> [Receita.Receita]
