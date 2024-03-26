@@ -1,4 +1,4 @@
-module Haskell.Model.Exame where
+module Haskell.Models.Exame where
 
     
 import Haskell.App.Util (split)

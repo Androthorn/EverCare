@@ -32,7 +32,6 @@ instance Show Medico where
                                             "Clínica: " ++ (show clinica) ++ "\n" ++
                                             "Especialidade: " ++ esp ++ "\n" ++
                                             "Horários de Atendimento: " ++ horario ++ "\n" ++
-                                            "Senha: **********" ++ "\n" ++
                                             "-------------------\n"
 
 instance Read Medico where

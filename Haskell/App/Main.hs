@@ -8,10 +8,15 @@ import qualified Haskell.Models.BD as BD
 import qualified Haskell.Controllers.PacienteController as PControl
 import qualified Haskell.Controllers.AutenticationController as Autenticator
 import qualified Haskell.Controllers.ClinicaController as CControl
+import qualified Haskell.Controllers.MedicoController as MControl
+
 import qualified Haskell.Models.Paciente as Paciente
 import qualified Haskell.Models.Clinica as Clinica
 import qualified Haskell.Models.Medico as Medico
 import qualified Haskell.Models.Consulta as Consulta
+import qualified Haskell.Models.Receita as Receita
+import qualified Haskell.Models.Laudo as Laudo
+import qualified Haskell.Models.Exame as Exame
 
 import Data.Char ( toUpper )
 import Control.Concurrent (threadDelay)
@@ -113,12 +118,20 @@ menuPaciente idPac dados = do
     putStrLn (dashboardPaciente)
     op <- prompt "Opção > "
 
-    if toUpper (head op) == 'M' then do
+    if toUpper (head op) == 'B' then do
+        buscar idPac dados
+
+    else if toUpper (head op) == 'M' then do
         cadastraConsulta idPac dados
 
     else if toUpper (head op) == 'B' then do
         buscar idPac dados
-    -- | opção Ver Agendamento
+    
+    else if toUpper (head op) == 'V' then do
+        verAgendamento idPac dados
+
+    else if toUpper (head op) == 'R' then do
+        verPosConsulta idPac dados
     -- | opção Receitas / Laudos / Solicitações de Exames
 
     else if toUpper (head op) == 'S' then do
@@ -188,58 +201,111 @@ abrirConversaPac idChat dados = do
 
     menuPaciente idPac dados
 
+verPosConsulta :: Int -> BD.BD -> IO()
+verPosConsulta idPac dados = do
+    limpaTela
+    putStrLn (tituloI "RECEITAS / LAUDOS / SOLICITAÇÕES DE EXAMES")
+    putStrLn (emissaoPaciente)
+    op <- prompt "Opção > "
+
+    if toUpper (head op) == 'R' then do
+        let resultado = PControl.consultarReceita idPac (BD.receitas dados)
+        imprime resultado
+        prompt "Pressione Enter para voltar"
+        menuPaciente idPac dados
+
+    else if toUpper (head op) == 'L' then do
+        let resultado = PControl.consultarLaudo idPac (BD.laudos dados)
+        imprime resultado
+        prompt "Pressione Enter para voltar"
+        menuPaciente idPac dados
+
+    else if toUpper (head op) == 'S' then do
+        let resultado = PControl.consultarSolicitacao idPac (BD.exames dados)
+        imprime resultado
+        prompt "Pressione Enter para voltar"
+        menuPaciente idPac dados
+
+    else if toUpper (head op) == 'V' then do
+        menuPaciente idPac dados
+
+    else do
+        putStrLn "Opção inválida"
+        verPosConsulta idPac dados
+
+
+verAgendamento :: Int -> BD.BD -> IO()
+verAgendamento idPac dados = do
+    limpaTela
+    putStrLn (tituloI "AGENDAMENTOS")
+    let consultas = PControl.consultarAgendamento idPac (BD.consultas dados)
+    imprime consultas
+    prompt "Pressione Enter para voltar"
+    menuPaciente idPac dados
+
+
 buscar :: Int -> BD.BD -> IO()
 buscar idPac dados = do
     limpaTela
     putStrLn (tituloI "BUSCAR")
-    putStrLn (buscarP)
+    putStrLn (dashboardBuscaMedico)
     op <- prompt "Opção > "
 
     if toUpper (head op) == 'M' then do
         nomeMedico <- prompt "Nome do Médico > "
-        putStrLn (PControl.filtrarPorMedico nomeMedico (BD.medicos dados))
+        let medicos = PControl.filtrarPorMedico nomeMedico (BD.medicos dados)
+        imprime medicos
         prompt "Pressione Enter para voltar"
         menuPaciente idPac dados
 
     else if toUpper (head op) == 'C' then do
         nomeClinica <- prompt "Nome da Clínica > "
-        putStrLn (PControl.filtrarPorClinica nomeClinica (BD.clinicas dados))
+        let clinicas = PControl.filtrarPorClinica nomeClinica (BD.clinicas dados)
+        imprime clinicas
         prompt "Pressione Enter para voltar"
         menuPaciente idPac dados
 
     else if toUpper (head op) == 'P' then do
         plano <- prompt "Plano de Saúde ou Particular > "
-        putStrLn (PControl.filtrarClinicaPorPlanoSaude plano (BD.clinicas dados))
+        let clinicas = PControl.filtrarClinicasPorPlanoDeSaude plano (BD.clinicas dados)
+        imprime clinicas
         prompt "Pressione Enter para voltar"
         menuPaciente idPac dados
 
+    {-
     else if toUpper (head op) == 'H' then do
         horario <- prompt "Horário > "
         putStrLn (PControl.buscarHorario horario (BD.consultas dados))
         prompt "Pressione Enter para voltar"
         menuPaciente idPac dados
+    -}
 
     else if toUpper (head op) == 'E' then do
         especialidade <- prompt "Especialidade > "
-        putStrLn (PControl.filtrarMedicosPorEspecialidade especialidade (BD.medicos dados))
-        prompt "Pressione Enter para voltar"
-        menuPaciente idPac dados
-
-    else if toUpper (head op) == 'T' then do
-        tipo <- prompt "Tipo do Agendamento ( (A)gendamento ou (O)rdem de Chegada ) > "
-        putStrLn (PControl.filtrarClinicasPorAgendamento tipo (BD.clinicas dados))
+        let medicos = PControl.filtrarMedicosPorEspecialidade especialidade (BD.medicos dados)
+        imprime medicos
         prompt "Pressione Enter para voltar"
         menuPaciente idPac dados
     
+    else if toUpper (head op) == 'T' then do
+        tipo <- prompt "Tipo do Agendamento ( (A)gendamento ou (O)rdem de Chegada ) > "
+        let clinicas = PControl.filtrarClinicasPorAgendamento tipo (BD.clinicas dados)
+        imprime clinicas
+        prompt "Pressione Enter para voltar"
+        menuPaciente idPac dados
+    
+    {-
     else if toUpper (head op) == 'A' then do
         acima <- prompt "Avaliação acima de (0-10) > "
         putStrLn (PControl.filtrarClinicasPorAvaliacao acima (BD.clinicas dados))
         prompt "Pressione Enter para voltar"
         menuPaciente idPac dados
+    -}
 
     else if toUpper (head op) == 'S' then do
         sintoma <- prompt "Sintoma > "
-        putStrLn (PControl.filtrarPorSintoma sintoma (BD.medicos dados))
+        let medicos = PControl.filtrarMedicoPorSintoma sintoma (BD.medicos dados)
+        imprime medicos
         prompt "Pressione Enter para voltar"
         menuPaciente idPac dados
 
@@ -249,21 +315,28 @@ buscar idPac dados = do
         putStrLn "Opção inválida"
         buscar idPac dados
 
-
 cadastraConsulta :: Int -> BD.BD -> IO()
 cadastraConsulta idPac dados = do
     limpaTela
     putStr (tituloI "AGENDAMENTO DE CONSULTA")
-    dadosCons <- leituraDadosConsulta
+    idC <- prompt "ID da Clínica > "
+    idM <- prompt "ID do Médico > "
+    dia <- prompt "Data da Consulta > "
+    putStrLn "\nHorários disponíveis: \n"
+    let horarios = BD.horariosDisponiveis dados (read idM) dia
+    imprime horarios
+
+    horario <- prompt "Horário > "
 
     putStrLn ("Consulta marcada com sucesso! o id da consulta é: " ++ (show (BD.idAtualConsulta dados)))
     threadDelay 2000000
 
-    let nomePac = (PControl.getPacienteName idPac (BD.pacientes dados))
-    let consulta = PControl.criaConsulta (BD.idAtualConsulta dados) ([nomePac] ++ dadosCons)
+    let dadosCons = [show idPac, idC, idM, dia, horario]
+    let consulta = PControl.criaConsulta (BD.idAtualConsulta dados) (dadosCons)
     BD.escreveNoArquivo "Haskell/Persistence/consultas.txt" (Consulta.toString consulta)
 
-    menuPaciente idPac dados
+    menuPaciente idPac dados { BD.consultas = (BD.consultas dados) ++ [consulta],
+                               BD.idAtualConsulta = (BD.idAtualConsulta dados) + 1 }
 
 
 inicialClinica :: BD.BD -> IO()
@@ -340,7 +413,7 @@ dashBoardC :: Int -> BD.BD -> IO()
 dashBoardC idC dados = do
     limpaTela
     putStrLn (tituloI "DASHBOARD CLÍNICA")
-    putStrLn (CControl.dashboardC idC (BD.medicos dados))
+    putStrLn (CControl.dashboardC idC (BD.medicos dados) (BD.consultas dados))
     prompt "Pressione Enter para voltar"
     menuClinica idC dados
 
@@ -352,13 +425,14 @@ visualizaInformacaoClinica idC dados = do
     op <- prompt "Opção > "
 
     if toUpper (head op) == 'A' then do
-        menuClinica idC dados
-        -- visualiza agendamentos
+        visualizaConsultas idC dados
+
     else if toUpper (head op) == 'P' then do
-        menuClinica idC dados
-        -- visualiza pacientes
+        visualizaPacientes idC dados
+
     else if toUpper (head op) == 'M' then do
         visualizaMedicos idC dados
+
     else if toUpper (head op) == 'V' then do
         menuClinica idC dados
     
@@ -366,11 +440,26 @@ visualizaInformacaoClinica idC dados = do
         putStrLn "Opção inválida"
         visualizaInformacaoClinica idC dados
 
+visualizaConsultas :: Int -> BD.BD -> IO()
+visualizaConsultas idC dados = do
+    limpaTela
+    putStrLn (tituloI "CLÍNICA - CONSULTAS")
+    putStrLn (CControl.verConsultas idC (BD.consultas dados))
+    prompt "Pressione Enter para voltar"
+    menuClinica idC dados
+
+visualizaPacientes :: Int -> BD.BD -> IO()
+visualizaPacientes idC dados = do
+    limpaTela
+    putStrLn (tituloI "CLÍNICA - PACIENTES")
+    putStrLn (CControl.verPaciente idC (BD.consultas dados) (BD.pacientes dados))
+    prompt "Pressione Enter para voltar"
+    menuClinica idC dados
 
 visualizaMedicos :: Int -> BD.BD -> IO()
 visualizaMedicos idC dados = do
     limpaTela
-    putStrLn (tituloI "MÉDICOS")
+    putStrLn (tituloI "CLÍNICA - MÉDICOS")
     putStrLn (CControl.verMedico idC (BD.medicos dados))
     prompt "Pressione Enter para voltar"
     menuClinica idC dados
@@ -436,12 +525,10 @@ menuMedico idM dados = do
     op <- prompt "Opção > "
 
     if toUpper (head op) == 'V' then do
-        menuMedico idM dados
+        verAgendamentoM idM dados
 
-    -- | opção Ver Agendamento  (do médico)
     else if toUpper (head op) == 'E' then do
-        menuMedico idM dados
-        -- | opção Emitir (receitas, laudos, solicitação de exames)
+        emitirM idM dados
     else if toUpper (head op) == 'S' then do
         inicial dados
 
@@ -449,20 +536,81 @@ menuMedico idM dados = do
         putStrLn "Opção inválida"
         menuMedico idM dados
 
-emitirMedico :: Int  -> BD.BD -> IO()
-emitirMedico idM dados = do
+emitirM :: Int  -> BD.BD -> IO()
+emitirM idM dados = do
+    limpaTela
     putStrLn emissaoMedico
     op <- prompt "Opção > "
 
     if toUpper (head op) == 'R' then do
-        menuMedico idM dados
-        -- | opção Receita
+        emitirReceita idM dados
+    
     else if toUpper (head op) == 'S' then do
-        menuMedico idM dados
-        -- | opção Solicitação de Exame
+        emitirExame idM dados
+    
     else if toUpper (head op) == 'L' then do
+        emitirLaudo idM dados
+
+    else if toUpper (head op) == 'V' then do
         menuMedico idM dados
-        -- | opção Laudo Médico
     else do
         putStrLn "Opção inválida"
-        emitirMedico idM dados
+        emitirM idM dados
+
+emitirLaudo :: Int -> BD.BD -> IO()
+emitirLaudo idM dados = do
+    limpaTela
+    putStrLn (tituloI "EMISSÃO DE LAUDO")
+    idP <- prompt "ID do Paciente > "
+    texto <- prompt "Texto > "
+
+    putStrLn ("Laudo emitido com sucesso! O id do laudo é: " ++ (show (BD.idAtualLaudo dados)))
+    threadDelay 2000000  -- waits for 2 seconds
+
+    let laudo = MControl.emiteLaudo (BD.idAtualLaudo dados) idM (read idP) texto
+    BD.escreveNoArquivo "Haskell/Persistence/laudos.txt" (Laudo.toString laudo)
+
+    menuMedico idM dados { BD.laudos = (BD.laudos dados) ++ [laudo],
+                          BD.idAtualLaudo = (BD.idAtualLaudo dados) + 1 }
+
+emitirExame :: Int -> BD.BD -> IO()
+emitirExame idM dados = do
+    limpaTela
+    putStrLn (tituloI "SOLICITAÇÃO DE EXAME")
+    idP <- prompt "ID do Paciente > "
+    tipo <- prompt "Tipo do Exame > "
+    dia <- prompt "Dia do Exame > "
+
+    putStrLn ("Solicitação de Exame feita com sucesso! O id da solicitação é: " ++ (show (BD.idAtualExame dados)))
+    threadDelay 2000000  -- waits for 2 seconds
+
+    let exame = MControl.solicitaExame (BD.idAtualExame dados) idM (read idP) tipo dia
+    BD.escreveNoArquivo "Haskell/Persistence/exames.txt" (Exame.toString exame)
+
+    menuMedico idM dados { BD.exames = (BD.exames dados) ++ [exame],
+                          BD.idAtualExame = (BD.idAtualExame dados) + 1 }
+
+emitirReceita :: Int -> BD.BD -> IO()
+emitirReceita idM dados = do
+    limpaTela
+    putStrLn (tituloI "EMISSÃO DE RECEITA")
+    receitaLeitura <- leituraEmissaoReceita
+
+    putStrLn ("Receita emitida com sucesso! O id da receita é: " ++ (show (BD.idAtualReceita dados)))
+    threadDelay 2000000  -- waits for 2 seconds
+
+    let receita = MControl.emiteReceita (BD.idAtualReceita dados) idM receitaLeitura
+    BD.escreveNoArquivo "Haskell/Persistence/receitas.txt" (Receita.toString receita)
+
+    menuMedico idM dados { BD.receitas = (BD.receitas dados) ++ [receita],
+                          BD.idAtualReceita = (BD.idAtualReceita dados) + 1 }
+
+verAgendamentoM:: Int -> BD.BD -> IO()
+verAgendamentoM idM dados = do
+    limpaTela
+    putStrLn (tituloI "AGENDAMENTOS")
+    let consultas = MControl.acessarConsultas idM (BD.consultas dados)
+    imprime consultas
+    prompt "Pressione Enter para voltar"
+    menuMedico idM dados
+

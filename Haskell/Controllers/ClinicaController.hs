@@ -1,15 +1,24 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Avoid lambda" #-}
+{-# HLINT ignore "Avoid lambda using `infix`" #-}
 module Haskell.Controllers.ClinicaController(
     criaClinica,
     criaMedico,
     verMedico,
     dashboardC,
     showLista,
-    getClinicaId
+    getClinicaId,
+    verPaciente,
+    verConsultas
 ) where
 
-import Data.List (intercalate, find)
+import Data.List (intercalate, find, nub)
 import qualified Haskell.Models.Clinica as Clinica
 import qualified Haskell.Models.Medico as Medico
+import qualified Haskell.Models.Paciente as Paciente
+import Haskell.Models.Consulta (Consulta)
+import qualified Haskell.Models.Consulta as Consulta
+import qualified Haskell.Controllers.PacienteController as PControl
 
 {-
 Cria um clinica.
@@ -39,15 +48,51 @@ verMedico idC medicos =
     else
         showLista medicosList
 
-dashboardC :: Int -> [Medico.Medico] -> String
-dashboardC idC medicos =
+verPaciente :: Int -> [Consulta.Consulta] -> [Paciente.Paciente] -> String
+verPaciente _ [] [] = ""
+verPaciente _ [] _ = ""
+verPaciente _ _ [] = ""
+verPaciente idC consultas pacientes =
+    let consultasFiltradas = filter (\consulta -> Consulta.idClinica consulta == idC) consultas
+        pacientesF = nub $ map Consulta.idPaciente consultasFiltradas
+        pacientesOK = map (\idP -> PControl.getPacienteOID idP pacientes) pacientesF
+        infoPacientes = showLista pacientesOK
+    in if null pacientesF then
+        "Não há pacientes nessa clínica"
+    else
+        infoPacientes
+
+verConsultas :: Int -> [Consulta.Consulta] -> String
+verConsultas _ [] = ""
+verConsultas idC consultas =
+    let consultasList = filter (\consulta -> Consulta.idClinica consulta == idC) consultas
+    in if null consultasList then
+        "Não há consultas cadastradas nessa clínica"
+    else
+        showLista consultasList
+
+{-
+Essa função retorna o dashboard da clinica.
+@param idC: id da clinica
+@param medicos: lista de medicos cadastrados
+@return o dashboard da clinica
+-}
+
+dashboardC :: Int -> [Medico.Medico] -> [Consulta.Consulta] -> String
+dashboardC idC medicos consultas =
     --Poderia ter o nome da clinica (virginia)
     let medicoContagem = length (filter (\medico -> Medico.clinica medico == idC) medicos)
+        consultasContagem = length (filter (\consulta -> Consulta.idClinica consulta == idC) consultas)
+        pacientesContagem = length (nub $ map Consulta.idPaciente consultas)
     in
     "----------------------------\n" ++
-    "MÉDICOS DA CLÍNICA\n" ++
-    "Quantidade de médicos: " ++ show medicoContagem ++ 
+    "DASHBOARD DA CLÍNICA\n" ++
+    "Quantidade de Médicos: " ++ show medicoContagem ++
+    "\nQuantidade de Consultas: " ++ show consultasContagem ++
+    "\nQuantidade de Pacientes: " ++ show pacientesContagem ++
     "\n---------------------------\n"
+    
+
 
 showLista :: Show a => [a] -> String
 showLista = concatMap (\x -> show x ++ "\n")

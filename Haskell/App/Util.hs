@@ -51,10 +51,10 @@ leituraDadosPaciente = do
               prompt "Senha > "]
 
 dashboardPaciente :: String
-dashboardPaciente =   " [M] - Marcar Consultas\n"
+dashboardPaciente =   " [B] - Buscar\n"
+                    ++" [M] - Marcar Consultas\n"
                     ++" [V] - Ver Agendamentos\n"
-                    ++" [R] - Receitas / Laudos / Solicitação de Exames\n"
-                    ++" [B] - Buscar\n"
+                    ++" [R] - Ver Receitas / Laudos / Solicitação de Exames\n"
                     ++" [C] - Chats\n"
                     ++" [S] - Sair\n"
 
@@ -64,8 +64,14 @@ chatP = " [C] - Criar Chat com Médico\n"
       ++" [A] - Abrir conversa\n"
       ++" [S] - Sair\n"
 
-buscarP :: String
-buscarP = " [M] - Nome do Médico Específica\n" 
+emissaoPaciente :: String
+emissaoPaciente = " [R] - Receita\n"
+               ++ " [S] - Solicitação de Exame\n"
+               ++ " [L] - Laudo Médico\n"
+               ++ " [V] - Voltar\n"
+
+dashboardBuscaMedico :: String
+dashboardBuscaMedico = " [M] - Nome do Médico Específica\n" 
         ++" [C] - Nome da Clínica Especifica\n"
         ++" [P] - Plano de Saúde\n"
         ++" [H] - Horário\n"
@@ -81,6 +87,7 @@ leituraDadosClinica = do
               prompt "Endereço > ",
               prompt "Horários de Funcionamento > ",
               prompt "Planos Vinculados > ",
+              prompt "Método de Agendamento > ",
               prompt "Contato > ",
               prompt "Senha > "]
 
@@ -91,11 +98,17 @@ leituraDadosConsulta = do
               prompt "Data da consulta > ",
               prompt "Horário > "]
 
+leituraEmissaoReceita :: IO [String]
+leituraEmissaoReceita = do
+    sequence [prompt "ID do Paciente > ",
+              prompt "Remédios e Instruções > "]
+
 dashboardClinica :: String
 dashboardClinica = " [C] - Cadastrar Médico\n"
                  ++" [V] - Ver Informações\n"
                  ++" [D] - Dashboard\n"
                  ++" [S] - Sair\n"
+
 
 visualizarInformacaoClinica :: String
 visualizarInformacaoClinica =   " [A] - Agendamentos\n"
@@ -122,6 +135,7 @@ emissaoMedico :: String
 emissaoMedico = " [R] - Receita\n"
              ++ " [S] - Solicitação de Exame\n"
              ++ " [L] - Laudo Médico\n"
+             ++ " [V] - Voltar\n"
 
 -- | Clear the terminal screen
 limpaTela :: IO ()
@@ -145,3 +159,13 @@ split "" _ aux = [aux]
 split (h : t) sep aux | h == sep && aux == "" = split t sep aux
                   | h == sep = [aux] ++ split t sep ""
                   | otherwise = split t sep (aux ++ [h])
+
+
+formataLista :: Show t => [t] -> String
+formataLista [] = ""
+formataLista (x:xs) = (show x) ++ "\n" ++ (formataLista xs)
+
+imprime :: Show t => [t] -> IO ()
+imprime l = do
+    putStrLn (formataLista l)
+    return ()
