@@ -1,5 +1,6 @@
 module Haskell.Controllers.MedicoController (
     getMedicoId,
+    getIdMedico,
     acessarConsultas,
     emiteReceita,
     emiteLaudo,
@@ -28,8 +29,13 @@ getMedicoId :: String -> [Medico.Medico] -> Int
 getMedicoId name medicos = 
     case find (\medico -> Medico.nome medico == name) medicos of
         Just medico -> Medico.id medico
-        Nothing -> error "paciente not found"
+        Nothing -> error "médico not found"
 
+getIdMedico :: Int -> [Medico.Medico] -> String
+getIdMedico idMedico medicos = 
+    case find (\medico -> Medico.id medico == idMedico) medicos of
+        Just medico -> Medico.nome medico
+        Nothing -> error "médico not found"
 
 acessarConsultas :: Int -> [Consulta.Consulta] -> [Consulta.Consulta]
 acessarConsultas _ [] = []

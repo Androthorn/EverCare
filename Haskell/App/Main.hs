@@ -9,6 +9,7 @@ import qualified Haskell.Controllers.PacienteController as PControl
 import qualified Haskell.Controllers.AutenticationController as Autenticator
 import qualified Haskell.Controllers.ClinicaController as CControl
 import qualified Haskell.Controllers.MedicoController as MControl
+import qualified Haskell.Controllers.ChatController as ChatControl
 
 import qualified Haskell.Models.Paciente as Paciente
 import qualified Haskell.Models.Clinica as Clinica
@@ -17,17 +18,17 @@ import qualified Haskell.Models.Consulta as Consulta
 import qualified Haskell.Models.Receita as Receita
 import qualified Haskell.Models.Laudo as Laudo
 import qualified Haskell.Models.Exame as Exame
+import qualified Haskell.Models.Chat as Chat
 
 import Data.Char ( toUpper )
 import Control.Concurrent (threadDelay)
-import Text.XHtml (menu)
 import Control.Monad.RWS.Lazy (MonadState(put))
 import System.IO
 import System.Directory
 import System.Process (system)
 import Data.List (sort)
 import GHC.RTS.Flags (MiscFlags(disableDelayedOsMemoryReturn))
-import Haskell.Models.BD (BD(idAtualPaciente))
+import qualified Haskell.Controllers.ChatController as PControl
 
 
 
@@ -174,32 +175,57 @@ criarChatP idPac dados = do
     nomeMedico <- prompt "Nome do Médico > "
     mensagem <- prompt "Mensagem > "
 
-    let idMedico = (PControl.getMedicoId nomeMedico (BD.medicos dados))
-    let chat = PControl.criaChatP idPac idMedico mensagem
-    BD.escreveNoArquivo "Haskell/Persistence/chats.txt" (Paciente.Chat.toString chat)
-
     putStrLn "Mensagem enviada com sucesso!"
     threadDelay 2000000
-    menuPaciente idPac dados
+
+    let idMedico = (MControl.getMedicoId nomeMedico (BD.medicos dados))
+    let chat = ChatControl.criarChat (BD.idAtualChat dados) idPac idMedico ("P: " ++ mensagem)
+    
+    BD.escreveNoArquivo "Haskell/Persistence/chats.txt" (Chat.toString chat)
+    menuPaciente idPac dados { BD.chats = (BD.chats dados) ++ [chat],
+                          BD.idAtualChat = (BD.idAtualChat dados) + 1 }
 
 
 visualizaTodosChatsPac :: Int -> BD.BD -> IO()
 visualizaTodosChatsPac idPac dados = do
     limpaTela
     putStrLn (tituloI "CHATS DO PACIENTE")
-    putStrLn (PControl.listarChats idPac (BD.chats dados))
+    imprime (ChatControl.verChatsPaciente idPac (BD.chats dados) (BD.medicos dados))
     prompt "Pressione Enter para voltar"
     menuPaciente idPac dados
 
 abrirConversaPac :: Int -> BD.BD -> IO()
-abrirConversaPac idChat dados = do
+abrirConversaPac idPac dados = do
     limpaTela
     putStrLn (tituloI "CHAT PACIENTE")
-    nomeMedico <- prompt "Id do Chat >"
-    putStrLn (PControl.abrirConversa idChat (BD.chats dados))
-    mensagem <- prompt "Responder > "
+    idChatStr <- prompt "Id do Chat >"
+    let idChat = read idChatStr :: Int
+    putStrLn (ChatControl.verChatEspecifico idChat (BD.chats dados))
+    op <- prompt "[R]esponder ou [S]air > "
 
+    if toUpper (head op) == 'R' then do
+        mensagem <- prompt "Mensagem > "
+        adicionarMensagemAoChat idChat mensagem dados
+    
+    else if toUpper (head op) == 'S' then do
+        menuPaciente idPac dados
+
+    else do
+        putStrLn "Opção inválida"
+        abrirConversaPac idPac dados
     menuPaciente idPac dados
+
+adicionarMensagemAoChat :: Int -> String -> BD.BD -> IO ()
+adicionarMensagemAoChat chatId novaMensagem dados = do
+    let chatsAtualizados = map (\chat -> if chatId == Chat.id chat then adicionarMensagem chat novaMensagem else chat) (BD.chats dados)
+    let bdAtualizado = dados { BD.chats = chatsAtualizados }
+    threadDelay 5000000
+    BD.escreveNoArquivo "Haskell/Persistence/chats.txt" (BD.chatsToString (BD.chats bdAtualizado))
+
+-- Função para adicionar uma mensagem a um chat
+adicionarMensagem :: Chat.Chat -> String -> Chat.Chat
+adicionarMensagem chat novaMensagem = chat { Chat.mensagens = Chat.mensagens chat ++ [novaMensagem] }
+
 
 verPosConsulta :: Int -> BD.BD -> IO()
 verPosConsulta idPac dados = do

@@ -23,7 +23,7 @@ instance Show Chat where
     show (Chat id idP idM m) = "----------------------------\n" ++
                                     "CHAT " ++ (show id) ++ "\n" ++
                                     "Paciente: " ++ (show idP) ++ "\n" ++
-                                    "Médico responsável: " ++ (show idM) ++ "\n" ++
+                                    "Médico: " ++ (show idM) ++ "\n" ++
                                     "Mensagens: " ++ (show m) ++ "\n"
 
 instance Read Chat where

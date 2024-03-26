@@ -191,6 +191,10 @@ stringToChats :: [String] -> [Chat.Chat]
 stringToChats [] = []
 stringToChats l = map read l :: [Chat.Chat]
 
+chatsToString :: [Chat.Chat] -> String
+chatsToString [] = ""
+chatsToString chats = unlines $ map Chat.toString chats
+
 stringToClinicas :: [String] -> [Clinica.Clinica]
 stringToClinicas [] = []
 stringToClinicas l = map read l :: [Clinica.Clinica]
