@@ -5,12 +5,13 @@ import qualified Haskell.Models.Medico as Medico
 import qualified Haskell.Models.Clinica as Clinica
 import qualified Haskell.Models.Consulta as Consulta
 import qualified Haskell.Models.Chat as Chat
-
+import qualified Haskell.Models.Avaliacao as Avaliacao
 
 import System.IO
 import System.Directory
 import Text.Read (readMaybe)
 import Data.Maybe (mapMaybe)
+import Distribution.Compat.CharParsing (CharParsing(string))
 
 
 data BD = BD {
@@ -19,10 +20,12 @@ data BD = BD {
     clinicas :: [Clinica.Clinica],
     consultas :: [Consulta.Consulta],
     chats :: [Chat.Chat],
+    avaliacoes :: [Avaliacao.Avaliacao],
     idAtualPaciente :: Int,
     idAtualMedico :: Int,
     idAtualClinica :: Int,
-    idAtualConsulta :: Int
+    idAtualConsulta :: Int,
+    idAtualAvaliacao :: Int
 } deriving (Show)
 
 
@@ -34,10 +37,12 @@ novoBD = BD {
     clinicas = [],
     consultas = [],
     chats = [],
+    avaliacoes = [],
     idAtualPaciente = 1,
     idAtualMedico = 1,
     idAtualClinica = 1,
-    idAtualConsulta = 1
+    idAtualConsulta = 1,
+    idAtualAvaliacao = 1
 }
 
 novoBanco :: IO BD
@@ -47,23 +52,34 @@ novoBanco = do
     let medicosIO = uploadMedicos "Haskell/Persistence/medicos.txt"
     let consultasIO = uploadConsultas "Haskell/Persistence/consultas.txt"
     let chatsIO = uploadChats "Haskell/Persistence/chats.txt"
+    let avaliacoesIO = uploadAvaliacoes "Haskell/Persistence/avaliacoes.txt"
     pacientes <- pacientesIO
     clinicas <- clinicaIO
     medicos <- medicosIO
     consultas <- consultasIO
     chats <- chatsIO
+    avaliacoes <- avaliacoesIO
     let bd = BD {
             pacientes = pacientes,
             medicos = medicos,
             clinicas = clinicas,
             consultas = consultas,
             chats = chats,
+            avaliacoes = avaliacoes,
             idAtualPaciente = length pacientes + 1,
             idAtualMedico = length medicos + 1,
             idAtualClinica = length clinicas + 1,
-            idAtualConsulta = length consultas +1
+            idAtualConsulta = length consultas +1,
+            idAtualAvaliacao = length avaliacoes +1
         }
     return bd
+
+uploadAvaliacoes :: FilePath -> IO [Avaliacao.Avaliacao]
+uploadAvaliacoes path = do
+    conteudo <- readFile path
+    let linhas = lines conteudo
+    let avaliacoesList = stringToAvaliacoes linhas
+    return avaliacoesList
 
 uploadPacientes :: FilePath -> IO [Paciente.Paciente]
 uploadPacientes path = do
@@ -111,6 +127,13 @@ escreveNoArquivo2 :: FilePath -> String -> IO ()
 escreveNoArquivo2 path conteudo = do
     appendFile path (conteudo ++ "\n")
 
+avaliacoesToString :: [Avaliacao.Avaliacao] -> String -> String
+avaliacoesToString [] str = str
+avaliacoesToString (x:xs) str = str ++ (Avaliacao.toString x) ++ "\n" ++ avaliacoesToString xs str
+
+stringToAvaliacoes :: [String] -> [Avaliacao.Avaliacao]
+stringToAvaliacoes [] = []
+stringToAvaliacoes l = map read l :: [Avaliacao.Avaliacao]
 
 pacientesToString :: [Paciente.Paciente] -> String -> String
 pacientesToString [] str = str

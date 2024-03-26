@@ -10,6 +10,7 @@ module Haskell.Controllers.ClinicaController(
 import Data.List (intercalate, find)
 import qualified Haskell.Models.Clinica as Clinica
 import qualified Haskell.Models.Medico as Medico
+import Haskell.App.Util (leituraDadosClinica)
 
 {-
 Cria um clinica.

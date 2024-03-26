@@ -54,13 +54,13 @@ dashboardPaciente :: String
 dashboardPaciente =   " [B] - Buscar\n"
                     ++" [M] - Marcar Consultas\n"
                     ++" [V] - Ver Agendamentos\n"
+                    ++" [A] - Avaliacao de Atendimento\n"
                     ++" [R] - Receitas / Laudos / Solicitação de Exames\n"
-                    ++" [B] - Buscar\n"
                     ++" [S] - Sair\n"
 
 dashboardBuscaMedico :: String
-dashboardBuscaMedico = " [M] - Nome do Médico Específica\n" 
-        ++" [C] - Nome da Clínica Especifica\n"
+dashboardBuscaMedico = " [M] - Nome do Médico\n" 
+        ++" [C] - Nome da Clínica\n"
         ++" [P] - Plano de Saúde\n"
         ++" [H] - Horário\n"
         ++" [E] - Especialidade\n"
