@@ -183,7 +183,7 @@ criarChatP idPac dados = do
     nomeMedico <- prompt "Nome do Médico > "
     mensagem <- prompt "Mensagem > "
 
-    putStrLn "Mensagem enviada com sucesso!"
+    putStrLn ("Mensagem enviada com sucesso! O id da sua mensagem é: " ++ (show (BD.idAtualChat dados)))
     threadDelay 2000000
 
     let idMedico = (MControl.getMedicoId nomeMedico (BD.medicos dados))
@@ -362,17 +362,16 @@ cadastraAvaliacao idPac dados = do
     putStrLn (tituloI "AVALIAÇÃO DE ATENDIMENTO")
     dadosAval <- leituraDadosAvaliacao
 
-    putStrLn ("Avaliação cadastrada com sucesso!")
+    putStrLn ("Avaliação cadastrada com sucesso! Seu id é: " ++ (show (BD.idAtualAvaliacao dados)))
     threadDelay 2000000
 
-    timeZoneBR <- getCurrentTimeZone
-    currentTime <- getCurrentTime
-    let formattedTime = formatTime defaultTimeLocale "%Y-%m-%d %H:%M:%S" (utcToZonedTime timeZoneBR currentTime)
+    let dadosA = [show idPac] ++ dadosAval
+    let avaliacao = PControl.criaAvaliacao (BD.idAtualAvaliacao dados) (dadosA)
 
-    let avaliacao = PControl.criaAvaliacao (BD.idAtualAvaliacao dados) dadosAval
-    BD.escreveNoArquivo "Haskell/Persistence/avaliacoes.txt" (Avaliacao.toString avaliacao ++ ";" ++ formattedTime)
 
-    loginPaciente dados { BD.avaliacoes = (BD.avaliacoes dados) ++ [avaliacao],
+    BD.escreveNoArquivo "Haskell/Persistence/avaliacoes.txt" (Avaliacao.toString avaliacao)
+
+    menuPaciente idPac dados { BD.avaliacoes = (BD.avaliacoes dados) ++ [avaliacao],
                           BD.idAtualAvaliacao = (BD.idAtualAvaliacao dados) + 1 }
    
 

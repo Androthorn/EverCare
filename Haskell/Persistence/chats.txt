@@ -1,2 +1,5 @@
 1;1;1;oiii lindo!!
 2;1;1;oi medico, lala
+3;5;2;P: ola eu funciono
+4;5;2;P: oi, funcionou
+4;5;2;P: oi, funcionou,oi

@@ -55,7 +55,7 @@ dashboardPaciente =   " [B] - Buscar\n"
                     ++" [M] - Marcar Consultas\n"
                     ++" [V] - Ver Agendamentos\n"
                     ++" [R] - Ver Receitas / Laudos / Solicitação de Exames\n"
-                    ++" [A] - Avaliacao de Atendimento\n\n"
+                    ++" [A] - Avaliacao de Atendimento\n"
                     ++" [C] - Chats\n"
                     ++" [S] - Sair\n"
 
@@ -73,7 +73,7 @@ emissaoPaciente = " [R] - Receita\n"
 
 leituraDadosAvaliacao :: IO [String]
 leituraDadosAvaliacao = do
-    sequence [prompt "Médico >",
+    sequence [prompt "Médico > ",
               prompt "Nota (0-10) > ",
               prompt "Comentário > "]
 

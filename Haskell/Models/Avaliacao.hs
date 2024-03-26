@@ -35,5 +35,4 @@ instance Read Avaliacao where
         let idMed = read (avaliacao !! 2) :: Int
         let nota = read (avaliacao !! 3) :: Int
         let comentario = avaliacao !! 4
-        let dataHora = getCurrentTime -- Get the current time and date
         [(Avaliacao idAvaliacao idPac idMed nota comentario , "")]
