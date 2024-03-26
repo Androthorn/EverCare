@@ -8,7 +8,7 @@ import qualified Haskell.Models.Chat as Chat
 import qualified Haskell.Models.Exame as Exame
 import qualified Haskell.Models.Laudo as Laudo
 import qualified Haskell.Models.Receita as Receita
-
+import qualified Haskell.Models.Avaliacao as Avaliacao
 
 import System.IO
 import System.Directory
@@ -26,6 +26,7 @@ data BD = BD {
     exames:: [Exame.Exame],
     laudos :: [Laudo.Laudo],
     receitas :: [Receita.Receita],
+    avaliacoes :: [Avaliacao.Avaliacao],
     idAtualPaciente :: Int,
     idAtualMedico :: Int,
     idAtualClinica :: Int,
@@ -33,7 +34,8 @@ data BD = BD {
     idAtualExame :: Int,
     idAtualLaudo :: Int,
     idAtualReceita :: Int,
-    idAtualChat :: Int
+    idAtualChat :: Int,
+    idAtualAvaliacao :: Int
 } deriving (Show)
 
 
@@ -47,6 +49,7 @@ novoBanco = do
     let examesIO = uploadExames "Haskell/Persistence/exames.txt"
     let laudosIO = uploadLaudos "Haskell/Persistence/laudos.txt"
     let receitasIO = uploadReceitas "Haskell/Persistence/receitas.txt"
+    let avaliacoesIO = uploadAvaliacoes "Haskell/Persistence/avaliacoes.txt"
     pacientes <- pacientesIO
     clinicas <- clinicaIO
     medicos <- medicosIO
@@ -55,6 +58,7 @@ novoBanco = do
     exames <- examesIO
     laudos <- laudosIO
     receitas <- receitasIO
+    avaliacoes <- avaliacoesIO
     let bd = BD {
             pacientes = pacientes,
             medicos = medicos,
@@ -64,6 +68,7 @@ novoBanco = do
             exames = exames,
             laudos = laudos,
             receitas = receitas,
+            avaliacoes = avaliacoes,
             idAtualPaciente = length pacientes + 1,
             idAtualMedico = length medicos + 1,
             idAtualClinica = length clinicas + 1,
@@ -71,7 +76,8 @@ novoBanco = do
             idAtualExame = length exames + 1,
             idAtualLaudo = length laudos + 1,
             idAtualReceita = length receitas + 1,
-            idAtualChat = length chats + 1
+            idAtualChat = length chats + 1,
+            idAtualAvaliacao = length avaliacoes + 1
         }
     return bd
 
@@ -92,6 +98,13 @@ uploadLaudos path = do
 stringToLaudos :: [String] -> [Laudo.Laudo]
 stringToLaudos [] = []
 stringToLaudos l = map read l :: [Laudo.Laudo]
+
+uploadAvaliacoes :: FilePath -> IO [Avaliacao.Avaliacao]
+uploadAvaliacoes path = do
+    conteudo <- readFile path
+    let linhas = lines conteudo
+    let avaliacoesList = stringToAvaliacoes linhas
+    return avaliacoesList
 
 uploadPacientes :: FilePath -> IO [Paciente.Paciente]
 uploadPacientes path = do
@@ -153,6 +166,18 @@ escreveNoArquivo path conteudo = do
 stringToReceitas :: [String] -> [Receita.Receita]
 stringToReceitas [] = []
 stringToReceitas l = map read l :: [Receita.Receita]
+
+receitasToString :: [Receita.Receita] -> String -> String
+receitasToString [] str = str
+receitasToString (x:xs) str = str ++ (Receita.toString x) ++ "\n" ++ receitasToString xs str
+
+avaliacoesToString :: [Avaliacao.Avaliacao] -> String -> String
+avaliacoesToString [] str = str
+avaliacoesToString (x:xs) str = str ++ (Avaliacao.toString x) ++ "\n" ++ avaliacoesToString xs str
+
+stringToAvaliacoes :: [String] -> [Avaliacao.Avaliacao]
+stringToAvaliacoes [] = []
+stringToAvaliacoes l = map read l :: [Avaliacao.Avaliacao]
 
 pacientesToString :: [Paciente.Paciente] -> String -> String
 pacientesToString [] str = str

@@ -5,6 +5,7 @@
 
 module Haskell.Controllers.PacienteController (
     criaPaciente,
+    criaAvaliacao,
     criaConsulta,
     filtrarMedicosPorEspecialidade,
     filtrarPorClinica,
@@ -29,11 +30,12 @@ import qualified Haskell.Models.Receita as Receita
 import qualified Haskell.Models.Consulta as Consulta
 import qualified Haskell.Models.Laudo as Laudo
 import qualified Haskell.Models.Exame as Exame
+import qualified Haskell.Models.Avaliacao as Avaliacao
+
 import Haskell.App.Util
 import Data.Char ( toLower )
 import Data.List (intercalate, find)
 import qualified Control.Applicative as ID
-
 
 {-
 Cria um paciente.
@@ -43,6 +45,15 @@ Cria um paciente.
 -}
 criaPaciente :: Int -> [String] -> Paciente.Paciente
 criaPaciente idP infos = read (intercalate ";" ([show (idP)] ++ infos)) :: Paciente.Paciente
+
+{-
+Cria uma avaliação.
+@param idA: Inteiro que representa o id da avaliação.
+@param infos: Lista de strings que contém as informações da avaliação.
+@return avaliação criada.
+-}
+criaAvaliacao :: Int -> [String] -> Avaliacao.Avaliacao
+criaAvaliacao idA infos = read (intercalate ";" ([show (idA)] ++ infos)) :: Avaliacao.Avaliacao
 
 {-
 Cria um paciente.

@@ -19,7 +19,9 @@ import qualified Haskell.Models.Receita as Receita
 import qualified Haskell.Models.Laudo as Laudo
 import qualified Haskell.Models.Exame as Exame
 import qualified Haskell.Models.Chat as Chat
+import qualified Haskell.Models.Avaliacao as Avaliacao
 
+import Data.Time
 import Data.Char ( toUpper )
 import Control.Concurrent (threadDelay)
 import Control.Monad.RWS.Lazy (MonadState(put))
@@ -29,6 +31,9 @@ import System.Process (system)
 import Data.List (sort)
 import GHC.RTS.Flags (MiscFlags(disableDelayedOsMemoryReturn))
 import qualified Haskell.Controllers.ChatController as PControl
+import Haskell.Models.BD (BD(idAtualPaciente))
+import Haskell.Models.Avaliacao (Avaliacao(idPac))
+import Data.Text.Internal.Read (IParser(P))
 
 
 
@@ -134,6 +139,9 @@ menuPaciente idPac dados = do
     else if toUpper (head op) == 'R' then do
         verPosConsulta idPac dados
     -- | opção Receitas / Laudos / Solicitações de Exames
+
+    else if toUpper (head op) == 'A' then do
+        cadastraAvaliacao idPac dados
 
     else if toUpper (head op) == 'S' then do
         inicial dados
@@ -340,6 +348,33 @@ buscar idPac dados = do
     else do
         putStrLn "Opção inválida"
         buscar idPac dados
+
+
+-- É NECESSARIA A IMPLEMENTAÇÃO DESSA FUNÇÃO E RESOLVER COMO IMPLEMENTAR 
+-- O LOCAL TIME E O LOCAL DATE (essas funcoes estao no fim do arquivo)
+-- ACREDITO QUE POSSA SER DIRETAMENTE AQUI NO MAIN UMA VEZ QUE SE TRATA DE UMA FUNCAO IO. 
+-- POR ENQUANTO VOU DEIXAR AQUI COMENTADO
+
+
+cadastraAvaliacao :: Int -> BD.BD -> IO ()
+cadastraAvaliacao idPac dados = do
+    limpaTela
+    putStrLn (tituloI "AVALIAÇÃO DE ATENDIMENTO")
+    dadosAval <- leituraDadosAvaliacao
+
+    putStrLn ("Avaliação cadastrada com sucesso!")
+    threadDelay 2000000
+
+    timeZoneBR <- getCurrentTimeZone
+    currentTime <- getCurrentTime
+    let formattedTime = formatTime defaultTimeLocale "%Y-%m-%d %H:%M:%S" (utcToZonedTime timeZoneBR currentTime)
+
+    let avaliacao = PControl.criaAvaliacao (BD.idAtualAvaliacao dados) dadosAval
+    BD.escreveNoArquivo "Haskell/Persistence/avaliacoes.txt" (Avaliacao.toString avaliacao ++ ";" ++ formattedTime)
+
+    loginPaciente dados { BD.avaliacoes = (BD.avaliacoes dados) ++ [avaliacao],
+                          BD.idAtualAvaliacao = (BD.idAtualAvaliacao dados) + 1 }
+   
 
 cadastraConsulta :: Int -> BD.BD -> IO()
 cadastraConsulta idPac dados = do
@@ -640,3 +675,11 @@ verAgendamentoM idM dados = do
     prompt "Pressione Enter para voltar"
     menuMedico idM dados
 
+-- Funcoes para capturar a data e hora atual
+
+obterDataHoraAtual :: IO String
+obterDataHoraAtual = do
+    currentTime <- getCurrentTime
+    let timeZone = hoursToTimeZone (-3) 
+        localTime = utcToLocalTime timeZone currentTime
+    return $ formatTime defaultTimeLocale "%d/%m/%Y %H:%M:%S" localTime
