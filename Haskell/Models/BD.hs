@@ -12,6 +12,9 @@ import System.Directory
 import Text.Read (readMaybe)
 import Data.Maybe (mapMaybe)
 import Distribution.Compat.CharParsing (CharParsing(string))
+import Haskell.App.Util (limpaTela)
+import Control.Exception (evaluate)
+import Control.DeepSeq
 
 
 data BD = BD {
@@ -70,16 +73,17 @@ novoBanco = do
             idAtualMedico = length medicos + 1,
             idAtualClinica = length clinicas + 1,
             idAtualConsulta = length consultas +1,
-            idAtualAvaliacao = length avaliacoes +1
+            idAtualAvaliacao = length  avaliacoes +1
         }
     return bd
 
 uploadAvaliacoes :: FilePath -> IO [Avaliacao.Avaliacao]
 uploadAvaliacoes path = do
-    conteudo <- readFile path
-    putStrLn  "lendo"
+    h <- openFile path ReadMode     
+    conteudo <- hGetContents h     
+    evaluate (rnf conteudo)     
+    hClose h 
     let linhas = lines conteudo
-    putStrLn  "linhas"
     let avaliacoesList = stringToAvaliacoes linhas
     return avaliacoesList
 

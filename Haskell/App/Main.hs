@@ -27,6 +27,7 @@ import GHC.RTS.Flags (MiscFlags(disableDelayedOsMemoryReturn))
 import Haskell.Models.BD (BD(idAtualPaciente))
 import Haskell.Models.Avaliacao (Avaliacao(idPac))
 import Data.Text.Internal.Read (IParser(P))
+import GHC.Base (VecElem(Int16ElemRep))
 
 
 
@@ -211,24 +212,26 @@ buscar idPac dados = do
 
 cadastraAvaliacao :: Int -> BD.BD -> IO ()
 cadastraAvaliacao idPac dados = do
+    let avaliacoes =  BD.avaliacoes dados
     limpaTela
     putStrLn (tituloI "AVALIAÇÃO DE ATENDIMENTO")
     dadosAval <- leituraDadosAvaliacao
-    print dadosAval
+    let idAvaliacao = BD.idAtualAvaliacao dados
+    let idMed = read (head dadosAval) :: Int
+    let nota = read (dadosAval !! 1) :: Int
+    let texto = last dadosAval
 
+    let avaliacao = Avaliacao.Avaliacao idAvaliacao idPac idMed nota texto
     putStrLn ("Avaliação cadastrada com sucesso!")
     threadDelay 2000000
 
-    -- timeZoneBR <- getCurrentTimeZone
-    -- currentTime <- getCurrentTime
-    -- let formattedTime = formatTime defaultTimeLocale "%Y-%m-%d %H:%M:%S" (utcToZonedTime timeZoneBR currentTime)
+    timeZoneBR <- getCurrentTimeZone
+    currentTime <- getCurrentTime
+    let formattedTime = formatTime defaultTimeLocale "%d-%m-%Y %H:%M:%S" (utcToZonedTime timeZoneBR currentTime)
 
+    BD.escreveNoArquivo "Haskell/Persistence/avaliacoes.txt" (Avaliacao.toString avaliacao ++ ";" ++ formattedTime)
     
-    let avaliacao = PControl.criaAvaliacao (BD.idAtualAvaliacao dados) idPac dadosAval
-    imprime (Avaliacao.toString avaliacao)
-    BD.escreveNoArquivo "Haskell/Persistence/avaliacoes.txt" (Avaliacao.toString avaliacao)
-
-    menuPaciente idPac dados  { BD.avaliacoes = (BD.avaliacoes dados) ++ [avaliacao],
+    menuPaciente idPac dados  { BD.avaliacoes = avaliacoes ++ [avaliacao],
                           BD.idAtualAvaliacao = (BD.idAtualAvaliacao dados) + 1 }
 
                     
@@ -382,12 +385,7 @@ cadastraMedico idClinica dados = do
     menuClinica idClinica dados { BD.medicos = (BD.medicos dados) ++ [medico],
                                   BD.idAtualMedico = (BD.idAtualMedico dados) + 1}
 
--- dashboardC :: Int -> BD.BD -> IO()
--- dashboardC idC dados = do
---     limpaTela
---     putStrLn (tituloI "DASHBOARD CLÍNICA")
---     let med = sort (CControl.consultarMedico idC (BD.medicos dados))
---     putStrLn (med)
+
 inicialMedico :: BD.BD -> IO()
 inicialMedico dados = do
     limpaTela
@@ -458,17 +456,3 @@ emitirMedico idM dados = do
     else do
         putStrLn "Opção inválida"
         emitirMedico idM dados
-
-
-
-
-
--- Funcoes para capturar a data e hora atual
-
-
-obterDataHoraAtual :: IO String
-obterDataHoraAtual = do
-    currentTime <- getCurrentTime
-    let timeZone = hoursToTimeZone (-3) 
-        localTime = utcToLocalTime timeZone currentTime
-    return $ formatTime defaultTimeLocale "%d/%m/%Y %H:%M:%S" localTime
