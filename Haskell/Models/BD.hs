@@ -81,6 +81,32 @@ novoBanco = do
         }
     return bd
 
+removerLinhaPorID :: FilePath -> Int -> IO ()
+removerLinhaPorID arquivo idDesejado = do
+    conteudo <- readFile arquivo
+    let linhas = lines conteudo
+        linhaParaRemover = encontraLinhaPorID linhas idDesejado
+        novoConteudo = unlines $ filter (/= linhaParaRemover) linhas
+    writeFile arquivo novoConteudo
+
+-- Função para encontrar a linha que contém o ID desejado
+encontraLinhaPorID :: [String] -> Int -> String
+encontraLinhaPorID [] _ = error "ID não encontrado"
+encontraLinhaPorID (linha:outrasLinhas) idDesejado =
+    let idDaLinha = read (head $ words linha) :: Int
+    in if idDaLinha == idDesejado
+        then linha
+        else encontraLinhaPorID outrasLinhas idDesejado
+
+removeChat :: BD -> Int -> BD
+removeChat bd idChat =
+    bd { chats = filter (\chat -> Chat.id chat /= idChat) (chats bd) }
+
+removerConsulta :: BD -> Int -> BD
+removerConsulta bd idConsulta =
+    bd { consultas = filter (\consulta -> Consulta.idConsulta consulta /= idConsulta) (consultas bd) }
+
+
 uploadReceitas :: FilePath -> IO [Receita.Receita]
 uploadReceitas path = do
     conteudo <- readFile path

@@ -138,7 +138,6 @@ menuPaciente idPac dados = do
 
     else if toUpper (head op) == 'R' then do
         verPosConsulta idPac dados
-    -- | opção Receitas / Laudos / Solicitações de Exames
 
     else if toUpper (head op) == 'A' then do
         cadastraAvaliacao idPac dados
@@ -189,7 +188,7 @@ criarChatP idPac dados = do
     let idMedico = (MControl.getMedicoId nomeMedico (BD.medicos dados))
     let chat = ChatControl.criarChat (BD.idAtualChat dados) idPac idMedico ("P: " ++ mensagem)
     
-    -- BD.escreveNoArquivo "Haskell/Persistence/chats.txt" (Chat.toString chat)
+    BD.escreveNoArquivo "Haskell/Persistence/chats.txt" (Chat.toString chat)
     menuPaciente idPac dados { BD.chats = (BD.chats dados) ++ [chat],
                           BD.idAtualChat = (BD.idAtualChat dados) + 1 }
 
@@ -213,7 +212,7 @@ abrirConversaPac idPac dados = do
 
     if toUpper (head op) == 'R' then do
         mensagem <- prompt "Mensagem > "
-        adicionarMensagemAoChat idChat mensagem dados
+        adicionarMensagemAoChat idChat ("P: " ++ mensagem) dados
     
     else if toUpper (head op) == 'S' then do
         menuPaciente idPac dados
@@ -349,31 +348,30 @@ buscar idPac dados = do
         putStrLn "Opção inválida"
         buscar idPac dados
 
-
--- É NECESSARIA A IMPLEMENTAÇÃO DESSA FUNÇÃO E RESOLVER COMO IMPLEMENTAR 
--- O LOCAL TIME E O LOCAL DATE (essas funcoes estao no fim do arquivo)
--- ACREDITO QUE POSSA SER DIRETAMENTE AQUI NO MAIN UMA VEZ QUE SE TRATA DE UMA FUNCAO IO. 
--- POR ENQUANTO VOU DEIXAR AQUI COMENTADO
-
-
 cadastraAvaliacao :: Int -> BD.BD -> IO ()
 cadastraAvaliacao idPac dados = do
+    let avaliacoes =  BD.avaliacoes dados
     limpaTela
     putStrLn (tituloI "AVALIAÇÃO DE ATENDIMENTO")
     dadosAval <- leituraDadosAvaliacao
+    let idAvaliacao = BD.idAtualAvaliacao dados
+    let idMed = read (head dadosAval) :: Int
+    let nota = read (dadosAval !! 1) :: Int
+    let texto = last dadosAval
 
-    putStrLn ("Avaliação cadastrada com sucesso! Seu id é: " ++ (show (BD.idAtualAvaliacao dados)))
+    let avaliacao = Avaliacao.Avaliacao idAvaliacao idPac idMed nota texto
+    putStrLn ("Avaliação cadastrada com sucesso!")
     threadDelay 2000000
 
-    let dadosA = [show idPac] ++ dadosAval
-    let avaliacao = PControl.criaAvaliacao (BD.idAtualAvaliacao dados) (dadosA)
+    timeZoneBR <- getCurrentTimeZone
+    currentTime <- getCurrentTime
+    let formattedTime = formatTime defaultTimeLocale "%d-%m-%Y %H:%M:%S" (utcToZonedTime timeZoneBR currentTime)
 
-
-    BD.escreveNoArquivo "Haskell/Persistence/avaliacoes.txt" (Avaliacao.toString avaliacao)
-
-    menuPaciente idPac dados { BD.avaliacoes = (BD.avaliacoes dados) ++ [avaliacao],
+    BD.escreveNoArquivo "Haskell/Persistence/avaliacoes.txt" (Avaliacao.toString avaliacao ++ ";" ++ formattedTime)
+    
+    menuPaciente idPac dados  { BD.avaliacoes = avaliacoes ++ [avaliacao],
                           BD.idAtualAvaliacao = (BD.idAtualAvaliacao dados) + 1 }
-   
+  
 
 cadastraConsulta :: Int -> BD.BD -> IO()
 cadastraConsulta idPac dados = do

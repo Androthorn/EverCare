@@ -73,7 +73,7 @@ emissaoPaciente = " [R] - Receita\n"
 
 leituraDadosAvaliacao :: IO [String]
 leituraDadosAvaliacao = do
-    sequence [prompt "Médico > ",
+    sequence [prompt "Id do Médico > ",
               prompt "Nota (0-10) > ",
               prompt "Comentário > "]
 
