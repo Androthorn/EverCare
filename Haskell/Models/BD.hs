@@ -15,6 +15,8 @@ import System.Directory
 import Text.Read (readMaybe)
 import Data.Maybe (mapMaybe)
 import Distribution.Compat.CharParsing (CharParsing(string))
+import Control.Exception (evaluate)
+import Control.DeepSeq
 
 
 data BD = BD {
@@ -81,6 +83,27 @@ novoBanco = do
         }
     return bd
 
+uploadChats :: FilePath -> IO [Chat.Chat]
+uploadChats path = do
+    h <- openFile path ReadMode     
+    conteudo <- hGetContents h     
+    evaluate (rnf conteudo)     
+    hClose h 
+    let linhas = lines conteudo
+    let chatsList = stringToChats linhas
+    return chatsList
+
+uploadAvaliacoes :: FilePath -> IO [Avaliacao.Avaliacao]
+uploadAvaliacoes path = do
+    h <- openFile path ReadMode     
+    conteudo <- hGetContents h     
+    evaluate (rnf conteudo)     
+    hClose h 
+    let linhas = lines conteudo
+    let avaliacoesList = stringToAvaliacoes linhas
+    return avaliacoesList
+
+
 uploadReceitas :: FilePath -> IO [Receita.Receita]
 uploadReceitas path = do
     conteudo <- readFile path
@@ -98,13 +121,6 @@ uploadLaudos path = do
 stringToLaudos :: [String] -> [Laudo.Laudo]
 stringToLaudos [] = []
 stringToLaudos l = map read l :: [Laudo.Laudo]
-
-uploadAvaliacoes :: FilePath -> IO [Avaliacao.Avaliacao]
-uploadAvaliacoes path = do
-    conteudo <- readFile path
-    let linhas = lines conteudo
-    let avaliacoesList = stringToAvaliacoes linhas
-    return avaliacoesList
 
 uploadPacientes :: FilePath -> IO [Paciente.Paciente]
 uploadPacientes path = do
@@ -134,12 +150,12 @@ uploadConsultas path = do
     let consultasList = stringToConsultas linhas
     return consultasList
 
-uploadChats :: FilePath -> IO [Chat.Chat]
-uploadChats path = do
-    conteudo <- readFile path
-    let linhas = lines conteudo
-    let chatsList = stringToChats linhas
-    return chatsList
+-- uploadChats :: FilePath -> IO [Chat.Chat]
+-- uploadChats path = do
+--     conteudo <- readFile path
+--     let linhas = lines conteudo
+--     let chatsList = stringToChats linhas
+--     return chatsList
 
 uploadExames :: FilePath -> IO [Exame.Exame]
 uploadExames path = do

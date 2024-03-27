@@ -213,7 +213,7 @@ abrirConversaPac idPac dados = do
 
     if toUpper (head op) == 'R' then do
         mensagem <- prompt "Mensagem > "
-        adicionarMensagemAoChat idChat mensagem dados
+        adicionarMensagemAoChat idChat ("P: " ++ mensagem) dados
     
     else if toUpper (head op) == 'S' then do
         menuPaciente idPac dados
