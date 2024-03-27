@@ -175,13 +175,13 @@ criarChatP idPac dados = do
     nomeMedico <- prompt "Nome do Médico > "
     mensagem <- prompt "Mensagem > "
 
-    putStrLn "Mensagem enviada com sucesso!"
+    putStrLn "O id do chat é " ++ BD.idAtualChat ++ "Mensagem enviada com sucesso!"
     threadDelay 2000000
 
     let idMedico = (MControl.getMedicoId nomeMedico (BD.medicos dados))
     let chat = ChatControl.criarChat (BD.idAtualChat dados) idPac idMedico ("P: " ++ mensagem)
     
-    BD.escreveNoArquivo "Haskell/Persistence/chats.txt" (Chat.toString chat)
+    -- BD.escreveNoArquivo "Haskell/Persistence/chats.txt" (Chat.toString chat)
     menuPaciente idPac dados { BD.chats = (BD.chats dados) ++ [chat],
                           BD.idAtualChat = (BD.idAtualChat dados) + 1 }
 
@@ -555,12 +555,37 @@ menuMedico idM dados = do
 
     else if toUpper (head op) == 'E' then do
         emitirM idM dados
+    -- else if toUpper (head op) == 'C' then do
+    --     chatMedico idM dados
     else if toUpper (head op) == 'S' then do
         inicial dados
 
     else do
         putStrLn "Opção inválida"
         menuMedico idM dados
+
+chatMedico :: Int -> BD.BD -> IO()
+chatMedico idM dados = do
+    limpaTela
+    putStrLn (tituloI "CHAT MÉDICO")
+    putStrLn (chatM)
+    op <- prompt "Opção > "
+
+    if toUpper (head op) == 'C' then do
+        criarChatM idM dados
+
+    else if toUpper (head op) == 'V' then do
+        visualizaTodosChatsMed idM dados
+
+    else if toUpper (head op) == 'A' then do
+        abrirConversaMed idM dados
+
+    else if toUpper (head op) == 'S' then do
+        menuMedico idM dados
+
+    else do
+        putStrLn "Opção inválida"
+        chatMedico idM dados
 
 emitirM :: Int  -> BD.BD -> IO()
 emitirM idM dados = do
