@@ -49,12 +49,13 @@ leituraDadosPaciente = do
               prompt "Hipertenso (S ou N) > ",
               prompt "Diabético (S ou N) > ",
               prompt "Senha > "]
-
+              
 dashboardPaciente :: String
 dashboardPaciente =   " [B] - Buscar\n"
                     ++" [M] - Marcar Consultas\n"
                     ++" [V] - Ver Agendamentos\n"
                     ++" [R] - Ver Receitas / Laudos / Solicitação de Exames\n"
+                    ++" [A] - Avaliacao de Atendimento\n"
                     ++" [C] - Chats\n"
                     ++" [S] - Sair\n"
 
@@ -70,9 +71,15 @@ emissaoPaciente = " [R] - Receita\n"
                ++ " [L] - Laudo Médico\n"
                ++ " [V] - Voltar\n"
 
+leituraDadosAvaliacao :: IO [String]
+leituraDadosAvaliacao = do
+    sequence [prompt "Médico > ",
+              prompt "Nota (0-10) > ",
+              prompt "Comentário > "]
+
 dashboardBuscaMedico :: String
-dashboardBuscaMedico = " [M] - Nome do Médico Específica\n" 
-        ++" [C] - Nome da Clínica Especifica\n"
+dashboardBuscaMedico = " [M] - Nome do Médico\n" 
+        ++" [C] - Nome da Clínica\n"
         ++" [P] - Plano de Saúde\n"
         ++" [H] - Horário\n"
         ++" [E] - Especialidade\n"

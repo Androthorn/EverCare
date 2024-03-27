@@ -1,4 +1,9 @@
-module Haskell.Models.Chat where
+module Haskell.Models.Chat (
+    Chat (..),
+    toString
+)
+
+where 
 
 import Haskell.App.Util (split)
 import Prelude hiding (id)
@@ -17,7 +22,7 @@ toString c =
     show (id c) ++ ";" ++
     show (idPaciente c) ++ ";" ++
     show (idMedico c) ++ ";" ++
-    intercalate ";" (mensagens c)
+    (intercalate "," (mensagens c))
 
 instance Show Chat where
     show (Chat id idP idM m) = "----------------------------\n" ++
@@ -32,5 +37,5 @@ instance Read Chat where
         let id = read (l !! 0) :: Int
         let idPaciente = read (l !! 1) :: Int
         let idMedico = read (l !! 2) :: Int
-        let mensagens = l !! 3
-        [(Chat id idPaciente idMedico [mensagens], "")]
+        let mensagens = split (l !! 3) ',' ""
+        [(Chat id idPaciente idMedico mensagens, "")]

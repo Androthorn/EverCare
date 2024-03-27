@@ -25,6 +25,7 @@ toString m = show (clinica m) ++ ";" ++
              senha m
 
 instance Show Medico where
+    show :: Medico -> String
     show (Medico clinica id nome crm esp horario _) =  "----------------------------\n" ++
                                             "Médico " ++ (show id) ++ "\n" ++
                                             "Nome: " ++ nome ++ "\n" ++

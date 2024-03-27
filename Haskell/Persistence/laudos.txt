@@ -1,1 +1,2 @@
 1;1;2;doidin
+2;2;5;Tomar 5 trembolona por dia

@@ -19,6 +19,7 @@ import qualified Haskell.Models.Paciente as Paciente
 import Haskell.Models.Consulta (Consulta)
 import qualified Haskell.Models.Consulta as Consulta
 import qualified Haskell.Controllers.PacienteController as PControl
+import Haskell.App.Util (leituraDadosClinica)
 
 {-
 Cria um clinica.
