@@ -129,6 +129,7 @@ leituraDadosMedico = do
 dashboardMedico :: String
 dashboardMedico = " [V] - Ver Agendamentos\n"
                 ++" [E] - Emitir\n"
+                ++" [C] - Chat\n"
                 ++" [S] - Sair\n"
 
 emissaoMedico :: String
