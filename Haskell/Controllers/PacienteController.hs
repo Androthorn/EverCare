@@ -7,12 +7,10 @@ module Haskell.Controllers.PacienteController (
     criaPaciente,
     criaAvaliacao,
     criaConsulta,
-    filtrarMedicosPorEspecialidade,
     filtrarPorClinica,
     filtrarPorMedico,
     filtrarClinicasPorPlanoDeSaude,
     filtrarClinicasPorAgendamento,
-    filtrarMedicoPorSintoma,
     consultarLaudo,
     consultarReceita,
     consultarAgendamento,
@@ -64,15 +62,6 @@ Cria um paciente.
 criaConsulta :: Int -> [String] -> Consulta.Consulta
 criaConsulta idC infos = read (intercalate ";" ([show (idC)] ++ infos)) :: Consulta.Consulta
 
-{-Essa função filtra uma lista de médicos com base na especialidade desejada.
-@param especialidadeDesejada: A especialidade que se deseja encontrar nos médicos.
-@param medicos: Uma lista de médicos que será filtrada.
-@return Uma lista de médicos que possuem a especialidade desejada.
--}
-filtrarMedicosPorEspecialidade :: String -> [Medico.Medico] -> [Medico.Medico]
-filtrarMedicosPorEspecialidade especialidadeDesejada medicos  =
-    filter (\medico -> Medico.especialidade medico == especialidadeDesejada) medicos
-
 {-Essa função filtra a clinica especifica desejeda.
 @param nomeEspecifico: a clinica desejada
 @param clinicas: a lista das clinias que serão filtradas
@@ -112,27 +101,6 @@ filtrarClinicasPorAgendamento tipoAgendamentoDesejado clinicas =
     filter (\clinica -> Clinica.metodoAgendamento clinica == tipoAgendamentoDesejado) clinicas
 
 
-{-Esta função filtra uma lista de médicos de acordo com sintomas especificos
-@return uma lista de médicos filtrada de acordo com o sintoma.
--}
-filtrarMedicoPorSintoma :: String -> [Medico.Medico] -> [Medico.Medico]
-filtrarMedicoPorSintoma sint medicos
-    | sintoma == "dor nas costas" || sintoma == "dor lombar" || sintoma == "dor na mão" || sintoma == "dor no pé" || sintoma == "dor na ombro" = filtrarMedicosPorEspecialidade "Ortopedista" medicos
-    | sintoma == "enxaqueca" || sintoma == "dor de cabeça" = filtrarMedicosPorEspecialidade "Neurologista" medicos
-    | sintoma == "dor de garganta" || sintoma == "nariz entupido" || sintoma == "sinusite" || sintoma == "dor de ouvido" = filtrarMedicosPorEspecialidade "Otorrinolaingologista" medicos
-    | sintoma == "menstruação desrregulada" || sintoma == "gravidez" || sintoma == "cólica" = filtrarMedicosPorEspecialidade "Ginecologista" medicos
-    | sintoma == "espinhas" || sintoma == "queda de cabelo" || sintoma == "mancha na pele" = filtrarMedicosPorEspecialidade "Dermatologista" medicos
-    | sintoma == "desconforto abdominal" || sintoma == "azia" || sintoma == "gastrite" = filtrarMedicosPorEspecialidade "Gastroenterologia" medicos
-    | sintoma == "febre" || sintoma == "tosse" || sintoma == "resfriado" || sintoma == "dor de garganta" = filtrarMedicosPorEspecialidade "Clínico Geral" medicos
-    | sintoma == "pressão alta" || sintoma == "pressão baixa" = filtrarMedicosPorEspecialidade "Cardiologista" medicos
-    | sintoma == "ansiedade" || sintoma == "depressão" = filtrarMedicosPorEspecialidade "Psiquiatra" medicos
-    | sintoma == "visão embaçada" || sintoma == "olho vermelho" || sintoma == "coceira nos olhos" = filtrarMedicosPorEspecialidade "Oftalmologista" medicos
-    | sintoma == "queda de pressão" || sintoma == "desmaio" = filtrarMedicosPorEspecialidade "Cardiologista" medicos
-    | sintoma == "dor nos rins" || sintoma == "sangue na urina" || sintoma == "dificuldade para urinar" = filtrarMedicosPorEspecialidade "Urologista" medicos
-    | otherwise = []
-    where 
-        sintoma = map toLower sint
-
 {-
 Essa função filtra uma lista de laudos com base no id do paciente.
 @param idPaciente: O id do paciente que se deseja encontrar nos laudos.
@@ -170,11 +138,11 @@ Essa função retorna o ID do paciente dado o seu nome.
 @param pacientes: lista de pacientes cadastrados
 @return o ID do paciente
 -}
-getPacienteId :: String -> [Paciente.Paciente] -> Int
+getPacienteId :: String -> [Paciente.Paciente] -> Maybe Int
 getPacienteId name pacientes = 
-    case find (\paciente -> Paciente.nome paciente == name) pacientes of
-        Just paciente -> Paciente.id paciente
-        Nothing -> error "paciente not found"
+    case find (\paciente -> (map toLower $ Paciente.nome paciente) == (map toLower name)) pacientes of
+        Just paciente -> Just (Paciente.id paciente)
+        Nothing -> Nothing
 
 {-
 Essa função retorna o Paciente dado o seu ID.

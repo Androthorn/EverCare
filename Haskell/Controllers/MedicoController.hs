@@ -11,6 +11,7 @@ import qualified Haskell.Models.BD as BD
 import qualified Haskell.Models.Medico as Medico
 import Haskell.App.Util
 import Data.List (intercalate, find)
+import Data.Char (toLower)
 import qualified Haskell.Models.Receita as Receita
 import qualified Haskell.Models.Receita as Laudo
 import qualified Haskell.Models.Exame as Exame
@@ -25,11 +26,11 @@ Essa função retorna o ID do medico dado o seu nome.
 @param medicos: lista de medicos cadastrados
 @return o ID do medico
 -}
-getMedicoId :: String -> [Medico.Medico] -> Int
+getMedicoId :: String -> [Medico.Medico] -> Maybe Int
 getMedicoId name medicos = 
-    case find (\medico -> Medico.nome medico == name) medicos of
-        Just medico -> Medico.id medico
-        Nothing -> error "médico not found"
+    case find (\medico -> (map toLower $ Medico.nome medico) == (map toLower name)) medicos of
+        Just medico -> Just (Medico.id medico)
+        Nothing -> Nothing
 
 getIdMedico :: Int -> [Medico.Medico] -> String
 getIdMedico idMedico medicos = 

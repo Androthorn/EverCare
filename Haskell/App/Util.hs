@@ -183,3 +183,12 @@ imprime :: Show t => [t] -> IO ()
 imprime l = do
     putStrLn (formataLista l)
     return ()
+
+imprimeEmUmaLinha :: [String] -> IO ()
+imprimeEmUmaLinha l = do
+    putStrLn (formataListaEmUmaLinha l)
+    return ()
+
+formataListaEmUmaLinha :: [String] -> String
+formataListaEmUmaLinha [] = ""
+formataListaEmUmaLinha (x:xs) = (x) ++ " " ++ (formataListaEmUmaLinha xs)
