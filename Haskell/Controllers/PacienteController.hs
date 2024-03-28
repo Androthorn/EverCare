@@ -17,7 +17,8 @@ module Haskell.Controllers.PacienteController (
     consultarSolicitacao,
     getPacienteId,
     getPacienteName,
-    getPacienteOID
+    getPacienteOID,
+    validaIDPaciente
 ) where
 
 import qualified Haskell.Models.BD as BD
@@ -62,7 +63,8 @@ Cria um paciente.
 criaConsulta :: Int -> [String] -> Consulta.Consulta
 criaConsulta idC infos = read (intercalate ";" ([show (idC)] ++ infos)) :: Consulta.Consulta
 
-{-Essa função filtra a clinica especifica desejeda.
+{-
+Esta função filtra a clinica especifica desejeda.
 @param nomeEspecifico: a clinica desejada
 @param clinicas: a lista das clinias que serão filtradas
 @return a clinica desjada
@@ -72,7 +74,8 @@ filtrarPorClinica nomeEspecifico clinicas =
     filter (\clinica -> Clinica.nome clinica == nomeEspecifico) clinicas
 
 
-{-Essa função filtra um médico.
+{-
+Esta função filtra um médico.
 @param medicoEspecifico: o médico desejado.
 @param medicos: a lista de médico que será filtrada
 -}
@@ -91,7 +94,8 @@ filtrarClinicasPorPlanoDeSaude planoSaudeDesejado clinicas =
     filter (\clinica -> elem planoSaudeDesejado (Clinica.planos clinica)) clinicas
 
 
-{-Essa função filtra uma lista de clínicas com base no tipo de agendamento desejado.
+{-
+Esta função filtra uma lista de clínicas com base no tipo de agendamento desejado.
    @param tipoAgendamentoDesejado: O tipo de agendamento desejado (por exemplo, "hora marcada" ou "ordem de chegada").
    @param clinicas: A lista de clínicas que será filtrada.
    @return A lista de clínicas que oferecem o tipo de agendamento desejado.
@@ -102,7 +106,7 @@ filtrarClinicasPorAgendamento tipoAgendamentoDesejado clinicas =
 
 
 {-
-Essa função filtra uma lista de laudos com base no id do paciente.
+Esta função filtra uma lista de laudos com base no id do paciente.
 @param idPaciente: O id do paciente que se deseja encontrar nos laudos.
 @param laudos: Uma lista de laudos que será filtrada.
 @return Uma lista de laudos que possuem o id do paciente desejado.
@@ -114,7 +118,7 @@ consultarLaudo idPaciente laudos = filter (\laudo -> Laudo.id laudo == idPacient
 
 
 {-
-Essa função filtra uma lista de receitas com base no id do paciente.
+Esta função filtra uma lista de receitas com base no id do paciente.
 @param idPaciente: O id do paciente que se deseja encontrar nas receitas.
 @param receitas: Uma lista de receitas que será filtrada.
 @return Uma lista de receitas que possuem o id do paciente desejado.
@@ -123,17 +127,28 @@ consultarReceita :: Int -> [Receita.Receita] -> [Receita.Receita]
 consultarReceita _ [] = []
 consultarReceita idPaciente receita = filter (\receita -> Receita.idPaciente receita == idPaciente) receita
 
+{- 
+Esta função filtra uma lista de exames com base no id do paciente.
+@param idPaciente: O id do paciente que se deseja encontrar nos exames.
+@param exames: Uma lista de exames que será filtrada.
+@return Uma lista de exames que possuem o id do paciente desejado.
+-}
 consultarSolicitacao :: Int -> [Exame.Exame] -> [Exame.Exame]
 consultarSolicitacao _ [] = []
 consultarSolicitacao idPaciente exames = filter (\exame -> Exame.idPaciente exame == idPaciente) exames
 
-
+{- 
+Esta função filtra uma lista de consultas com base no id do paciente.
+@param idPaciente: O id do paciente que se deseja encontrar nas consultas.
+@param consultas: Uma lista de consultas que será filtrada.
+@return Uma lista de consultas que possuem o id do paciente desejado.
+-}
 consultarAgendamento :: Int -> [Consulta.Consulta] -> [Consulta.Consulta]
 consultarAgendamento _ [] = []
 consultarAgendamento idPaciente consultas = filter (\consulta -> Consulta.idPaciente consulta == idPaciente) consultas
 
 {- 
-Essa função retorna o ID do paciente dado o seu nome.
+Esta função retorna o ID do paciente dado o seu nome.
 @param name: nome do paciente
 @param pacientes: lista de pacientes cadastrados
 @return o ID do paciente
@@ -145,7 +160,7 @@ getPacienteId name pacientes =
         Nothing -> Nothing
 
 {-
-Essa função retorna o Paciente dado o seu ID.
+Esta função retorna o Paciente dado o seu ID.
 @param idPaciente: ID do paciente
 @param pacientes: lista de pacientes cadastrados
 @return o paciente
@@ -157,7 +172,7 @@ getPacienteOID idPaciente pacientes =
         Nothing -> error "paciente not found"
 
 {-
-Essa função retorna o nome do paciente dado o seu ID.
+Esta função retorna o nome do paciente dado o seu ID.
 @param idPaciente: ID do paciente
 @param pacientes: lista de pacientes cadastrados
 @return o nome do paciente
@@ -167,3 +182,15 @@ getPacienteName idPaciente pacientes =
     case find (\paciente -> Paciente.id paciente == idPaciente) pacientes of
         Just paciente -> Paciente.nome paciente
         Nothing -> error "paciente not found"
+
+{-
+Esta função verifica se existe algum paciente com o id recebido.
+@param idP: id do paciente
+@param pacientes: lista dos pacientes
+@return True se existir, False se não
+-}
+
+validaIdPaciente :: Int -> [Paciente.Paciente]-> Bool
+validaIDPaciente _ [] = False
+validaIDPaciente idPac (x:xs) | idP == (Paciente.id x) = True
+                              | otherwise = validaIDPaciente idP xs

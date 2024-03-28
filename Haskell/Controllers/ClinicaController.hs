@@ -9,7 +9,11 @@ module Haskell.Controllers.ClinicaController(
     showLista,
     getClinicaId,
     verPaciente,
-    verConsultas
+    verConsultas,
+    validaClinica,
+    validaIDExame,
+    validaIDReceita,
+    validaIDLaudo
 ) where
 
 import Data.List (intercalate, find, nub)
@@ -18,6 +22,9 @@ import qualified Haskell.Models.Medico as Medico
 import qualified Haskell.Models.Paciente as Paciente
 import Haskell.Models.Consulta (Consulta)
 import qualified Haskell.Models.Consulta as Consulta
+import qualified Haskell.Models.Receita as Receita
+import qualified Haskell.Models.Receita as Laudo
+import qualified Haskell.Models.Exame as Exame
 import qualified Haskell.Controllers.PacienteController as PControl
 import Haskell.App.Util (leituraDadosClinica)
 
@@ -40,6 +47,12 @@ Cria um médico
 criaMedico :: Int -> Int -> [String] -> Medico.Medico
 criaMedico idC idM informs = read (intercalate ";" ([show (idC)] ++ [show (idM)] ++ informs)) :: Medico.Medico
 
+{- 
+Esta função retorna a lista de médicos associados a uma clínica.
+@param idC: ID da clínica
+@param medicos: lista de médicos cadastrados
+@return uma string representando a lista de médicos associados à clínica
+-}
 verMedico :: Int -> [Medico.Medico] -> String
 verMedico _ [] = ""
 verMedico idC medicos =
@@ -49,6 +62,13 @@ verMedico idC medicos =
     else
         showLista medicosList
 
+{- 
+Esta função retorna a lista de pacientes associados a uma clínica.
+@param idC: ID da clínica
+@param consultas: lista de consultas
+@param pacientes: lista de pacientes cadastrados
+@return uma string representando a lista de pacientes associados à clínica
+-}
 verPaciente :: Int -> [Consulta.Consulta] -> [Paciente.Paciente] -> String
 verPaciente _ [] [] = ""
 verPaciente _ [] _ = ""
@@ -63,6 +83,12 @@ verPaciente idC consultas pacientes =
     else
         infoPacientes
 
+{- 
+Esta função retorna a lista de consultas associadas a uma clínica.
+@param idC: ID da clínica
+@param consultas: lista de consultas
+@return uma string representando a lista de consultas associadas à clínica
+-}
 verConsultas :: Int -> [Consulta.Consulta] -> String
 verConsultas _ [] = ""
 verConsultas idC consultas =
@@ -73,7 +99,7 @@ verConsultas idC consultas =
         showLista consultasList
 
 {-
-Essa função retorna o dashboard da clinica.
+Esta função retorna o dashboard da clinica.
 @param idC: id da clinica
 @param medicos: lista de medicos cadastrados
 @return o dashboard da clinica
@@ -99,7 +125,7 @@ showLista :: Show a => [a] -> String
 showLista = concatMap (\x -> show x ++ "\n")
 
 {-
-Essa função retorna o ID da clinica dado o seu nome.
+Esta função retorna o ID da clinica dado o seu nome.
 @param name: nome da clinica
 @param clinicas: lista de clinicas cadastradas
 @return o ID da clinica
@@ -109,3 +135,47 @@ getClinicaId name clinicas =
     case find (\clinica -> Clinica.nome clinica == name) clinicas of
         Just clinica -> Clinica.id clinica
         Nothing -> error "clinica not found"
+
+{-
+Esta função verifica se o Id da clínica está correto.
+@param idC: id da clínica
+@param clinica: lista de clínica
+@return True se existir, False se não
+-}
+validaClinica :: Int -> [Clinica.Clinica] -> Bool
+validaClinica _ [] = False
+validaClinica idC (c:cs)
+    | idC == Clinica.id c = True
+    | otherwise = validaClinica idC cs
+
+{-
+Esta função verifica se existe exame com o id dado
+@param idExame: id do exame
+@param exames: lista dos exames
+@return True se existir, False se não
+-}
+validaIDExame :: Int -> [Exame.Exame] -> Bool
+validaIDExame _ [] = False
+validaIDExame idExame (x:xs) | idExame == (Exame.id x) = True
+                             | otherwise = validaIDExame idExame xs
+
+{-
+Esta função verifica se existe receita com o id dado
+@param idReceita: id do receita
+@param receitas: lista dos Receitas
+@return True se existir, False se não
+-}
+validaIDReceita :: Int -> [Receita.Receita] -> Bool
+validaIDReceita _ [] = False
+validaIDReceita idReceita (x:xs) | idReceita == (Receita.id x) = True
+                                 | otherwise = validaIDReceita idReceita xs
+{-
+Esta função verifica se existe laudo com o Id dado
+@param idLaudo: id do laudo
+@param laudos: lista de laudos
+@return True se existir, False se não
+-}
+validaIDLaudo :: Int -> [Laudo.Laudo] -> Bool
+validaIDLaudo _ [] = False
+validaIDLaudo idLaudo (x:xs) | idLaudo == (Laudo.id x) = True
+                             | otherwise = validaIDLaudo idLaudo xs
