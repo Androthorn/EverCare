@@ -5,8 +5,8 @@ module Haskell.Controllers.MedicoController (
     emiteReceita,
     emiteLaudo,
     solicitaExame,
-    adicionaMedia,
-    atualizaMedias
+    atualizarMediaNotasMedico,
+    atualizaNumAvaliacoesMedico
 )where
 
 import qualified Haskell.Models.BD as BD
@@ -56,21 +56,23 @@ emiteLaudo id idMedico idPaciente texto = read (intercalate ";" ([show (id), sho
 solicitaExame :: Int -> Int -> Int -> String -> String -> Exame.Exame
 solicitaExame id idMedico idPaciente tipo dia = Exame.Exame id idPaciente idMedico tipo dia
 
-atualizaMedias :: [Avaliacao.Avaliacao] -> [Medico.Medico] -> [Medico.Medico]
-atualizaMedias avaliacoes medicos = map (\medico -> adicionaMedia (Medico.id medico) avaliacoes medicos) medicos
+-- Função para atualizar a média de notas de um médico
+atualizarMediaNotasMedico :: Int -> Float -> [Medico.Medico] -> [Medico.Medico]
+atualizarMediaNotasMedico _ _ [] = []
+atualizarMediaNotasMedico idMed novaNota (medico:medicos)
+  | idMed == Medico.id medico = novoMedico : atualizarMediaNotasMedico idMed novaNota medicos
+  | otherwise = medico : atualizarMediaNotasMedico idMed novaNota medicos
+  where
+    numAvaliacoes = fromIntegral (Medico.numAvaliacoes medico)
+    notaAntiga = Medico.nota medico
+    novaMedia = (notaAntiga * numAvaliacoes + novaNota) / (numAvaliacoes + 1)
+    novoMedico = medico { Medico.nota = novaMedia }
 
 
-adicionaMedia :: Int -> [Avaliacao.Avaliacao] -> [Medico.Medico] -> Medico.Medico
-adicionaMedia idMedico avaliacoes medicos = 
-    let media = mediaNotas idMedico avaliacoes
-        medico = find (\medicoM -> Medico.id medicoM == idMedico) medicos
-    in case medico of
-        Just medico -> medico {Medico.nota = media}
-        Nothing -> error "médico not found"
-
-mediaNotas :: Int -> [Avaliacao.Avaliacao] -> Float
-mediaNotas _ [] = 0
-mediaNotas idMedico avaliacoes = 
-    let avaliacoesM = filter (\avaliacao -> Avaliacao.idMed avaliacao == idMedico) avaliacoes
-        notas = map (\avaliacao -> Avaliacao.nota avaliacao) avaliacoesM
-    in (fromIntegral (sum notas)) / (fromIntegral (length notas))
+atualizaNumAvaliacoesMedico :: Int -> [Medico.Medico] -> [Medico.Medico]
+atualizaNumAvaliacoesMedico _ [] = []
+atualizaNumAvaliacoesMedico idMed (medico:medicos)
+  | idMed == Medico.id medico = novoMedico : atualizaNumAvaliacoesMedico idMed medicos
+  | otherwise = medico : atualizaNumAvaliacoesMedico idMed medicos
+  where
+    novoMedico = medico { Medico.numAvaliacoes = Medico.numAvaliacoes medico + 1 }

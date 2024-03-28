@@ -13,6 +13,7 @@ data Medico = Medico {
     especialidade :: String,
     horarios :: String, 
     senha :: String,
+    numAvaliacoes :: Int,
     nota :: Float
 }
 
@@ -28,10 +29,11 @@ toString m = show (clinica m) ++ ";" ++
 
 instance Show Medico where
     show :: Medico -> String
-    show (Medico clinica id nome crm esp horario _ _) =  "----------------------------\n" ++
+    show (Medico clinica id nome crm nota esp horario _ _) =  "----------------------------\n" ++
                                             "Médico " ++ (show id) ++ "\n" ++
                                             "Nome: " ++ nome ++ "\n" ++
                                             "CRM: " ++ crm ++ "\n" ++
+                                            "Nota: " ++ (show nota) ++ "\n" ++
                                             "Clínica: " ++ (show clinica) ++ "\n" ++
                                             "Especialidade: " ++ esp ++ "\n" ++
                                             "Horários de Atendimento: " ++ horario ++ "\n" ++
@@ -48,4 +50,5 @@ instance Read Medico where
         let horarios = if (length medico == 8) then medico !! 5 else ""
         let senha = if (length medico == 8) then medico !! 6 else ""
         let nota = if (length medico == 8) then read (medico !! 7) :: Float else -1.0
-        [(Medico clinica id nome crm especialidade horarios senha nota, "")]
+        let numAvaliacoes = if (length medico == 8) then 0 else read (medico !! 5) :: Int
+        [(Medico clinica id nome crm especialidade horarios senha numAvaliacoes nota, "")]

@@ -143,7 +143,6 @@ menuPaciente idPac dados = do
 
     else if toUpper (head op) == 'A' then do
         cadastraAvaliacao idPac dados
-        
 
     else if toUpper (head op) == 'S' then do
         inicial dados
@@ -163,10 +162,9 @@ cadastraAvaliacao idPac dados = do
     dadosAval <- leituraDadosAvaliacao
     let idAvaliacao = BD.idAtualAvaliacao dados
     let idMed = read (head dadosAval) :: Int
-    let nota = read (dadosAval !! 1) :: Int
+    let novaNota = read (dadosAval !! 1) :: Float
     let texto = last dadosAval
-
-    let avaliacao = Avaliacao.Avaliacao idAvaliacao idPac idMed nota texto
+    let avaliacao = Avaliacao.Avaliacao idAvaliacao idPac idMed novaNota texto
     putStrLn ("Avaliação cadastrada com sucesso!")
     threadDelay 2000000
 
@@ -175,9 +173,10 @@ cadastraAvaliacao idPac dados = do
     let formattedTime = formatTime defaultTimeLocale "%d-%m-%Y %H:%M:%S" (utcToZonedTime timeZoneBR currentTime)
 
     BD.escreveNoArquivo "Haskell/Persistence/avaliacoes.txt" (Avaliacao.toString avaliacao ++ ";" ++ formattedTime)
-    let random = MControl.adicionaMedia idMed avaliacoes (BD.medicos dados)
-    menuPaciente idPac dados  { BD.avaliacoes = avaliacoes ++ [avaliacao],
-                                BD.idAtualAvaliacao = (BD.idAtualAvaliacao dados) + 1 }
+    
+    let medicosAtualizados1 = MControl.atualizaNumAvaliacoesMedico idMed (BD.medicos dados)
+    let medicosAtualizados2 = MControl.atualizaMediaNotasMedico idMed novaNota medicosAtualizados1
+    
 
 chatsPac :: Int -> BD.BD -> IO()
 chatsPac idPac dados = do
