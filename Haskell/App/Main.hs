@@ -138,7 +138,6 @@ menuPaciente idPac dados = do
 
     else if toUpper (head op) == 'R' then do
         verPosConsulta idPac dados
-    -- | opção Receitas / Laudos / Solicitações de Exames
 
     else if toUpper (head op) == 'A' then do
         cadastraAvaliacao idPac dados
@@ -198,7 +197,9 @@ visualizaTodosChatsPac :: Int -> BD.BD -> IO()
 visualizaTodosChatsPac idPac dados = do
     limpaTela
     putStrLn (tituloI "CHATS DO PACIENTE")
-    imprime (ChatControl.verChatsPaciente idPac (BD.chats dados) (BD.medicos dados))
+    imprime(BD.chats dados)
+    threadDelay 30000000
+    putStrLn (ChatControl.verChatsPaciente idPac (BD.chats dados) (BD.medicos dados))
     prompt "Pressione Enter para voltar"
     menuPaciente idPac dados
 
@@ -209,9 +210,9 @@ abrirConversaPac idPac dados = do
     idChatStr <- prompt "Id do Chat >"
     let idChat = read idChatStr :: Int
     putStrLn (ChatControl.verChatEspecifico idChat (BD.chats dados))
-    op <- prompt "[R]esponder ou [S]air > "
+    op <- prompt "[E]nviar Mensagem ou [S]air > "
 
-    if toUpper (head op) == 'R' then do
+    if toUpper (head op) == 'E' then do
         mensagem <- prompt "Mensagem > "
         adicionarMensagemAoChat idChat ("P: " ++ mensagem) dados
     
@@ -221,14 +222,18 @@ abrirConversaPac idPac dados = do
     else do
         putStrLn "Opção inválida"
         abrirConversaPac idPac dados
+
     menuPaciente idPac dados
 
 adicionarMensagemAoChat :: Int -> String -> BD.BD -> IO ()
 adicionarMensagemAoChat chatId novaMensagem dados = do
     let chatsAtualizados = map (\chat -> if chatId == Chat.id chat then adicionarMensagem chat novaMensagem else chat) (BD.chats dados)
     let bdAtualizado = dados { BD.chats = chatsAtualizados }
-    threadDelay 5000000
-    BD.escreveNoArquivo "Haskell/Persistence/chats.txt" (BD.chatsToString (BD.chats bdAtualizado))
+    imprime(BD.chats dados)
+    threadDelay 10000000
+    BD.limpaArquivo "Haskell/Persistence/chats.txt"
+    BD.escreveNoArquivoSemContra "Haskell/Persistence/chats.txt" (BD.chatsToString (BD.chats bdAtualizado))
+    
 
 -- Função para adicionar uma mensagem a um chat
 adicionarMensagem :: Chat.Chat -> String -> Chat.Chat
@@ -591,10 +596,84 @@ menuMedico idM dados = do
         emitirM idM dados
     else if toUpper (head op) == 'S' then do
         inicial dados
-
+    else if toUpper (head op) == 'C' then do
+        chatsMed idM dados
     else do
         putStrLn "Opção inválida"
         menuMedico idM dados
+
+chatsMed :: Int -> BD.BD -> IO()
+chatsMed idMed dados = do
+    limpaTela
+    putStrLn (tituloI "CHAT MÉDICO")
+    putStrLn (chatM)
+    op <- prompt "Opção > "
+
+    if toUpper (head op) == 'C' then do
+        criarChatM idMed dados
+
+    else if toUpper (head op) == 'V' then do
+        visualizaTodosChatsMed idMed dados
+
+    else if toUpper (head op) == 'A' then do
+        abrirConversaMed idMed dados
+
+    else if toUpper (head op) == 'S' then do
+        menuMedico idMed dados
+
+    else do
+        putStrLn "Opção inválida"
+        chatsMed idMed dados
+
+criarChatM :: Int -> BD.BD -> IO()
+criarChatM idMed dados = do
+    limpaTela
+    putStrLn (tituloI "MANDAR MENSAGEM")
+    nomePac <- prompt "Nome do Paciente > "
+    mensagem <- prompt "Mensagem > "
+
+    putStrLn ("Mensagem enviada com sucesso! O id do chat é: " ++ (show (BD.idAtualChat dados)))
+    threadDelay 2000000
+
+    let idPaciente = (PControl.getPacienteId nomePac (BD.pacientes dados))
+    let chat = ChatControl.criarChat (BD.idAtualChat dados) idPaciente idMed ("M: " ++ mensagem)
+    
+    BD.escreveNoArquivo "Haskell/Persistence/chats.txt" (Chat.toString chat)
+    menuMedico idMed dados { BD.chats = (BD.chats dados) ++ [chat],
+                          BD.idAtualChat = (BD.idAtualChat dados) + 1 }
+
+
+visualizaTodosChatsMed :: Int -> BD.BD -> IO()
+visualizaTodosChatsMed idMed dados = do
+    limpaTela
+    putStrLn (tituloI "CHATS DO MÉDICO")
+    imprime(BD.chats dados)
+    threadDelay 20000000
+    putStrLn (ChatControl.verChatsMedico idMed (BD.chats dados) (BD.pacientes dados))
+    prompt "Pressione Enter para voltar"
+    menuMedico idMed dados
+
+abrirConversaMed :: Int -> BD.BD -> IO()
+abrirConversaMed idMed dados = do
+    limpaTela
+    putStrLn (tituloI "CHAT MÉDICO")
+    idChatStr <- prompt "Id do Chat >"
+    let idChat = read idChatStr :: Int
+    putStrLn (ChatControl.verChatEspecifico idChat (BD.chats dados))
+    op <- prompt "[E]nviar Mensagem ou [S]air > "
+
+    if toUpper (head op) == 'E' then do
+        mensagem <- prompt "Mensagem > "
+        adicionarMensagemAoChat idChat ("M: " ++ mensagem) dados
+    
+    else if toUpper (head op) == 'S' then do
+        menuPaciente idMed dados
+
+    else do
+        putStrLn "Opção inválida"
+        abrirConversaMed idMed dados
+
+    menuMedico idMed dados
 
 emitirM :: Int  -> BD.BD -> IO()
 emitirM idM dados = do

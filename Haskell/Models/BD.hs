@@ -83,6 +83,15 @@ novoBanco = do
         }
     return bd
 
+escreveNoArquivoSemContra :: FilePath -> String -> IO ()
+escreveNoArquivoSemContra path conteudo = do
+    appendFile path conteudo
+
+limpaArquivo :: FilePath -> IO ()
+limpaArquivo path = do
+    h <- openFile path WriteMode
+    hClose h
+
 uploadChats :: FilePath -> IO [Chat.Chat]
 uploadChats path = do
     h <- openFile path ReadMode     

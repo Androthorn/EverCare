@@ -136,7 +136,14 @@ leituraDadosMedico = do
 dashboardMedico :: String
 dashboardMedico = " [V] - Ver Agendamentos\n"
                 ++" [E] - Emitir\n"
+                ++" [C] - Chats\n"
                 ++" [S] - Sair\n"
+
+chatM :: String
+chatM = " [C] - Criar Chat com Paciente\n"
+      ++" [V] - Ver Chats Ativos\n"
+      ++" [A] - Abrir conversa\n"
+      ++" [S] - Sair\n"
 
 emissaoMedico :: String
 emissaoMedico = " [R] - Receita\n"

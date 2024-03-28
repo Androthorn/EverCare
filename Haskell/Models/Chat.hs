@@ -22,7 +22,7 @@ toString c =
     show (id c) ++ ";" ++
     show (idPaciente c) ++ ";" ++
     show (idMedico c) ++ ";" ++
-    (intercalate "/" (mensagens c))
+    (intercalate "," (mensagens c))
 
 instance Show Chat where
     show (Chat id idP idM m) = "----------------------------\n" ++
