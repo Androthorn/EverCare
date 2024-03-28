@@ -10,7 +10,8 @@ module Haskell.Controllers.PacienteController (
     filtrarClinicasPorAgendamento,
     filtrarOpcoes,
     consultarLaudo,
-    consultarReceita
+    consultarReceita,
+    validaIDPaciente
     
 ) where
 
@@ -101,8 +102,7 @@ filtrarMedicoPorSintoma sintoma medicos =
     | otherwise = putStrLn "Não foi possível achar médicos para este sintoma"
 
 
-{-
-Essa função filtra uma lista de laudos com base no id do paciente.
+{-Essa função filtra uma lista de laudos com base no id do paciente.
 @param idPaciente: O id do paciente que se deseja encontrar nos laudos.
 @param laudos: Uma lista de laudos que será filtrada.
 @return Uma lista de laudos que possuem o id do paciente desejado.
@@ -112,8 +112,7 @@ consultarLaudo _ [] = []
 consultarLaudo idPaciente laudos = filter (\laudo -> Laudo.id laudo == idPaciente) laudos
 
 
-{-
-Essa função filtra uma lista de receitas com base no id do paciente.
+{-Essa função filtra uma lista de receitas com base no id do paciente.
 @param idPaciente: O id do paciente que se deseja encontrar nas receitas.
 @param receitas: Uma lista de receitas que será filtrada.
 @return Uma lista de receitas que possuem o id do paciente desejado.
@@ -121,4 +120,15 @@ Essa função filtra uma lista de receitas com base no id do paciente.
 consultarReceita :: Int -> [Receita.Receita] -> [Receita.Receita]
 consultarReceita _ [] = []
 consultarReceita idPaciente receita = filter (\receita -> Receita.idPaciente receita == idPaciente) receita
+
+{-Essa função verifica se existe algum paciente com o id recebido.
+@param idP: id do paciente
+@param pacientes: lista dos pacientes
+@return True se existir, False se não
+-}
+
+validaIdPaciente :: Int -> [Paciente.Paciente]-> Bool
+validaIDPaciente _ [] = False
+validaIDPaciente idPac (x:xs) | idP == (Paciente.id x) = True
+                              | otherwise = validaIDPaciente idP xs
 
