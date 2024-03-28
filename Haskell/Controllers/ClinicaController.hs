@@ -1,6 +1,8 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Avoid lambda" #-}
 {-# HLINT ignore "Avoid lambda using `infix`" #-}
+{-# HLINT ignore "Redundant bracket" #-}
+{-# HLINT ignore "Use Down" #-}
 module Haskell.Controllers.ClinicaController(
     criaClinica,
     criaMedico,
@@ -12,14 +14,16 @@ module Haskell.Controllers.ClinicaController(
     verConsultas
 ) where
 
-import Data.List (intercalate, find, nub)
+import Data.List (intercalate, find, nub, sortBy)
 import qualified Haskell.Models.Clinica as Clinica
 import qualified Haskell.Models.Medico as Medico
 import qualified Haskell.Models.Paciente as Paciente
 import Haskell.Models.Consulta (Consulta)
 import qualified Haskell.Models.Consulta as Consulta
 import qualified Haskell.Controllers.PacienteController as PControl
+import qualified Haskell.Controllers.MedicoController as MControl
 import Haskell.App.Util (leituraDadosClinica)
+import Data.Ord (comparing)
 
 {-
 Cria um clinica.
@@ -79,24 +83,41 @@ Essa função retorna o dashboard da clinica.
 @return o dashboard da clinica
 -}
 
-dashboardC :: Int -> [Medico.Medico] -> [Consulta.Consulta] -> String
-dashboardC idC medicos consultas =
+dashboardC :: Int -> [Medico.Medico] -> [Consulta.Consulta] -> [Clinica.Clinica]-> String
+dashboardC idC medicos consultas clinicas =
     --Poderia ter o nome da clinica (virginia)
     let medicoContagem = length (filter (\medico -> Medico.clinica medico == idC) medicos)
         consultasContagem = length (filter (\consulta -> Consulta.idClinica consulta == idC) consultas)
         pacientesContagem = length (nub $ map Consulta.idPaciente consultas)
+
     in
     "----------------------------\n" ++
-    "DASHBOARD DA CLÍNICA\n" ++
+    "DASHBOARD DA CLÍNICA: " ++ (getClinicaName idC clinicas) ++ "\n\n" ++
     "Quantidade de Médicos: " ++ show medicoContagem ++
     "\nQuantidade de Consultas: " ++ show consultasContagem ++
     "\nQuantidade de Pacientes: " ++ show pacientesContagem ++
-    "\n---------------------------\n"
-    
+    "\n---------------------------\n\n" ++
+    "----------------------------\n" ++
+    "Ranking de Médicos: \n" ++
+    showLista (rankingMedicosPorNota idC clinicas medicos) ++
+    "----------------------------\n"
 
+
+
+rankingMedicosPorNota :: Int -> [Clinica.Clinica] -> [Medico.Medico] -> [Medico.Medico]
+rankingMedicosPorNota idClinica clinicas medicos =
+    let medicosDaClinica = filter (\medico -> Medico.clinica medico == idClinica) medicos
+        medicosOrdenados = sortBy (flip $ comparing Medico.nota) medicosDaClinica
+    in medicosOrdenados
 
 showLista :: Show a => [a] -> String
 showLista = concatMap (\x -> show x ++ "\n")
+
+getClinicaName :: Int -> [Clinica.Clinica] -> String
+getClinicaName idC clinicas = 
+    case find (\clinica -> Clinica.id clinica == idC) clinicas of
+        Just clinica -> Clinica.nome clinica
+        Nothing -> error "clinica not found"
 
 {-
 Essa função retorna o ID da clinica dado o seu nome.

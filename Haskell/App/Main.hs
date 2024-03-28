@@ -123,6 +123,7 @@ menuPaciente idPac dados = do
     limpaTela
     putStrLn (tituloI "DASHBOARD PACIENTE")
     putStrLn (dashboardPaciente)
+    let random = MControl.atualizaMedias (BD.avaliacoes dados) (BD.medicos dados)
     op <- prompt "Opção > "
 
     if toUpper (head op) == 'B' then do
@@ -142,6 +143,7 @@ menuPaciente idPac dados = do
 
     else if toUpper (head op) == 'A' then do
         cadastraAvaliacao idPac dados
+        
 
     else if toUpper (head op) == 'S' then do
         inicial dados
@@ -173,7 +175,7 @@ cadastraAvaliacao idPac dados = do
     let formattedTime = formatTime defaultTimeLocale "%d-%m-%Y %H:%M:%S" (utcToZonedTime timeZoneBR currentTime)
 
     BD.escreveNoArquivo "Haskell/Persistence/avaliacoes.txt" (Avaliacao.toString avaliacao ++ ";" ++ formattedTime)
-
+    let random = MControl.adicionaMedia idMed avaliacoes (BD.medicos dados)
     menuPaciente idPac dados  { BD.avaliacoes = avaliacoes ++ [avaliacao],
                                 BD.idAtualAvaliacao = (BD.idAtualAvaliacao dados) + 1 }
 
@@ -462,6 +464,8 @@ menuClinica idC dados = do
     limpaTela
     putStrLn (tituloI "DASHBOARD CLÍNICA")
     putStrLn (dashboardClinica)
+    let random = MControl.atualizaMedias (BD.avaliacoes dados) (BD.medicos dados)
+
     op <- prompt "Opção > "
 
     if toUpper (head op) == 'C' then do
@@ -484,7 +488,7 @@ dashBoardC :: Int -> BD.BD -> IO()
 dashBoardC idC dados = do
     limpaTela
     putStrLn (tituloI "DASHBOARD CLÍNICA")
-    putStrLn (CControl.dashboardC idC (BD.medicos dados) (BD.consultas dados))
+    putStrLn (CControl.dashboardC idC (BD.medicos dados) (BD.consultas dados) (BD.clinicas dados))
     prompt "Pressione Enter para voltar"
     menuClinica idC dados
 
@@ -540,7 +544,7 @@ cadastraMedico idClinica dados = do
     limpaTela
     putStrLn (tituloI "CADASTRO DE MÉDICO")
     dadosM <- leituraDadosMedico
-
+    dadosM <- return (dadosM ++ ["-1"])
     putStrLn ("Médico cadastrado com sucesso! O id é: " ++ (show (BD.idAtualMedico dados)))
 
     let medico = CControl.criaMedico idClinica (BD.idAtualMedico dados) dadosM
@@ -593,6 +597,7 @@ menuMedico idM dados = do
     limpaTela
     putStrLn (tituloI "DASHBOARD MÉDICO")
     putStrLn (dashboardMedico)
+    let random = MControl.atualizaMedias (BD.avaliacoes dados) (BD.medicos dados)
     op <- prompt "Opção > "
 
     if toUpper (head op) == 'V' then do
@@ -673,7 +678,7 @@ abrirConversaMed idMed dados = do
         adicionarMensagemAoChat idChat ("M: " ++ mensagem) dados
     
     else if toUpper (head op) == 'S' then do
-        menuPaciente idMed dados
+        menuMedico idMed dados
 
     else do
         putStrLn "Opção inválida"
