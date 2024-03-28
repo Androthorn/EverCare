@@ -123,7 +123,7 @@ menuPaciente idPac dados = do
     limpaTela
     putStrLn (tituloI "DASHBOARD PACIENTE")
     putStrLn (dashboardPaciente)
-    let random = MControl.atualizaMedias (BD.avaliacoes dados) (BD.medicos dados)
+    -- let random = MControl.atualizaMedias dados
     op <- prompt "Opção > "
 
     if toUpper (head op) == 'B' then do
@@ -143,7 +143,8 @@ menuPaciente idPac dados = do
 
     else if toUpper (head op) == 'A' then do
         cadastraAvaliacao idPac dados
-        
+        -- MControl.atualizaMedias dados
+        menuPaciente idPac dados
 
     else if toUpper (head op) == 'S' then do
         inicial dados
@@ -175,7 +176,9 @@ cadastraAvaliacao idPac dados = do
     let formattedTime = formatTime defaultTimeLocale "%d-%m-%Y %H:%M:%S" (utcToZonedTime timeZoneBR currentTime)
 
     BD.escreveNoArquivo "Haskell/Persistence/avaliacoes.txt" (Avaliacao.toString avaliacao ++ ";" ++ formattedTime)
-    let random = MControl.adicionaMedia idMed avaliacoes (BD.medicos dados)
+    -- let random = MControl.adicionaMedia idMed avaliacoes (BD.medicos dados)
+    -- let medico = MControl.getMedico idMed (BD.medicos dados)
+    -- let sla = medico { Medico.nota = nota}
     menuPaciente idPac dados  { BD.avaliacoes = avaliacoes ++ [avaliacao],
                                 BD.idAtualAvaliacao = (BD.idAtualAvaliacao dados) + 1 }
 
@@ -464,7 +467,7 @@ menuClinica idC dados = do
     limpaTela
     putStrLn (tituloI "DASHBOARD CLÍNICA")
     putStrLn (dashboardClinica)
-    let random = MControl.atualizaMedias (BD.avaliacoes dados) (BD.medicos dados)
+    -- let random = MControl.atualizaMedias dados
 
     op <- prompt "Opção > "
 
@@ -597,7 +600,7 @@ menuMedico idM dados = do
     limpaTela
     putStrLn (tituloI "DASHBOARD MÉDICO")
     putStrLn (dashboardMedico)
-    let random = MControl.atualizaMedias (BD.avaliacoes dados) (BD.medicos dados)
+    -- let random = MControl.atualizaMedias dados
     op <- prompt "Opção > "
 
     if toUpper (head op) == 'V' then do

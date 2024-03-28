@@ -13,7 +13,7 @@ data Medico = Medico {
     especialidade :: String,
     horarios :: String, 
     senha :: String,
-    nota :: Float
+    nota :: Int
 }
 
 toString :: Medico -> String
@@ -47,5 +47,5 @@ instance Read Medico where
         let especialidade = medico !! 4
         let horarios = if (length medico == 8) then medico !! 5 else ""
         let senha = if (length medico == 8) then medico !! 6 else ""
-        let nota = if (length medico == 8) then read (medico !! 7) :: Float else -1.0
+        let nota = if (length medico == 8) then read (medico !! 7) :: Int else -1
         [(Medico clinica id nome crm especialidade horarios senha nota, "")]

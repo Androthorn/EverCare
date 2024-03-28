@@ -5,8 +5,9 @@ module Haskell.Controllers.MedicoController (
     emiteReceita,
     emiteLaudo,
     solicitaExame,
-    adicionaMedia,
-    atualizaMedias
+    -- adicionaMedia,
+    -- atualizaMedias,
+    getMedico
 )where
 
 import qualified Haskell.Models.BD as BD
@@ -34,6 +35,13 @@ getMedicoId name medicos =
         Just medico -> Medico.id medico
         Nothing -> error "médico not found"
 
+getMedico :: Int -> [Medico.Medico] -> Medico.Medico
+getMedico idMedico medicos = 
+    case find (\medico -> Medico.id medico == idMedico) medicos of
+        Just medico -> medico
+        Nothing -> error "médico not found"
+
+
 getIdMedico :: Int -> [Medico.Medico] -> String
 getIdMedico idMedico medicos = 
     case find (\medico -> Medico.id medico == idMedico) medicos of
@@ -56,17 +64,23 @@ emiteLaudo id idMedico idPaciente texto = read (intercalate ";" ([show (id), sho
 solicitaExame :: Int -> Int -> Int -> String -> String -> Exame.Exame
 solicitaExame id idMedico idPaciente tipo dia = Exame.Exame id idPaciente idMedico tipo dia
 
-atualizaMedias :: [Avaliacao.Avaliacao] -> [Medico.Medico] -> [Medico.Medico]
-atualizaMedias avaliacoes medicos = map (\medico -> adicionaMedia (Medico.id medico) avaliacoes medicos) medicos
+-- atualizaMedias :: BD.BD -> IO [Medico.Medico]
+-- atualizaMedias dados = do
+--     let medicos = BD.medicos dados
+--         avaliacoes = BD.avaliacoes dados
+--         medicosAtualizados = map (\medico -> adicionaMedia (Medico.id medico) avaliacoes medicos) medicos
+--         bdAtualizado = dados { BD.medicos = medicosAtualizados }
+--     BD.limpaArquivo "Haskell/Persistence/medicos.txt"
+--     BD.escreveNoArquivoSemContra "Haskell/Persistence/medicos.txt" (BD.medicosToString (BD.medicos bdAtualizado) "")
+--     return medicosAtualizados 
 
-
-adicionaMedia :: Int -> [Avaliacao.Avaliacao] -> [Medico.Medico] -> Medico.Medico
-adicionaMedia idMedico avaliacoes medicos = 
-    let media = mediaNotas idMedico avaliacoes
-        medico = find (\medicoM -> Medico.id medicoM == idMedico) medicos
-    in case medico of
-        Just medico -> medico {Medico.nota = media}
-        Nothing -> error "médico not found"
+-- adicionaMedia :: Int -> [Avaliacao.Avaliacao] -> [Medico.Medico] -> Medico.Medico
+-- adicionaMedia idMedico avaliacoes medicos = 
+--     let media = mediaNotas idMedico avaliacoes
+--         medico = find (\medicoM -> Medico.id medicoM == idMedico) medicos
+--     in case medico of
+--         Just medico -> medico {Medico.nota = media}
+--         Nothing -> error "médico not found"
 
 mediaNotas :: Int -> [Avaliacao.Avaliacao] -> Float
 mediaNotas _ [] = 0
