@@ -162,7 +162,7 @@ cadastraAvaliacao idPac dados = do
     dadosAval <- leituraDadosAvaliacao
     let idAvaliacao = BD.idAtualAvaliacao dados
     let idMed = read (head dadosAval) :: Int
-    let novaNota = read (dadosAval !! 1) :: Float
+    let novaNota = read (dadosAval !! 1) :: Int
     let texto = last dadosAval
     let avaliacao = Avaliacao.Avaliacao idAvaliacao idPac idMed novaNota texto
     putStrLn ("Avaliação cadastrada com sucesso!")
@@ -172,11 +172,16 @@ cadastraAvaliacao idPac dados = do
     currentTime <- getCurrentTime
     let formattedTime = formatTime defaultTimeLocale "%d-%m-%Y %H:%M:%S" (utcToZonedTime timeZoneBR currentTime)
 
+    let medicosAtualizados = atualizaBDMedicos idMed novaNota dados
+
     BD.escreveNoArquivo "Haskell/Persistence/avaliacoes.txt" (Avaliacao.toString avaliacao ++ ";" ++ formattedTime)
     
-    let medicosAtualizados1 = MControl.atualizaNumAvaliacoesMedico idMed (BD.medicos dados)
-    let medicosAtualizados2 = MControl.atualizaMediaNotasMedico idMed novaNota medicosAtualizados1
     
+atualizaBDMedicos :: Int -> Int -> BD.BD -> BD.BD
+atualizaBDMedicos idMed novaNota dados =
+    let medicosAtualizados1 = MControl.atualizaNumAvaliacoesMedico idMed (BD.medicos dados)
+        medicosAtualizados2 = MControl.atualizaMediaNotasMedico idMed novaNota medicosAtualizados1
+    in dados { BD.medicos = medicosAtualizados2 }
 
 chatsPac :: Int -> BD.BD -> IO()
 chatsPac idPac dados = do

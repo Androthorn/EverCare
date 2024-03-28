@@ -56,8 +56,8 @@ emiteLaudo id idMedico idPaciente texto = read (intercalate ";" ([show (id), sho
 solicitaExame :: Int -> Int -> Int -> String -> String -> Exame.Exame
 solicitaExame id idMedico idPaciente tipo dia = Exame.Exame id idPaciente idMedico tipo dia
 
--- Função para atualizar a média de notas de um médico
-atualizarMediaNotasMedico :: Int -> Float -> [Medico.Medico] -> [Medico.Medico]
+
+atualizarMediaNotasMedico :: Int -> Int -> [Medico.Medico] -> [Medico.Medico]
 atualizarMediaNotasMedico _ _ [] = []
 atualizarMediaNotasMedico idMed novaNota (medico:medicos)
   | idMed == Medico.id medico = novoMedico : atualizarMediaNotasMedico idMed novaNota medicos
