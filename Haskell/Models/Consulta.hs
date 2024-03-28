@@ -36,7 +36,7 @@ instance Show Consulta where
                     "-------------------\n"
 
 instance Read Consulta where
-    readsPrec :: Int -> ReadS Consulta
+    
     readsPrec _ str = do
         let consulta = split str ';' ""
         let consultaId = read (consulta !! 0) :: Int

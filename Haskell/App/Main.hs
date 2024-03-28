@@ -29,7 +29,6 @@ import System.IO
 import System.Directory
 import System.Process (system)
 import Data.List (sort)
-import GHC.RTS.Flags (MiscFlags(disableDelayedOsMemoryReturn))
 import qualified Haskell.Controllers.ChatController as PControl
 import Haskell.Models.BD (BD(idAtualPaciente))
 import Haskell.Models.Avaliacao (Avaliacao(idPac))
