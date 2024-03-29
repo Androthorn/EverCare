@@ -17,6 +17,8 @@ import Data.Maybe (mapMaybe)
 import Distribution.Compat.CharParsing (CharParsing(string))
 import Control.Exception (evaluate)
 import Control.DeepSeq
+import Data.Char (toLower)
+import Data.List (isInfixOf)
 
 
 data BD = BD {
@@ -147,7 +149,10 @@ uploadClinicas path = do
 
 uploadMedicos :: FilePath -> IO [Medico.Medico]
 uploadMedicos path = do
-    conteudo <- readFile path
+    h <- openFile path ReadMode     
+    conteudo <- hGetContents h     
+    evaluate (rnf conteudo)     
+    hClose h 
     let linhas = lines conteudo
     let medicosList = stringToMedicos linhas
     return medicosList
@@ -258,3 +263,38 @@ horariosDisponiveis bd idMedico dia =
 
 consultasToHorarios :: [Consulta.Consulta] -> [String]
 consultasToHorarios consultas = map (\consulta -> Consulta.horario consulta) consultas
+
+filtraMedicosDaClinica :: BD -> Int -> [Medico.Medico]
+filtraMedicosDaClinica bd idClinica = filter (\medico -> Medico.clinica medico == idClinica) (medicos bd)
+
+filtraMedicoPorEspecialidade :: BD -> String ->[Medico.Medico]
+filtraMedicoPorEspecialidade bd especialidade = filter (\medico -> (map toLower $ Medico.especialidade medico) == (map toLower especialidade)) (medicos bd)
+
+filtraConsultasDoPaciente :: BD -> Int -> [Consulta.Consulta]
+filtraConsultasDoPaciente bd idPaciente = filter (\consulta -> Consulta.idPaciente consulta == idPaciente) (consultas bd)
+
+filtraConsultasDoMedico :: BD -> Int -> [Consulta.Consulta]
+filtraConsultasDoMedico bd idMedico = filter (\consulta -> Consulta.idMedico consulta == idMedico) (consultas bd)
+
+filtraConsultasDaClinica :: BD -> Int -> [Consulta.Consulta]
+filtraConsultasDaClinica bd idClinica = filter (\consulta -> Consulta.idClinica consulta == idClinica) (consultas bd)
+
+filtrarMedicoPorSintoma :: BD -> String -> [Medico.Medico]
+filtrarMedicoPorSintoma bd sint =
+    case map toLower sint of
+        sintoma | "dor nas costas" `isInfixOf` sintoma || "dor lombar" `isInfixOf` sintoma || "dor na mão" `isInfixOf` sintoma || "dor no pé" `isInfixOf` sintoma || "dor na ombro" `isInfixOf` sintoma -> filtraMedicoPorEspecialidade bd "Ortopedista"
+        sintoma | "enxaqueca" `isInfixOf` sintoma || "dor de cabeça" `isInfixOf` sintoma -> filtraMedicoPorEspecialidade bd "Neurologista"
+        sintoma | "dor de garganta" `isInfixOf` sintoma || "nariz entupido" `isInfixOf` sintoma || "sinusite" `isInfixOf` sintoma || "dor de ouvido" `isInfixOf` sintoma -> filtraMedicoPorEspecialidade bd "Otorrinolaingologista"
+        sintoma | "menstruação desrregulada" `isInfixOf` sintoma || "gravidez" `isInfixOf` sintoma || "cólica" `isInfixOf` sintoma -> filtraMedicoPorEspecialidade bd "Ginecologista"
+        sintoma | "espinhas" `isInfixOf` sintoma || "queda de cabelo" `isInfixOf` sintoma || "mancha na pele" `isInfixOf` sintoma -> filtraMedicoPorEspecialidade bd "Dermatologista"
+        sintoma | "desconforto abdominal" `isInfixOf` sintoma || "azia" `isInfixOf` sintoma || "gastrite" `isInfixOf` sintoma -> filtraMedicoPorEspecialidade bd "Gastroenterologia"
+        sintoma | "febre" `isInfixOf` sintoma || "tosse" `isInfixOf` sintoma || "resfriado" `isInfixOf` sintoma || "dor de garganta" `isInfixOf` sintoma -> filtraMedicoPorEspecialidade bd "Clínico Geral"
+        sintoma | "pressão alta" `isInfixOf` sintoma || "pressão baixa" `isInfixOf` sintoma -> filtraMedicoPorEspecialidade bd "Cardiologista" 
+        sintoma | "ansiedade" `isInfixOf` sintoma || "depressão" `isInfixOf` sintoma -> filtraMedicoPorEspecialidade bd "Psiquiatra"
+        sintoma | "visão embaçada" `isInfixOf` sintoma || "olho vermelho" `isInfixOf` sintoma || "coceira nos olhos" `isInfixOf` sintoma -> filtraMedicoPorEspecialidade bd "Oftalmologista"
+        sintoma | "queda de pressão" `isInfixOf` sintoma || "desmaio" `isInfixOf` sintoma -> filtraMedicoPorEspecialidade bd "Cardiologista"
+        sintoma | "dor nos rins" `isInfixOf` sintoma || "sangue na urina" `isInfixOf` sintoma || "dificuldade para urinar" `isInfixOf` sintoma -> filtraMedicoPorEspecialidade bd "Urologista"
+        sintoma | otherwise -> []
+
+    where
+        sintoma = map toLower sint
