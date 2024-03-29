@@ -4,7 +4,11 @@ module Haskell.Controllers.MedicoController (
     acessarConsultas,
     emiteReceita,
     emiteLaudo,
-    solicitaExame
+    solicitaExame,
+    -- atualizarMediaNotasMedico,
+    -- atualizaNumAvaliacoesMedico,
+    -- atualizaMedias,
+    adicionaMedia
 )where
 
 import qualified Haskell.Models.BD as BD
@@ -17,6 +21,7 @@ import qualified Haskell.Models.Receita as Laudo
 import qualified Haskell.Models.Exame as Exame
 import qualified Haskell.Models.Consulta as Consulta
 import qualified Haskell.Models.Laudo as Laudo
+import qualified Haskell.Models.Avaliacao as Avaliacao
 
 
 
@@ -54,4 +59,38 @@ emiteLaudo id idMedico idPaciente texto = read (intercalate ";" ([show (id), sho
 solicitaExame :: Int -> Int -> Int -> String -> String -> Exame.Exame
 solicitaExame id idMedico idPaciente tipo dia = Exame.Exame id idPaciente idMedico tipo dia
 
+-- atualizarMediaNotasMedico :: Int -> Float -> [Medico.Medico] -> [Medico.Medico]
+-- atualizarMediaNotasMedico _ _ [] = []
+-- atualizarMediaNotasMedico idMed novaNota (medico:medicos)
+--     | idMed == Medico.id medico = novoMedico : atualizarMediaNotasMedico idMed novaNota medicos
+--     | otherwise = medico : atualizarMediaNotasMedico idMed novaNota medicos
+--     where
+--         numAvaliacoes = fromIntegral (Medico.numAvaliacoes medico)
+--         notaAntiga = Medico.nota medico
+--         novaMedia = ((notaAntiga * numAvaliacoes) + novaNota) / (numAvaliacoes + 1)
+--         novoMedico = medico { Medico.nota = novaMedia }
 
+-- atualizaMedias :: BD.BD -> IO [Medico.Medico]
+-- atualizaMedias dados = do
+--     let medicos = BD.medicos dados
+--         avaliacoes = BD.avaliacoes dados
+--         medicosAtualizados = map (\medico -> adicionaMedia (Medico.id medico) avaliacoes medicos) medicos
+--         bdAtualizado = dados { BD.medicos = medicosAtualizados }
+--     BD.limpaArquivo "Haskell/Persistence/medicos.txt"
+--     BD.escreveNoArquivoSemContra "Haskell/Persistence/medicos.txt" (BD.medicosToString (BD.medicos bdAtualizado) "")
+--     return medicosAtualizados 
+
+adicionaMedia :: Int -> [Avaliacao.Avaliacao] -> [Medico.Medico] -> [Medico.Medico]
+adicionaMedia idMedico avaliacoes medicos = 
+    let media = mediaNotas idMedico avaliacoes
+        atualizarMedico m = if Medico.id m == idMedico
+                            then m { Medico.nota = media }
+                            else m
+    in map atualizarMedico medicos
+
+mediaNotas :: Int -> [Avaliacao.Avaliacao] -> Float
+mediaNotas _ [] = 0
+mediaNotas idMedico avaliacoes = 
+    let avaliacoesM = filter (\avaliacao -> Avaliacao.idMed avaliacao == idMedico) avaliacoes
+        notas = map (\avaliacao -> Avaliacao.nota avaliacao) avaliacoesM
+    in (fromIntegral (sum notas)) / (fromIntegral (length notas))

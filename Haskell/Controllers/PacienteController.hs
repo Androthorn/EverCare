@@ -11,6 +11,7 @@ module Haskell.Controllers.PacienteController (
     filtrarPorMedico,
     filtrarClinicasPorPlanoDeSaude,
     filtrarClinicasPorAgendamento,
+    filtrarMedicosPorAvaliacoes,
     consultarLaudo,
     consultarReceita,
     consultarAgendamento,
@@ -100,6 +101,16 @@ filtrarClinicasPorAgendamento :: String -> [Clinica.Clinica] -> [Clinica.Clinica
 filtrarClinicasPorAgendamento tipoAgendamentoDesejado clinicas =
     filter (\clinica -> Clinica.metodoAgendamento clinica == tipoAgendamentoDesejado) clinicas
 
+{-
+Essa função filtra uma lista de médicos que tem notas acima de um certo valor.
+@param valor: O valor mínimo da nota.
+@param medicos: A lista de médicos que será filtrada.
+@return A lista de médicos que possuem notas acima do valor mínimo.
+-}
+
+filtrarMedicosPorAvaliacoes :: Float -> [Medico.Medico] -> [Medico.Medico]
+filtrarMedicosPorAvaliacoes valor medicos = 
+    filter (\medico -> Medico.nota medico >= valor) medicos
 
 {-
 Essa função filtra uma lista de laudos com base no id do paciente.

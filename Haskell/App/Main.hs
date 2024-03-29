@@ -35,6 +35,7 @@ import Haskell.Models.Avaliacao (Avaliacao(idPac))
 import Data.Text.Internal.Read (IParser(P))
 import GHC.Base (VecElem(Int16ElemRep))
 import Text.Read (readMaybe)
+import Text.XHtml (menu, th)
 
 
 
@@ -209,13 +210,16 @@ buscar idPac dados = do
         prompt "Pressione Enter para voltar"
         menuPaciente idPac dados
     
-    {-
+    
     else if toUpper (head op) == 'A' then do
-        acima <- prompt "Avaliação acima de (0-10) > "
-        putStrLn (PControl.filtrarClinicasPorAvaliacao acima (BD.clinicas dados))
+        acimaStr <- prompt "Avaliação acima de (0-10) > "
+        let acimaValor = read acimaStr :: Float
+        let medicos = (PControl.filtrarMedicosPorAvaliacoes acimaValor (BD.medicos dados))
+        let avaliacoes = map Medico.toStringAval medicos
+        putStrLn (unlines avaliacoes)
         prompt "Pressione Enter para voltar"
         menuPaciente idPac dados
-    -}
+    
 
     else if toUpper (head op) == 'S' then do
         sintoma <- prompt "Descreva o que está sentindo > "
@@ -292,20 +296,45 @@ cadastraAvaliacao idPac dados = do
     let idAvaliacao = BD.idAtualAvaliacao dados
     let idMed = read (head dadosAval) :: Int
     let nota = read (dadosAval !! 1) :: Int
+    let notaFloat = fromIntegral nota
     let texto = last dadosAval
 
     let avaliacao = Avaliacao.Avaliacao idAvaliacao idPac idMed nota texto
-    putStrLn ("Avaliação cadastrada com sucesso!")
+    putStrLn ("Avaliação cadastrada com sucesso! O id da sua avaliação é: " ++ (show (BD.idAtualAvaliacao dados)))
     threadDelay 2000000
 
     timeZoneBR <- getCurrentTimeZone
     currentTime <- getCurrentTime
     let formattedTime = formatTime defaultTimeLocale "%d-%m-%Y %H:%M:%S" (utcToZonedTime timeZoneBR currentTime)
 
+    -- let bdMedicosAtualizados = atualizaBDMedicos idMed notaFloat dados
+    -- threadDelay 2000000
+    -- BD.limpaArquivo "Haskell/Persistence/medicos.txt"
+    -- threadDelay 2000000
+    -- BD.escreveNoArquivoSemContra "Haskell/Persistence/medicos.txt" (BD.medicosToString (BD.medicos bdMedicosAtualizados) "")
     BD.escreveNoArquivo "Haskell/Persistence/avaliacoes.txt" (Avaliacao.toString avaliacao ++ ";" ++ formattedTime)
 
-    menuPaciente idPac dados  { BD.avaliacoes = avaliacoes ++ [avaliacao],
+    let bdAtualizado = dados { BD.avaliacoes = avaliacoes ++ [avaliacao],
                                 BD.idAtualAvaliacao = (BD.idAtualAvaliacao dados) + 1 }
+    let bdMAtualizado = atualizaBDmedicos idMed bdAtualizado
+
+    BD.limpaArquivo "Haskell/Persistence/medicos.txt"
+    BD.escreveNoArquivoSemContra "Haskell/Persistence/medicos.txt" (BD.medicosToString (BD.medicos bdMAtualizado) "")
+
+    menuPaciente idPac bdMAtualizado
+
+atualizaBDmedicos :: Int -> BD.BD -> BD.BD
+atualizaBDmedicos idMed dados = do
+    let medicosAtualizados = MControl.adicionaMedia idMed (BD.avaliacoes dados) (BD.medicos dados)
+        bdAtualizado = dados { BD.medicos = medicosAtualizados }
+    bdAtualizado
+
+-- atualizaBDMedicos :: Int -> Float -> BD.BD -> BD.BD
+-- atualizaBDMedicos idMed novaNota dados = do
+--     let medicosAtualizados1 = MControl.atualizaNumAvaliacoesMedico idMed (BD.medicos dados)
+--         medicosAtualizados2 = MControl.atualizarMediaNotasMedico idMed novaNota medicosAtualizados1
+--         bdAtualizado = dados { BD.medicos = medicosAtualizados2 }
+--     bdAtualizado
 
 chatsPac :: Int -> BD.BD -> IO()
 chatsPac idPac dados = do
@@ -364,8 +393,8 @@ visualizaTodosChatsPac :: Int -> BD.BD -> IO()
 visualizaTodosChatsPac idPac dados = do
     limpaTela
     putStrLn (tituloI "CHATS DO PACIENTE")
-    imprime(BD.chats dados)
-    threadDelay 30000000
+    -- imprime(BD.chats dados)
+    -- threadDelay 30000000
     putStrLn (ChatControl.verChatsPaciente idPac (BD.chats dados) (BD.medicos dados))
     prompt "Pressione Enter para voltar"
     menuPaciente idPac dados
@@ -374,14 +403,17 @@ abrirConversaPac :: Int -> BD.BD -> IO()
 abrirConversaPac idPac dados = do
     limpaTela
     putStrLn (tituloI "CHAT PACIENTE")
-    idChatStr <- prompt "Id do Chat >"
+    idChatStr <- prompt "Id do Chat > "
     let idChat = read idChatStr :: Int
     putStrLn (ChatControl.verChatEspecifico idChat (BD.chats dados))
     op <- prompt "[E]nviar Mensagem ou [S]air > "
 
     if toUpper (head op) == 'E' then do
         mensagem <- prompt "Mensagem > "
-        adicionarMensagemAoChat idChat ("P: " ++ mensagem) dados
+        let dadosA = adicionarMensagemAoChat idChat ("P: " ++ mensagem) dados
+        BD.limpaArquivo "Haskell/Persistence/chats.txt"
+        BD.escreveNoArquivoSemContra "Haskell/Persistence/chats.txt" (BD.chatsToString (BD.chats dadosA))
+        menuPaciente idPac dadosA
     
     else if toUpper (head op) == 'S' then do
         menuPaciente idPac dados
@@ -392,15 +424,14 @@ abrirConversaPac idPac dados = do
 
     menuPaciente idPac dados
 
-adicionarMensagemAoChat :: Int -> String -> BD.BD -> IO ()
-adicionarMensagemAoChat chatId novaMensagem dados = do
+adicionarMensagemAoChat :: Int -> String -> BD.BD -> BD.BD
+adicionarMensagemAoChat chatId novaMensagem dados =
     let chatsAtualizados = map (\chat -> if chatId == Chat.id chat then adicionarMensagem chat novaMensagem else chat) (BD.chats dados)
-    let bdAtualizado = dados { BD.chats = chatsAtualizados }
-    imprime(BD.chats dados)
-    threadDelay 10000000
-    BD.limpaArquivo "Haskell/Persistence/chats.txt"
-    BD.escreveNoArquivoSemContra "Haskell/Persistence/chats.txt" (BD.chatsToString (BD.chats bdAtualizado))
-    
+        bdAtualizado = dados { BD.chats = chatsAtualizados }
+    -- imprime(BD.chats dados)
+    -- threadDelay 10000000
+    in do
+        bdAtualizado
 
 -- Função para adicionar uma mensagem a um chat
 adicionarMensagem :: Chat.Chat -> String -> Chat.Chat
@@ -723,8 +754,8 @@ visualizaTodosChatsMed :: Int -> BD.BD -> IO()
 visualizaTodosChatsMed idMed dados = do
     limpaTela
     putStrLn (tituloI "CHATS DO MÉDICO")
-    imprime(BD.chats dados)
-    threadDelay 20000000
+    -- imprime(BD.chats dados)
+    -- threadDelay 20000000
     putStrLn (ChatControl.verChatsMedico idMed (BD.chats dados) (BD.pacientes dados))
     prompt "Pressione Enter para voltar"
     menuMedico idMed dados
@@ -733,15 +764,18 @@ abrirConversaMed :: Int -> BD.BD -> IO()
 abrirConversaMed idMed dados = do
     limpaTela
     putStrLn (tituloI "CHAT MÉDICO")
-    idChatStr <- prompt "Id do Chat >"
+    idChatStr <- prompt "Id do Chat > "
     let idChat = read idChatStr :: Int
     putStrLn (ChatControl.verChatEspecifico idChat (BD.chats dados))
     op <- prompt "[E]nviar Mensagem ou [S]air > "
 
     if toUpper (head op) == 'E' then do
         mensagem <- prompt "Mensagem > "
-        adicionarMensagemAoChat idChat ("M: " ++ mensagem) dados
-    
+        let dadosA = adicionarMensagemAoChat idChat ("P: " ++ mensagem) dados
+        BD.limpaArquivo "Haskell/Persistence/chats.txt"
+        BD.escreveNoArquivoSemContra "Haskell/Persistence/chats.txt" (BD.chatsToString (BD.chats dadosA))
+        menuPaciente idMed dadosA
+
     else if toUpper (head op) == 'S' then do
         menuPaciente idMed dados
 

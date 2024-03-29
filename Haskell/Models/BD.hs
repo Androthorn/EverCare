@@ -149,7 +149,10 @@ uploadClinicas path = do
 
 uploadMedicos :: FilePath -> IO [Medico.Medico]
 uploadMedicos path = do
-    conteudo <- readFile path
+    h <- openFile path ReadMode     
+    conteudo <- hGetContents h     
+    evaluate (rnf conteudo)     
+    hClose h 
     let linhas = lines conteudo
     let medicosList = stringToMedicos linhas
     return medicosList
