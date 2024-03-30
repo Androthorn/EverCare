@@ -20,8 +20,9 @@ import qualified Haskell.Models.Laudo as Laudo
 import qualified Haskell.Models.Exame as Exame
 import qualified Haskell.Models.Chat as Chat
 import qualified Haskell.Models.Avaliacao as Avaliacao
-
+import qualified Haskell.Models.Fila as Fila
 import Data.Time
+import Data.List (elemIndex)
 import Data.Char ( toUpper )
 import Control.Concurrent (threadDelay)
 import Control.Monad.RWS.Lazy (MonadState(put))
@@ -36,6 +37,7 @@ import Data.Text.Internal.Read (IParser(P))
 import GHC.Base (VecElem(Int16ElemRep))
 import Text.Read (readMaybe)
 import Text.XHtml (menu, th)
+import Data.Maybe (fromJust)
 
 
 
@@ -150,7 +152,6 @@ menuPaciente idPac dados = do
 
     else if toUpper (head op) == 'A' then do
         cadastraAvaliacao idPac dados
-        -- MControl.atualizaMedias dados
         menuPaciente idPac dados
 
     else if toUpper (head op) == 'S' then do
@@ -159,9 +160,78 @@ menuPaciente idPac dados = do
     else if toUpper (head op) == 'C' then do
         chatsPac idPac dados
 
+    else if toUpper (head op) == 'F' then do
+        filaVirtualPac idPac dados
+
     else do
         putStrLn "Opção inválida"
         menuPaciente idPac dados
+
+filaVirtualPac :: Int -> BD.BD -> IO()
+filaVirtualPac idPac dados = do
+    limpaTela
+    putStrLn (tituloI "PACIENTE - FILA VIRTUAL")
+    putStrLn (filaVirtualP)
+    op <- prompt "Opção > "
+
+    if toUpper (head op) == 'E' then do
+        putStrLn "\n"
+        idMedico <- prompt "ID do Médico > "
+        let idM = read idMedico :: Int
+        
+        let bdAtualizado = entraFilaVirtual idPac idM (BD.filas dados) dados
+        let fiLA = filter (\fila -> Fila.idMedico fila == idM) (BD.filas bdAtualizado)
+        let fila = head fiLA
+        putStrLn ("Você está na posição " ++ (show (length (Fila.fila fila))) ++ " da fila")
+
+        BD.limpaArquivo "Haskell/Persistence/filas.txt"
+        BD.escreveNoArquivoSemContra "Haskell/Persistence/filas.txt" (BD.filasToString (BD.filas bdAtualizado) "")
+        threadDelay 2000000
+        menuPaciente idPac bdAtualizado
+
+    else if toUpper (head op) == 'V' then do
+        idFStr <- prompt "ID da Fila > "
+        let idF = read idFStr :: Int
+        let index = verfilas idF idPac dados
+        if index == Nothing then do
+            putStrLn "Você não está na fila"
+            threadDelay 1000000
+            menuPaciente idPac dados
+        else do
+            putStrLn ("Você está na posição " ++ (show (fromJust index + 1)) ++ " da fila")
+            threadDelay 2000000
+            prompt "Pressione Enter para voltar"
+            filaVirtualPac idPac dados
+
+    else if toUpper (head op) == 'S' then do
+        menuPaciente idPac dados
+
+    else do
+        putStrLn "Opção inválida"
+        filaVirtualPac idPac dados
+
+verfilas :: Int -> Int -> BD.BD -> Maybe Int
+verfilas idF idPac dados = 
+    let fila = head (filter (\fila -> (Fila.id fila) == idF) (BD.filas dados))
+        name = PControl.getPacienteName idPac (BD.pacientes dados)
+    in elemIndex name (Fila.fila fila)
+    
+
+entraFilaVirtual :: Int -> Int ->[Fila.Fila] -> BD.BD -> BD.BD
+entraFilaVirtual idPac idM filas dados =
+    let filasList = filter (\fila -> Fila.idMedico fila == idM) filas
+        fila = head filasList
+        filaId = Fila.id fila
+        filasAtualizadas = map (\filaP -> if filaId == Fila.id filaP then adicionaFila filaP idPac (BD.pacientes dados) else filaP) filas
+        bdAtualizado = dados { BD.filas = filasAtualizadas }
+    in do
+        bdAtualizado
+
+adicionaFila :: Fila.Fila -> Int -> [Paciente.Paciente] -> Fila.Fila
+adicionaFila fila idPac pacientes = 
+    let filaAtualizada = fila { Fila.fila = Fila.fila fila ++ [PControl.getPacienteName idPac pacientes] }
+    in filaAtualizada
+
 
 buscar :: Int -> BD.BD -> IO()
 buscar idPac dados = do
@@ -564,10 +634,78 @@ menuClinica idC dados = do
         dashBoardC idC dados
     else if toUpper (head op) == 'S' then do
         inicial dados
+    else if toUpper (head op) == 'F' then do
+        filaVirtualClinica idC dados
 
     else do
         putStrLn "Opção inválida"
         menuClinica idC dados
+
+filaVirtualClinica :: Int -> BD.BD -> IO()
+filaVirtualClinica idC dados = do
+    limpaTela
+    putStrLn (tituloI "FILA VIRTUAL")
+    putStrLn (filaVirtualC)
+    op <- prompt "Opção > "
+
+    if toUpper (head op) == 'C' then do
+        idMStr <- prompt "ID do Médico > "
+        let idM = read idMStr :: Int
+        putStrLn ("Fila criada com sucesso! O id da fila é: " ++ (show (BD.idAtualFila dados)))
+        threadDelay 2000000
+        let fila = CControl.criarFilaVirtual (BD.idAtualFila dados) idC idM 
+
+        BD.escreveNoArquivo "Haskell/Persistence/filas.txt" (Fila.toString fila)
+        menuClinica idC dados { BD.filas = (BD.filas dados) ++ [fila],
+                                BD.idAtualFila = (BD.idAtualFila dados) + 1 }
+
+    else if toUpper (head op) == 'V' then do
+        putStrLn (CControl.verFilasClinica idC (BD.filas dados))
+        prompt "Pressione Enter para voltar"
+        menuClinica idC dados 
+
+    else if toUpper (head op) == 'A' then do
+        idFStr <- prompt "ID da Fila > "
+        let idF = read idFStr :: Int
+        let bdAtualizado = atualizaFilaClinica idF dados
+        putStrLn ("Paciente chamado com sucesso! Fila Atualizada!")
+
+        BD.limpaArquivo "Haskell/Persistence/filas.txt"
+        BD.escreveNoArquivoSemContra "Haskell/Persistence/filas.txt" (BD.filasToString (BD.filas bdAtualizado) "")
+
+        threadDelay 2000000
+        menuClinica idC bdAtualizado
+
+    else if toUpper (head op) == 'D' then do
+        let bdAtualizado = deletarFilaVirtual idC dados
+        putStrLn ("Fila deletada com sucesso!")
+        threadDelay 2000000
+        menuClinica idC bdAtualizado
+
+    else if toUpper (head op) == 'S' then do
+        menuClinica idC dados
+
+    else do
+        putStrLn "Opção inválida"
+        filaVirtualClinica idC dados
+
+deletarFilaVirtual :: Int -> BD.BD -> BD.BD
+deletarFilaVirtual idF dados = do
+    let filasAtualizadas = filter (\fila -> Fila.idClinica fila /= idF) (BD.filas dados)
+    let bdAtualizado = dados { BD.filas = filasAtualizadas }
+    bdAtualizado
+
+atualizaFilaClinica :: Int -> BD.BD -> BD.BD
+atualizaFilaClinica idF dados = do
+    let filasAtualizadas = map (\filaP -> if idF == (Fila.id filaP) then 
+                                            atualizarFila filaP 
+                                            else filaP) (BD.filas dados)
+        bdAtualizado = dados { BD.filas = filasAtualizadas }
+    bdAtualizado
+
+atualizarFila :: Fila.Fila -> Fila.Fila
+atualizarFila fila = fila { Fila.fila = tail (Fila.fila fila)}
+
 
 dashBoardC :: Int -> BD.BD -> IO()
 dashBoardC idC dados = do

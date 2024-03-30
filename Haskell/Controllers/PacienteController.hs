@@ -143,6 +143,7 @@ consultarAgendamento :: Int -> [Consulta.Consulta] -> [Consulta.Consulta]
 consultarAgendamento _ [] = []
 consultarAgendamento idPaciente consultas = filter (\consulta -> Consulta.idPaciente consulta == idPaciente) consultas
 
+
 {- 
 Essa função retorna o ID do paciente dado o seu nome.
 @param name: nome do paciente

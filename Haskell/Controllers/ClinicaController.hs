@@ -11,7 +11,9 @@ module Haskell.Controllers.ClinicaController(
     showLista,
     getClinicaId,
     verPaciente,
-    verConsultas
+    verConsultas,
+    criarFilaVirtual,
+    verFilasClinica
 ) where
 
 import Data.List (intercalate, find, nub, sortBy)
@@ -22,6 +24,8 @@ import Haskell.Models.Consulta (Consulta)
 import qualified Haskell.Models.Consulta as Consulta
 import qualified Haskell.Controllers.PacienteController as PControl
 import qualified Haskell.Controllers.MedicoController as MControl
+import qualified Haskell.Models.Fila as Fila
+
 import Haskell.App.Util (leituraDadosClinica)
 import Data.Ord (comparing)
 
@@ -83,13 +87,13 @@ Essa função retorna o dashboard da clinica.
 @return o dashboard da clinica
 -}
 
-dashboardC :: Int -> [Medico.Medico] -> [Consulta.Consulta] -> [Clinica.Clinica]-> String
+dashboardC :: Int -> [Medico.Medico] -> [Consulta.Consulta] -> [Clinica.Clinica] -> String
 dashboardC idC medicos consultas clinicas =
     --Poderia ter o nome da clinica (virginia)
     let medicoContagem = length (filter (\medico -> Medico.clinica medico == idC) medicos)
-        consultasContagem = length (filter (\consulta -> Consulta.idClinica consulta == idC) consultas)
-        pacientesContagem = length (nub $ map Consulta.idPaciente consultas)
-
+        consultasA = filter (\consulta -> Consulta.idClinica consulta == idC) consultas
+        consultasContagem = length consultasA
+        pacientesContagem = length (nub $ map Consulta.idPaciente consultasA)
     in
     "----------------------------\n" ++
     "DASHBOARD DA CLÍNICA: " ++ (getClinicaName idC clinicas) ++ "\n\n" ++
@@ -99,7 +103,7 @@ dashboardC idC medicos consultas clinicas =
     "\n---------------------------\n\n" ++
     "----------------------------\n" ++
     "Ranking de Médicos: \n" ++
-    showLista (rankingMedicosPorNota idC clinicas medicos) ++
+    concatMap Medico.toStringAval (rankingMedicosPorNota idC clinicas medicos) ++
     "----------------------------\n"
 
 
@@ -109,6 +113,19 @@ rankingMedicosPorNota idClinica clinicas medicos =
     let medicosDaClinica = filter (\medico -> Medico.clinica medico == idClinica) medicos
         medicosOrdenados = sortBy (flip $ comparing Medico.nota) medicosDaClinica
     in medicosOrdenados
+
+criarFilaVirtual :: Int -> Int -> Int -> Fila.Fila
+criarFilaVirtual id idC idM = Fila.Fila id idC idM []
+
+verFilasClinica :: Int -> [Fila.Fila] -> String
+verFilasClinica _ [] = ""
+verFilasClinica idC filas =
+    let filasList = filter (\fila -> Fila.idClinica fila == idC) filas
+    in if null filasList then
+        "Não há filas abertas nessa clínica"
+    else
+        showLista filasList
+        
 
 showLista :: Show a => [a] -> String
 showLista = concatMap (\x -> show x ++ "\n")

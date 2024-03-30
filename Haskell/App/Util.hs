@@ -57,7 +57,20 @@ dashboardPaciente =   " [B] - Buscar\n"
                     ++" [R] - Ver Receitas / Laudos / Solicitação de Exames\n"
                     ++" [A] - Avaliacao de Atendimento\n"
                     ++" [C] - Chats\n"
+                    ++" [F] - Fila Virtual\n"
                     ++" [S] - Sair\n"
+
+filaVirtualP :: String
+filaVirtualP = " [E] - Entrar em Fila\n"
+            ++ " [V] - Ver Fila\n"
+            ++ " [S] - Sair\n"
+
+filaVirtualC :: String
+filaVirtualC = " [C] - Criar Fila\n"
+            ++ " [V] - Ver Filas\n"
+            ++ " [A] - Atualizar Fila\n"
+            ++ " [D] - Deletar Fila\n"
+            ++ " [S] - Sair\n"
 
 chatP :: String
 chatP = " [C] - Criar Chat com Médico\n"
@@ -112,6 +125,7 @@ leituraEmissaoReceita = do
 
 dashboardClinica :: String
 dashboardClinica = " [C] - Cadastrar Médico\n"
+                 ++" [F] - Fila Virtual\n"
                  ++" [V] - Ver Informações\n"
                  ++" [D] - Dashboard\n"
                  ++" [S] - Sair\n"
