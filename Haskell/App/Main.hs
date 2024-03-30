@@ -340,10 +340,11 @@ cadastraConsulta idPac dados = do
                             threadDelay 1000000
                             cadastraConsulta idPac dados
                         else do
+                            queixas <- prompt "Queixas > "
                             putStrLn ("Consulta marcada com sucesso! o id da consulta é: " ++ (show (BD.idAtualConsulta dados)))
                             threadDelay 2000000
 
-                            let dadosCons = [show idPac, idStrC, idStrM, dia, horario]
+                            let dadosCons = [show idPac, idStrC, idStrM, dia, horario, queixas]
 
                             let consulta = PControl.criaConsulta (BD.idAtualConsulta dados) (dadosCons)
                             BD.escreveNoArquivo "Haskell/Persistence/consultas.txt" (Consulta.toString consulta)

@@ -13,7 +13,8 @@ data Consulta = Consulta {
     idClinica :: Int,  
     idMedico :: Int,
     dataConsulta :: String,
-    horario :: String
+    horario :: String,
+    queixas :: String
 }
 
 
@@ -23,16 +24,18 @@ toString cons =      show (idConsulta cons) ++
               ";" ++ show (idClinica cons) ++
               ";" ++ show (idMedico cons) ++
               ";" ++ dataConsulta cons ++
-              ";" ++ horario cons
+              ";" ++ horario cons ++
+              ";" ++ queixas cons
 
 instance Show Consulta where
-    show (Consulta idCons idPac idClin idMed dataC hora) = "-------------------\n" ++
+    show (Consulta idCons idPac idClin idMed dataC hora queixas) = "-------------------\n" ++
                     "Id da Consulta: " ++ show idCons ++ "\n" ++
                     "Nome do paciente: " ++ show idPac ++ "\n" ++
                     "Nome da Clínica: "  ++ show idClin ++ "\n" ++
                     "Nome do Médico: " ++ show idMed ++ "\n" ++
                     "Data da consulta: " ++ dataC ++ "\n" ++
                     "Hora da consulta: " ++ hora ++ "\n" ++
+                    "Queixas: " ++ queixas ++ "\n" ++
                     "-------------------\n"
 
 instance Read Consulta where
@@ -45,7 +48,8 @@ instance Read Consulta where
         let idMedico = read (consulta !! 3) :: Int
         let datas = consulta !! 4
         let hora = consulta !! 5
-        return (Consulta consultaId idPaciente idClinica idMedico datas hora, "")
+        let queixas = consulta !! 6
+        return (Consulta consultaId idPaciente idClinica idMedico datas hora queixas, "")
 
 
 --funcoes legado para (talvez) futuro uso
