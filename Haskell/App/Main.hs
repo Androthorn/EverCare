@@ -952,6 +952,7 @@ abrirConversaMed idMed dados = do
 emitirM :: Int  -> BD.BD -> IO()
 emitirM idM dados = do
     limpaTela
+    putStrLn (tituloI "EMISSÃO DE DOCUMENTOS")
     putStrLn emissaoMedico
     op <- prompt "Opção > "
 
@@ -974,34 +975,57 @@ emitirLaudo :: Int -> BD.BD -> IO()
 emitirLaudo idM dados = do
     limpaTela
     putStrLn (tituloI "EMISSÃO DE LAUDO")
-    idP <- prompt "ID do Paciente > "
-    texto <- prompt "Texto > "
+    idPStr <- prompt "ID do Paciente > "
+    case readMaybe idPStr :: Maybe Int of
+        Just idP -> do
+            let consultas = BD.filtraConsultasDoMedico dados idM
+            if notElem idP (map Consulta.idPaciente consultas) then do
+                putStrLn "Você não possui consulta com esse paciente!"
+                threadDelay 1000000
+                emitirM idM dados
+            else do
+                texto <- prompt "Texto > "
 
-    putStrLn ("Laudo emitido com sucesso! O id do laudo é: " ++ (show (BD.idAtualLaudo dados)))
-    threadDelay 2000000  -- waits for 2 seconds
+                putStrLn ("Laudo emitido com sucesso! O id do laudo é: " ++ (show (BD.idAtualLaudo dados)))
+                threadDelay 2000000  -- waits for 2 seconds
 
-    let laudo = MControl.emiteLaudo (BD.idAtualLaudo dados) idM (read idP) texto
-    BD.escreveNoArquivo "Haskell/Persistence/laudos.txt" (Laudo.toString laudo)
+                let laudo = MControl.emiteLaudo (BD.idAtualLaudo dados) idM (read idPStr) texto
+                BD.escreveNoArquivo "Haskell/Persistence/laudos.txt" (Laudo.toString laudo)
 
-    menuMedico idM dados { BD.laudos = (BD.laudos dados) ++ [laudo],
-                          BD.idAtualLaudo = (BD.idAtualLaudo dados) + 1 }
+                menuMedico idM dados { BD.laudos = (BD.laudos dados) ++ [laudo],
+                                    BD.idAtualLaudo = (BD.idAtualLaudo dados) + 1 }
+        Nothing -> do
+            putStrLn "ID do Paciente deve ser um inteiro"
+            threadDelay 1000000
+            emitirM idM dados
 
 emitirExame :: Int -> BD.BD -> IO()
 emitirExame idM dados = do
     limpaTela
     putStrLn (tituloI "SOLICITAÇÃO DE EXAME")
-    idP <- prompt "ID do Paciente > "
-    tipo <- prompt "Tipo do Exame > "
-    dia <- prompt "Dia do Exame > "
+    idPStr <- prompt "ID do Paciente > "
+    case readMaybe idPStr :: Maybe Int of
+        Just idP -> do
+            let consultas = BD.filtraConsultasDoMedico dados idM
+            if notElem idP (map Consulta.idPaciente consultas) then do
+                putStrLn "Você não possui consulta com esse paciente!"
+                threadDelay 1000000
+                emitirM idM dados
+            else do
+                tipo <- prompt "Tipo do Exame > "
+                dia <- prompt "Dia do Exame > "
+                putStrLn ("Solicitação de Exame feita com sucesso! O id da solicitação é: " ++ (show (BD.idAtualExame dados)))
+                threadDelay 2000000  -- waits for 2 seconds
 
-    putStrLn ("Solicitação de Exame feita com sucesso! O id da solicitação é: " ++ (show (BD.idAtualExame dados)))
-    threadDelay 2000000  -- waits for 2 seconds
+                let exame = MControl.solicitaExame (BD.idAtualExame dados) idM (read idPStr) tipo dia
+                BD.escreveNoArquivo "Haskell/Persistence/exames.txt" (Exame.toString exame)
 
-    let exame = MControl.solicitaExame (BD.idAtualExame dados) idM (read idP) tipo dia
-    BD.escreveNoArquivo "Haskell/Persistence/exames.txt" (Exame.toString exame)
-
-    menuMedico idM dados { BD.exames = (BD.exames dados) ++ [exame],
-                          BD.idAtualExame = (BD.idAtualExame dados) + 1 }
+                menuMedico idM dados { BD.exames = (BD.exames dados) ++ [exame],
+                                    BD.idAtualExame = (BD.idAtualExame dados) + 1 }
+        Nothing -> do
+            putStrLn "ID do Paciente deve ser um inteiro"
+            threadDelay 1000000
+            emitirM idM dados
 
 emitirReceita :: Int -> BD.BD -> IO()
 emitirReceita idM dados = do
@@ -1009,14 +1033,29 @@ emitirReceita idM dados = do
     putStrLn (tituloI "EMISSÃO DE RECEITA")
     receitaLeitura <- leituraEmissaoReceita
 
-    putStrLn ("Receita emitida com sucesso! O id da receita é: " ++ (show (BD.idAtualReceita dados)))
-    threadDelay 2000000  -- waits for 2 seconds
+    let idPStr = (receitaLeitura !! 0)
 
-    let receita = MControl.emiteReceita (BD.idAtualReceita dados) idM receitaLeitura
-    BD.escreveNoArquivo "Haskell/Persistence/receitas.txt" (Receita.toString receita)
+    case readMaybe idPStr :: Maybe Int of
+        Just idP -> do
+            let consultas = BD.filtraConsultasDoMedico dados idM
+            if notElem idP (map Consulta.idPaciente consultas) then do
+                putStrLn "Você não possui consulta com esse paciente!"
+                threadDelay 1000000
+                emitirM idM dados
+            else do
+                putStrLn ("Receita emitida com sucesso! O id da receita é: " ++ (show (BD.idAtualReceita dados)))
+                threadDelay 2000000  -- waits for 2 seconds
 
-    menuMedico idM dados { BD.receitas = (BD.receitas dados) ++ [receita],
-                          BD.idAtualReceita = (BD.idAtualReceita dados) + 1 }
+                let receita = MControl.emiteReceita (BD.idAtualReceita dados) idM receitaLeitura
+                BD.escreveNoArquivo "Haskell/Persistence/receitas.txt" (Receita.toString receita)
+
+                menuMedico idM dados { BD.receitas = (BD.receitas dados) ++ [receita],
+                                    BD.idAtualReceita = (BD.idAtualReceita dados) + 1 }
+
+        Nothing -> do
+            putStrLn "ID do Paciente deve ser um inteiro"
+            threadDelay 1000000
+            emitirM idM dados
 
 verAgendamentoM:: Int -> BD.BD -> IO()
 verAgendamentoM idM dados = do
