@@ -152,7 +152,6 @@ menuPaciente idPac dados = do
 
     else if toUpper (head op) == 'A' then do
         cadastraAvaliacao idPac dados
-        menuPaciente idPac dados
 
     else if toUpper (head op) == 'S' then do
         inicial dados
@@ -364,38 +363,58 @@ cadastraConsulta idPac dados = do
 cadastraAvaliacao :: Int -> BD.BD -> IO ()
 cadastraAvaliacao idPac dados = do
     let avaliacoes =  BD.avaliacoes dados
+    let consultas = BD.filtraConsultasDoPaciente dados idPac
     limpaTela
     putStrLn (tituloI "AVALIAÇÃO DE ATENDIMENTO")
-    dadosAval <- leituraDadosAvaliacao
-    let idAvaliacao = BD.idAtualAvaliacao dados
-    let idMed = read (head dadosAval) :: Int
-    let nota = read (dadosAval !! 1) :: Int
-    let notaFloat = fromIntegral nota
-    let texto = last dadosAval
 
-    let avaliacao = Avaliacao.Avaliacao idAvaliacao idPac idMed nota texto
-    putStrLn ("Avaliação cadastrada com sucesso! O id da sua avaliação é: " ++ (show (BD.idAtualAvaliacao dados)))
-    threadDelay 2000000
+    idMedStr <- prompt "ID do Médico > "
+    case readMaybe idMedStr :: Maybe Int of
+        Just idMed -> do
+            if notElem idMed (map Consulta.idMedico consultas) then do
+                putStrLn "Você não possui consulta com esse médico!"
+                threadDelay 1000000
+                menuPaciente idPac dados
+            else do
+                notaStr <- prompt "Nota (0-10) > "
+                case readMaybe notaStr :: Maybe Int of
+                    Just nota -> do
+                        if nota < 0 || nota > 10 then do
+                            putStrLn "Nota deve ser um inteiro entre 0 e 10"
+                            threadDelay 1000000
+                            menuPaciente idPac dados
+                        else do
+                            texto <- prompt "Texto > "
+                            let idAvaliacao = BD.idAtualAvaliacao dados
+                            let notaFloat = fromIntegral nota
+                            let avaliacao = Avaliacao.Avaliacao idAvaliacao idPac idMed nota texto
+                            putStrLn ("Avaliação cadastrada com sucesso! O id da sua avaliação é: " ++ (show (BD.idAtualAvaliacao dados)))
+                            threadDelay 2000000
 
-    timeZoneBR <- getCurrentTimeZone
-    currentTime <- getCurrentTime
-    let formattedTime = formatTime defaultTimeLocale "%d-%m-%Y %H:%M:%S" (utcToZonedTime timeZoneBR currentTime)
+                            timeZoneBR <- getCurrentTimeZone
+                            currentTime <- getCurrentTime
+                            let formattedTime = formatTime defaultTimeLocale "%d-%m-%Y %H:%M:%S" (utcToZonedTime timeZoneBR currentTime)
 
-    -- let bdMedicosAtualizados = atualizaBDMedicos idMed notaFloat dados
-    -- threadDelay 2000000
-    -- BD.limpaArquivo "Haskell/Persistence/medicos.txt"
-    -- threadDelay 2000000
-    -- BD.escreveNoArquivoSemContra "Haskell/Persistence/medicos.txt" (BD.medicosToString (BD.medicos bdMedicosAtualizados) "")
-    BD.escreveNoArquivo "Haskell/Persistence/avaliacoes.txt" (Avaliacao.toString avaliacao ++ ";" ++ formattedTime)
+                            BD.escreveNoArquivo "Haskell/Persistence/avaliacoes.txt" (Avaliacao.toString avaliacao ++ ";" ++ formattedTime)
 
-    let bdAtualizado = dados { BD.avaliacoes = avaliacoes ++ [avaliacao],
-                                BD.idAtualAvaliacao = (BD.idAtualAvaliacao dados) + 1 }
-    let bdMAtualizado = atualizaBDmedicos idMed bdAtualizado
+                            let bdAtualizado = dados { BD.avaliacoes = avaliacoes ++ [avaliacao],
+                                                        BD.idAtualAvaliacao = (BD.idAtualAvaliacao dados) + 1 }
+                            let bdMAtualizado = atualizaBDmedicos idMed bdAtualizado
 
-    BD.limpaArquivo "Haskell/Persistence/medicos.txt"
-    BD.escreveNoArquivoSemContra "Haskell/Persistence/medicos.txt" (BD.medicosToString (BD.medicos bdMAtualizado) "")
+                            BD.limpaArquivo "Haskell/Persistence/medicos.txt"
+                            BD.escreveNoArquivoSemContra "Haskell/Persistence/medicos.txt" (BD.medicosToString (BD.medicos bdMAtualizado) "")
 
-    menuPaciente idPac bdMAtualizado
+                            menuPaciente idPac bdMAtualizado
+
+                    Nothing -> do
+                        putStrLn "Nota deve ser um inteiro"
+                        threadDelay 1000000
+                        menuPaciente idPac dados
+            
+        Nothing -> do
+            putStrLn "ID deve ser um inteiro"
+            threadDelay 1000000
+            menuPaciente idPac dados
+
 
 atualizaBDmedicos :: Int -> BD.BD -> BD.BD
 atualizaBDmedicos idMed dados = do
