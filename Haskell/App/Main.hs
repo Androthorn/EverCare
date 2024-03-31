@@ -2,6 +2,7 @@
 {-# HLINT ignore "Redundant bracket" #-}
 {-# HLINT ignore "Redundant if" #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# HLINT ignore "Use /=" #-}
 
 import Haskell.App.Util
 import qualified Haskell.Models.BD as BD
@@ -35,9 +36,10 @@ import Haskell.Models.BD (BD(idAtualPaciente))
 import Haskell.Models.Avaliacao (Avaliacao(idPac))
 import Data.Text.Internal.Read (IParser(P))
 import GHC.Base (VecElem(Int16ElemRep))
-import Text.Read (readMaybe)
+import Text.Read (readMaybe, get)
 import Text.XHtml (menu, th)
 import Data.Maybe (fromJust)
+import Haskell.Models.Consulta (Consulta(idConsulta))
 
 
 
@@ -172,35 +174,62 @@ filaVirtualPac idPac dados = do
     putStrLn (tituloI "PACIENTE - FILA VIRTUAL")
     putStrLn (filaVirtualP)
     op <- prompt "Opção > "
+    let consultasP = filter (\consulta -> Consulta.idPaciente consulta == idPac) (BD.consultas dados)
 
     if toUpper (head op) == 'E' then do
         putStrLn "\n"
         idMedico <- prompt "ID do Médico > "
-        let idM = read idMedico :: Int
-        
-        let bdAtualizado = entraFilaVirtual idPac idM (BD.filas dados) dados
-        let fiLA = filter (\fila -> Fila.idMedico fila == idM) (BD.filas bdAtualizado)
-        let fila = head fiLA
-        putStrLn ("Você está na posição " ++ (show (length (Fila.fila fila))) ++ " da fila")
+        case readMaybe idMedico :: Maybe Int of
+            Just idM -> do
+                if notElem idM (map Medico.id (BD.medicos dados)) then do
+                    putStrLn "Médico não cadastrado"
+                    threadDelay 1000000
+                    menuPaciente idPac dados
+                else do
+                    if notElem idM (map Consulta.idMedico consultasP) then do
+                        putStrLn "Você não possui consulta com esse médico"
+                        threadDelay 2000000
+                        menuPaciente idPac dados
+                    else do
+                        let bdAtualizado = entraFilaVirtual idPac idM (BD.filas dados) dados
+                        let fiLA = filter (\fila -> Fila.idMedico fila == idM) (BD.filas bdAtualizado)
+                        let fila = head fiLA
+                        putStrLn ("Você está na posição " ++ (show (length (Fila.fila fila))) ++ " da fila")
 
-        BD.limpaArquivo "Haskell/Persistence/filas.txt"
-        BD.escreveNoArquivoSemContra "Haskell/Persistence/filas.txt" (BD.filasToString (BD.filas bdAtualizado) "")
-        threadDelay 2000000
-        menuPaciente idPac bdAtualizado
+                        BD.limpaArquivo "Haskell/Persistence/filas.txt"
+                        BD.escreveNoArquivoSemContra "Haskell/Persistence/filas.txt" (BD.filasToString (BD.filas bdAtualizado) "")
+                        threadDelay 2000000
+                        menuPaciente idPac bdAtualizado
+            Nothing -> do
+                putStrLn "ID deve ser um inteiro"
+                threadDelay 1000000
+                menuPaciente idPac dados
+        
 
     else if toUpper (head op) == 'V' then do
         idFStr <- prompt "ID da Fila > "
-        let idF = read idFStr :: Int
-        let index = verfilas idF idPac dados
-        if index == Nothing then do
-            putStrLn "Você não está na fila"
-            threadDelay 1000000
-            menuPaciente idPac dados
-        else do
-            putStrLn ("Você está na posição " ++ (show (fromJust index + 1)) ++ " da fila")
-            threadDelay 2000000
-            prompt "Pressione Enter para voltar"
-            filaVirtualPac idPac dados
+        case readMaybe idFStr :: Maybe Int of
+            Just idF -> do
+                if notElem idF (map Fila.id (BD.filas dados)) then do
+                    putStrLn "ID da Fila inválido"
+                    threadDelay 1000000
+                    menuPaciente idPac dados
+                else do
+                    let index = verfilas idF idPac dados
+                    if index == Nothing then do
+                        putStrLn "Você não está na fila"
+                        threadDelay 1000000
+                        menuPaciente idPac dados
+                    else do
+                        putStrLn ("Você está na posição " ++ (show (fromJust index + 1)) ++ " da fila")
+                        threadDelay 2000000
+                        prompt "Pressione Enter para voltar"
+                        filaVirtualPac idPac dados
+    
+            Nothing -> do
+                putStrLn "ID deve ser um inteiro"
+                threadDelay 1000000
+                menuPaciente idPac dados
 
     else if toUpper (head op) == 'S' then do
         menuPaciente idPac dados
@@ -314,7 +343,7 @@ cadastraConsulta idPac dados = do
 
     case readMaybe idStrC :: Maybe Int of
         Just idC -> do
-
+            let clinica = getClinicaId idC dados
             idStrM <- prompt "ID do Médico > "
             case readMaybe idStrM :: Maybe Int of
                 Just idM -> do
@@ -327,28 +356,43 @@ cadastraConsulta idPac dados = do
 
                     else do
                         dia <- prompt "Data da Consulta > "
-
-                        let horarios = BD.horariosDisponiveis dados idM dia
-                        putStrLn "\nHorários disponíveis: "
-                        imprimeEmUmaLinha horarios
-                        putStrLn ""
-
-                        horario <- prompt "Horário > "
-                        if notElem horario horarios then do
-                            putStrLn "\nHorário indisponível"
+                        if not (isValidDate dia) then do
+                            putStrLn "\nData inválida"
                             threadDelay 1000000
                             cadastraConsulta idPac dados
                         else do
-                            queixas <- prompt "Queixas > "
-                            putStrLn ("Consulta marcada com sucesso! o id da consulta é: " ++ (show (BD.idAtualConsulta dados)))
-                            threadDelay 2000000
+                            if not (Clinica.metodoAgendamento clinica == "O") then do
+                                putStrLn "Consulta marcada com sucesso!"
+                                threadDelay 2000000
 
-                            let dadosCons = [show idPac, idStrC, idStrM, dia, horario, queixas]
+                                let dadosCons = [show idPac, idStrC, idStrM, dia, "00:00", "Sem queixas"]
 
-                            let consulta = PControl.criaConsulta (BD.idAtualConsulta dados) (dadosCons)
-                            BD.escreveNoArquivo "Haskell/Persistence/consultas.txt" (Consulta.toString consulta)
-                            menuPaciente idPac dados { BD.consultas = (BD.consultas dados) ++ [consulta],
-                                                    BD.idAtualConsulta = (BD.idAtualConsulta dados) + 1 }
+                                let consulta = PControl.criaConsulta (BD.idAtualConsulta dados) (dadosCons)
+                                BD.escreveNoArquivo "Haskell/Persistence/consultas.txt" (Consulta.toString consulta)
+                                menuPaciente idPac dados { BD.consultas = (BD.consultas dados) ++ [consulta],
+                                                        BD.idAtualConsulta = (BD.idAtualConsulta dados) + 1 }
+                            else do
+                                let horarios = BD.horariosDisponiveis dados idM dia
+                                putStrLn "\nHorários disponíveis: "
+                                imprimeEmUmaLinha horarios
+                                putStrLn ""
+
+                                horario <- prompt "Horário > "
+                                if notElem horario horarios then do
+                                    putStrLn "\nHorário indisponível"
+                                    threadDelay 1000000
+                                    cadastraConsulta idPac dados
+                                else do
+                                    queixas <- prompt "Queixas > "
+                                    putStrLn ("Consulta marcada com sucesso! o id da consulta é: " ++ (show (BD.idAtualConsulta dados)))
+                                    threadDelay 2000000
+
+                                    let dadosCons = [show idPac, idStrC, idStrM, dia, horario, queixas]
+
+                                    let consulta = PControl.criaConsulta (BD.idAtualConsulta dados) (dadosCons)
+                                    BD.escreveNoArquivo "Haskell/Persistence/consultas.txt" (Consulta.toString consulta)
+                                    menuPaciente idPac dados { BD.consultas = (BD.consultas dados) ++ [consulta],
+                                                            BD.idAtualConsulta = (BD.idAtualConsulta dados) + 1 }
 
                 Nothing -> do
                     putStrLn "\nID do Médico deve ser um inteiro"
@@ -359,6 +403,17 @@ cadastraConsulta idPac dados = do
             putStrLn "\nID da Clínica ser um inteiro"
             threadDelay 1000000
             cadastraConsulta idPac dados
+
+getClinicaId :: Int -> BD.BD -> Clinica.Clinica
+getClinicaId idC dados = head (filter (\clinica -> Clinica.id clinica == idC) (BD.clinicas dados))
+
+isValidDate :: String -> Bool
+isValidDate date = 
+    let dateList = split date '/' ""
+        day = read (dateList !! 0) :: Int
+        month = read (dateList !! 1) :: Int
+        year = read (dateList !! 2) :: Int
+    in day >= 1 && day <= 31 && month >= 1 && month <= 12 && year >= 2024
 
 cadastraAvaliacao :: Int -> BD.BD -> IO ()
 cadastraAvaliacao idPac dados = do
@@ -570,9 +625,57 @@ verAgendamento idPac dados = do
     putStrLn (tituloI "AGENDAMENTOS")
     let consultas = PControl.consultarAgendamento idPac (BD.consultas dados)
     imprime consultas
-    prompt "Pressione Enter para voltar"
-    menuPaciente idPac dados
+    op <- prompt "Confirmar ou Cancelar Alguma Consulta? [S/N] > "
+    if toUpper (head op) == 'S' then do
+        idConsultaStr <- prompt "ID da Consulta > "
+        case readMaybe idConsultaStr :: Maybe Int of
+            Just idConsulta -> do
+                if notElem idConsulta (map Consulta.idConsulta consultas) then do
+                    putStrLn "ID da Consulta não marcada por você"
+                    threadDelay 2000000
+                    menuPaciente idPac dados
+                else do
+                    let consulta = head (filter (\consulta -> Consulta.idConsulta consulta == idConsulta) consultas)
+                    if Consulta.confirmado consulta then do
+                        putStrLn "Consulta já confirmada"
+                        threadDelay 2000000
+                        menuPaciente idPac dados
+                    else do
+                        confirmaConsulta idPac idConsulta dados
+            Nothing -> do
+                putStrLn "ID deve ser um inteiro"
+                verAgendamento idPac dados
+        menuPaciente idPac dados
+    else if toUpper (head op) == 'N' then do
+        menuPaciente idPac dados
+    else do
+        putStrLn "Opção inválida"
+        verAgendamento idPac dados
+    
 
+confirmaConsulta :: Int -> Int -> BD.BD -> IO()
+confirmaConsulta idPac idConsulta dados = do
+    putStrLn "Deseja [C]onfirmar ou [D]esmarcar a consulta? > "
+    op <- prompt "Opção > "
+    if toUpper (head op) == 'C' then do
+        let consultas = map (\consulta -> if Consulta.idConsulta consulta == idConsulta then consulta { Consulta.confirmado = True } else consulta) (BD.consultas dados)
+        let bdAtualizado = dados { BD.consultas = consultas }
+        BD.limpaArquivo "Haskell/Persistence/consultas.txt"
+        BD.escreveNoArquivoSemContra "Haskell/Persistence/consultas.txt" (BD.consultasToString (BD.consultas bdAtualizado) "")
+        putStrLn "Consulta confirmada com sucesso!"
+        threadDelay 2000000
+        menuPaciente idPac bdAtualizado
+    else if toUpper (head op) == 'D' then do
+        putStrLn "Consulta não confirmada"
+        let consultasAtualizadas = filter (\consulta -> Consulta.idConsulta consulta /= idConsulta) (BD.consultas dados)
+        let bdAtualizado = dados { BD.consultas = consultasAtualizadas }
+        BD.limpaArquivo "Haskell/Persistence/consultas.txt"
+        BD.escreveNoArquivoSemContra "Haskell/Persistence/consultas.txt" (BD.consultasToString (BD.consultas bdAtualizado) "")
+        threadDelay 2000000
+        menuPaciente idPac bdAtualizado
+    else do
+        putStrLn "Opção inválida"
+        confirmaConsulta idPac idConsulta dados
 
 -- É NECESSARIA A IMPLEMENTAÇÃO DESSA FUNÇÃO E RESOLVER COMO IMPLEMENTAR 
 -- O LOCAL TIME E O LOCAL DATE (essas funcoes estao no fim do arquivo)
@@ -666,18 +769,40 @@ filaVirtualClinica idC dados = do
     limpaTela
     putStrLn (tituloI "FILA VIRTUAL")
     putStrLn (filaVirtualC)
+    let filasC = filter (\fila -> Fila.idClinica fila == idC) (BD.filas dados)
     op <- prompt "Opção > "
 
     if toUpper (head op) == 'C' then do
         idMStr <- prompt "ID do Médico > "
-        let idM = read idMStr :: Int
-        putStrLn ("Fila criada com sucesso! O id da fila é: " ++ (show (BD.idAtualFila dados)))
-        threadDelay 2000000
-        let fila = CControl.criarFilaVirtual (BD.idAtualFila dados) idC idM 
-
-        BD.escreveNoArquivo "Haskell/Persistence/filas.txt" (Fila.toString fila)
-        menuClinica idC dados { BD.filas = (BD.filas dados) ++ [fila],
-                                BD.idAtualFila = (BD.idAtualFila dados) + 1 }
+        case readMaybe idMStr :: Maybe Int of
+            Nothing -> do
+                putStrLn "ID deve ser um inteiro"
+                threadDelay 2000000
+                filaVirtualClinica idC dados
+            Just idM -> do
+                let idM = read idMStr :: Int
+                if notElem idM (map Medico.id (BD.medicos dados)) then do
+                    putStrLn "ID do Médico não cadastrado"
+                    threadDelay 2000000
+                    filaVirtualClinica idC dados
+                else do
+                    let medicosC = BD.filtraMedicosDaClinica dados idC
+                    if notElem idM (map Medico.id medicosC) then do
+                        putStrLn "ID do Médico não pertence a Clínica"
+                        threadDelay 2000000
+                        filaVirtualClinica idC dados
+                    else do 
+                        if notElem idM (map Fila.idMedico (BD.filas dados)) then do
+                            putStrLn ("Fila criada com sucesso! O id da fila é: " ++ (show (BD.idAtualFila dados)))
+                            threadDelay 2000000
+                            let fila = CControl.criarFilaVirtual (BD.idAtualFila dados) idC idM 
+                            BD.escreveNoArquivo "Haskell/Persistence/filas.txt" (Fila.toString fila)
+                            menuClinica idC dados { BD.filas = (BD.filas dados) ++ [fila],
+                                                    BD.idAtualFila = (BD.idAtualFila dados) + 1 }
+                        else do
+                            putStrLn "Fila já criada"
+                            threadDelay 2000000
+                            menuClinica idC dados
 
     else if toUpper (head op) == 'V' then do
         putStrLn (CControl.verFilasClinica idC (BD.filas dados))
@@ -686,21 +811,55 @@ filaVirtualClinica idC dados = do
 
     else if toUpper (head op) == 'A' then do
         idFStr <- prompt "ID da Fila > "
-        let idF = read idFStr :: Int
-        let bdAtualizado = atualizaFilaClinica idF dados
-        putStrLn ("Paciente chamado com sucesso! Fila Atualizada!")
+        case readMaybe idFStr :: Maybe Int of
+            Nothing -> do
+                putStrLn "ID deve ser um inteiro"
+                threadDelay 2000000
+                filaVirtualClinica idC dados
+            Just idF -> do
+                if notElem idF (map Fila.id (BD.filas dados)) then do
+                    putStrLn "ID da Fila não cadastrado"
+                    threadDelay 2000000
+                    filaVirtualClinica idC dados
+                else do
+                    if notElem idF (map Fila.id filasC) then do
+                        putStrLn "ID da Fila não pertence a Clínica"
+                        threadDelay 2000000
+                        filaVirtualClinica idC dados
+                    else do
+                        let idF = read idFStr :: Int
+                        let bdAtualizado = atualizaFilaClinica idF dados
+                        putStrLn ("Paciente chamado com sucesso! Fila Atualizada!")
 
-        BD.limpaArquivo "Haskell/Persistence/filas.txt"
-        BD.escreveNoArquivoSemContra "Haskell/Persistence/filas.txt" (BD.filasToString (BD.filas bdAtualizado) "")
+                        BD.limpaArquivo "Haskell/Persistence/filas.txt"
+                        BD.escreveNoArquivoSemContra "Haskell/Persistence/filas.txt" (BD.filasToString (BD.filas bdAtualizado) "")
 
-        threadDelay 2000000
-        menuClinica idC bdAtualizado
+                        threadDelay 2000000
+                        menuClinica idC bdAtualizado
 
     else if toUpper (head op) == 'D' then do
-        let bdAtualizado = deletarFilaVirtual idC dados
-        putStrLn ("Fila deletada com sucesso!")
-        threadDelay 2000000
-        menuClinica idC bdAtualizado
+        idFStr <- prompt "ID da Fila > "
+        case readMaybe idFStr :: Maybe Int of
+            Nothing -> do
+                putStrLn "ID deve ser um inteiro"
+                threadDelay 2000000
+                filaVirtualClinica idC dados
+            Just idF -> do
+                if notElem idF (map Fila.id (BD.filas dados)) then do
+                    putStrLn "ID da Fila não cadastrado"
+                    threadDelay 2000000
+                    filaVirtualClinica idC dados
+                else do
+                    if notElem idF (map Fila.id filasC) then do
+                        putStrLn "ID da Fila não pertence a Clínica"
+                        threadDelay 2000000
+                        filaVirtualClinica idC dados
+                    else do
+                        let idF = read idFStr :: Int
+                        let bdAtualizado = deletarFilaVirtual idF dados
+                        putStrLn ("Fila deletada com sucesso!")
+                        threadDelay 2000000
+                        menuClinica idC bdAtualizado
 
     else if toUpper (head op) == 'S' then do
         menuClinica idC dados
