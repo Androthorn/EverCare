@@ -26,7 +26,7 @@ import qualified Haskell.Controllers.PacienteController as PControl
 import qualified Haskell.Controllers.MedicoController as MControl
 import qualified Haskell.Models.Fila as Fila
 
-import Haskell.App.Util (leituraDadosClinica)
+import Haskell.App.Util (leituraDadosClinica, imprime)
 import Data.Ord (comparing)
 
 {-
@@ -103,10 +103,18 @@ dashboardC idC medicos consultas clinicas =
     "\n---------------------------\n\n" ++
     "----------------------------\n" ++
     "Ranking de Médicos: \n" ++
+    "POR NOTA:\n" ++
     concatMap Medico.toStringAval (rankingMedicosPorNota idC clinicas medicos) ++
+    "POR N° DE CONSULTAS:\n" ++
+    concatMap show (rankingMedicosPorConsultas idC clinicas medicos consultas) ++
     "----------------------------\n"
 
-
+rankingMedicosPorConsultas :: Int -> [Clinica.Clinica] -> [Medico.Medico] -> [Consulta.Consulta] -> [Medico.Medico]
+rankingMedicosPorConsultas idClinica clinicas medicos consultas =
+    let medicosDaClinica = filter (\medico -> Medico.clinica medico == idClinica) medicos
+        consultasDaClinica = filter (\consulta -> Consulta.idClinica consulta == idClinica) consultas
+        medicosOrdenados = sortBy (flip $ comparing (\medico -> length $ filter (\consulta -> Consulta.idMedico consulta == Medico.id medico) consultasDaClinica)) medicosDaClinica
+    in medicosOrdenados
 
 rankingMedicosPorNota :: Int -> [Clinica.Clinica] -> [Medico.Medico] -> [Medico.Medico]
 rankingMedicosPorNota idClinica clinicas medicos =
