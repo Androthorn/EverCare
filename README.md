@@ -7,29 +7,30 @@ O sistema EverCare tem como objetivos o gerenciamento de clínicas médicas e ot
 - Paciente:
     - Cadastrar-se e fazer login;
     - Marcar consultas
-    - Conversa com médico
-    - Feedback e Avaliação da clínica e médico que foi atendido
-    - Entra em fila virtual 
-    - Busca por médicos, com filtros:
-        - Médicos com ou sem plano de saúde
+    - Confirmar ou Desmarcar Consultas
+    - Ver Agendamentos
+    - Feedback e Avaliação do médico que foi atendido
+    - Busca por médicos ou clínica por nome específico
+    - Buscar médicos por:
+        - Plano de Saúde
         - Horários de atendimento
-        - Agendamento ou ordem de chegada
-        - Avaliação
+        - Agendamento ou Ordem de chegada
+        - Avaliação de Médico
         - Especialidade
         - Sintomas
-    - Ver receitas / laudos / solicitações de exames
+    - Ver receitas / laudos / solicitações de exames (Pós-Consulta)
+    - Conversa com médico
+    - Entra em fila virtual da consulta marcada por ordem de chegada
 
 - Clínica:
     - Cadastrar-se e fazer login;
-    - Histórico de pacientes atendidos
-    - Cadastra médicos com suas informações médicas e horários de atendimento
+    - Histórico de pacientes, de médicos e de consultas marcadas (Ver se foram confirmadas)
+    - Cadastra médicos com suas informações médicas
     - Dashboard:
-        - Consultas realizadas em determinado período (mês)
+        - Quantidade de Consultas, de Médicos e de Pacientes
         - Ranking de médicos (por avaliação / número de atendimentos)
-    - Gerencia fila virtual (ou médico?)
-    - Consulta:
-        - Por ordem de chegada -> Fila virtual
-        - Por agendamento
+    - Gerencia Fila Virtual:
+        - Cria, Atualiza ou Deleta Filas
 
 - Médico:
     - Fazer login
