@@ -569,10 +569,6 @@ atualizaBDmedicos idMed dados = do
         bdAtualizado = dados { BD.medicos = medicosAtualizados }
     bdAtualizado
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/virgdev
 chatsPac :: Int -> BD.BD -> IO()
 chatsPac idPac dados = do
     limpaTela
@@ -647,12 +643,12 @@ abrirConversaPac idPac dados = do
             if notElem idChat (map Chat.id (BD.chats dados)) then do
                 putStrLn "ID do Chat inválido"
                 threadDelay 1000000
-                abrirConversaPac idPac dados
+                chatsPac idPac dados
             else do
                 if notElem idChat (map Chat.id chatsPaciente) then do
                     putStrLn "Chat não pertence ao paciente"
                     threadDelay 1000000
-                    abrirConversaPac idPac dados
+                    chatsPac idPac dados
                 else do
                     putStrLn (ChatControl.verChatEspecifico idChat (BD.chats dados))
                     op <- prompt "[E]nviar Mensagem ou [S]air > "
@@ -781,10 +777,6 @@ confirmaConsulta idPac idConsulta dados = do
         putStrLn "Opção inválida"
         confirmaConsulta idPac idConsulta dados
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/virgdev
 inicialClinica :: BD.BD -> IO()
 inicialClinica dados = do
     limpaTela
@@ -1184,25 +1176,42 @@ abrirConversaMed idMed dados = do
     limpaTela
     putStrLn (tituloI "CHAT MÉDICO")
     idChatStr <- prompt "Id do Chat > "
-    let idChat = read idChatStr :: Int
-    putStrLn (ChatControl.verChatEspecifico idChat (BD.chats dados))
-    op <- prompt "[E]nviar Mensagem ou [S]air > "
 
-    if toUpper (head op) == 'E' then do
-        mensagem <- prompt "Mensagem > "
-        let dadosA = adicionarMensagemAoChat idChat ("P: " ++ mensagem) dados
-        BD.limpaArquivo "Haskell/Persistence/chats.txt"
-        BD.escreveNoArquivoSemContra "Haskell/Persistence/chats.txt" (BD.chatsToString (BD.chats dadosA))
-        menuMedico idMed dadosA
+    let chatsMedico = filter (\chat -> Chat.idMedico chat == idMed) (BD.chats dados)
 
-    else if toUpper (head op) == 'S' then do
-        menuMedico idMed dados
+    case readMaybe idChatStr :: Maybe Int of
+        Just idChat -> do
+            if notElem idChat (map Chat.id (BD.chats dados)) then do
+                putStrLn "ID do Chat inválido"
+                threadDelay 1000000
+                chatsMed idMed dados
+            else do
+                if notElem idChat (map Chat.id chatsMedico) then do
+                    putStrLn "Chat não pertence ao médico"
+                    threadDelay 1000000
+                    chatsMed idMed dados
+                else do
+                    putStrLn (ChatControl.verChatEspecifico idChat (BD.chats dados))
+                    op <- prompt "[E]nviar Mensagem ou [S]air > "
 
-    else do
-        putStrLn "Opção inválida"
-        abrirConversaMed idMed dados
+                    if toUpper (head op) == 'E' then do
+                        mensagem <- prompt "Mensagem > "
+                        let dadosA = adicionarMensagemAoChat idChat ("M: " ++ mensagem) dados
+                        BD.limpaArquivo "Haskell/Persistence/chats.txt"
+                        BD.escreveNoArquivoSemContra "Haskell/Persistence/chats.txt" (BD.chatsToString (BD.chats dadosA))
+                        menuMedico idMed dadosA
 
-    menuMedico idMed dados
+                    else if toUpper (head op) == 'S' then do
+                        menuMedico idMed dados
+
+                    else do
+                        putStrLn "Opção inválida"
+                        abrirConversaMed idMed dados
+        Nothing -> do
+            putStrLn "ID deve ser um inteiro"
+            threadDelay 1000000
+            abrirConversaMed idMed dados
+    menuMedico idMed dados  
 
 emitirM :: Int  -> BD.BD -> IO()
 emitirM idM dados = do
