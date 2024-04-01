@@ -1,7 +1,1 @@
-1;Ana;101030;Feminino;18/09;Rua do Lado;A+;Nenhum;True;False;False;123
-2;André;102030;Masculino;09/05;Rua ABC;B-;UnoMed;False;False;False;123
-3;Cecilia;304050;Feminino;21/04;Rua do Meio;B-;Nenhum;True;True;False;False;123
-4;Gabriela;090807;Feminino;22/08;Rua Central;B-;Bradesca;False;False;True;123
-5;Guilherme;876543;Masculino;04/12;Rua Urbana;O+;UnoMed;False;False;False;123
-6;jose;jose;jose;jose;jose;jose;jose;True;True;True;123
-7;Maria;104060;feminino;01/02;rua do bobo;o-;UnoMed;False;True;True;123
+1;Ana;99;feminino;16;rua;a+;Unimed;True;False;False;123

@@ -1,3 +1,1 @@
-1;1;2;7;22/10/2024;10:00;Enxaqueca;True
-2;1;2;3;31/03/2024;11:00;dor no pé;False
-3;1;2;3;22/04/2024;14:00;dor no joelho;False
+1;1;1;1;16/08/2024;00:00;Sem queixas;False

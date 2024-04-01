@@ -1,2 +1,1 @@
-1;Otorrino;Rua;8:00-12:00;Unimed, Bradesco, HapVida;A;83;123
-2;Pop;Rua;8:00-12:00;Unimed, Particular;O;9999;123
+1;UBS;rua;08:00;Unimed;Ordem de Chegada;99;123

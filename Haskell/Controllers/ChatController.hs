@@ -23,13 +23,11 @@ import Haskell.Models.Medico as Medico
 criarChat :: Int -> Int -> Int -> String -> Chat.Chat
 criarChat id idPaciente idMedico mensagem = Chat.Chat id idPaciente idMedico [mensagem]
 
-verChatsPaciente :: Int -> [Chat.Chat] -> [Medico.Medico] -> String
-verChatsPaciente _ [] [] = []
-verChatsPaciente _ [] _ = []
-verChatsPaciente _ _ [] = []
-verChatsPaciente idPaciente chats medicos =
+verChatsPaciente :: Int -> [Chat.Chat] -> String
+verChatsPaciente _ [] = []
+verChatsPaciente idPaciente chats =
     let filtrado = filter (\chat -> Chat.idPaciente chat == idPaciente) chats
-        chatsString = map (\chat -> showChat chat medicos) filtrado
+        chatsString = map (\chat -> showChat chat) filtrado
     in unlines chatsString
 
 verChatsMedico :: Int -> [Chat.Chat] -> [Paciente.Paciente] -> String
@@ -54,9 +52,9 @@ showChatM chat pacientes = "----------------------------\n" ++
                 "Médico: " ++ (show (Chat.idMedico chat)) ++ "\n" ++
                 "Mensagens: " ++ (show (Chat.mensagens chat)) ++ "\n"
 
-showChat :: Chat.Chat -> [Medico.Medico] -> String
-showChat chat medicos = "----------------------------\n" ++
+showChat :: Chat.Chat -> String
+showChat chat = "----------------------------\n" ++
                 "CHAT " ++ (show (Chat.id chat)) ++ "\n" ++
                 "Paciente: " ++ (show (Chat.idPaciente chat)) ++ "\n" ++
-                "Médico: " ++ (MC.getIdMedico (Chat.idMedico chat) medicos) ++ "\n" ++
+                "Médico: " ++ (show (Chat.idMedico chat)) ++ "\n" ++
                 "Mensagens: " ++ (show (Chat.mensagens chat)) ++ "\n"
