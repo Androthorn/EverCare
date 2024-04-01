@@ -26,8 +26,8 @@ toString e =
 instance Show Exame where
     show (Exame id idP idM t d) = "----------------------------\n" ++
                                         "EXAME " ++ (show id) ++ "\n" ++
-                                        "Paciente: " ++ (show idP) ++ "\n" ++
-                                        "Médico responsável: " ++ (show idM) ++ "\n" ++
+                                        "Id do Paciente: " ++ (show idP) ++ "\n" ++
+                                        "Id do Médico responsável: " ++ (show idM) ++ "\n" ++
                                         "Tipo do exame: " ++ t ++ "\n" ++
                                         "Data: " ++ (show d) ++ "\n"
 

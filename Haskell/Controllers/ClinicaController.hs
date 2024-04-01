@@ -126,7 +126,7 @@ criarFilaVirtual :: Int -> Int -> Int -> Fila.Fila
 criarFilaVirtual id idC idM = Fila.Fila id idC idM []
 
 verFilasClinica :: Int -> [Fila.Fila] -> String
-verFilasClinica _ [] = ""
+verFilasClinica _ [] = "Não há filas abertas nessa clínica"
 verFilasClinica idC filas =
     let filasList = filter (\fila -> Fila.idClinica fila == idC) filas
     in if null filasList then

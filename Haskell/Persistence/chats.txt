@@ -1,8 +1,0 @@
-1;1;4;P: opa
-2;1;3;P: hii
-3;1;1;P: pode,P: ja pode,P: Por favor funcione,P: envia ai na moral
-4;2;4;P: hahaha,P: será?
-5;5;4;P: linda,P: eu acho
-6;5;3;P: lindex,M: so se for
-7;4;2;P: mediquinha fulera,P: e ache bom,P: ahahaha
-8;4;4;P: plot,P: da historia

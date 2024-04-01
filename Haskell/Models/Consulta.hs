@@ -32,9 +32,9 @@ toString cons =      show (idConsulta cons) ++
 instance Show Consulta where
     show (Consulta idCons idPac idClin idMed dataC hora queixas confirmado) = "-------------------\n" ++
                     "Id da Consulta: " ++ show idCons ++ "\n" ++
-                    "Nome do paciente: " ++ show idPac ++ "\n" ++
-                    "Nome da Clínica: "  ++ show idClin ++ "\n" ++
-                    "Nome do Médico: " ++ show idMed ++ "\n" ++
+                    "Id do paciente: " ++ show idPac ++ "\n" ++
+                    "Id da Clínica: "  ++ show idClin ++ "\n" ++
+                    "Id do Médico: " ++ show idMed ++ "\n" ++
                     "Data da consulta: " ++ dataC ++ "\n" ++
                     "Hora da consulta: " ++ hora ++ "\n" ++
                     "Queixas: " ++ queixas ++ "\n" ++

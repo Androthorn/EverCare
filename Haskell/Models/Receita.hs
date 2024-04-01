@@ -21,7 +21,7 @@ toString r =
 instance Show Receita where
     show (Receita id idM idP texto) = "----------------------------\n" ++
                                         "RECEITUÁRIO " ++ (show id) ++ "\n" ++
-                                        "Médico responsável: " ++ (show idM) ++ "\n" ++
+                                        "Id do Médico responsável: " ++ (show idM) ++ "\n" ++
                                         "Paciente: " ++ (show idP) ++ "\n" ++
                                         "Remédios: " ++ "\n" ++  texto
 

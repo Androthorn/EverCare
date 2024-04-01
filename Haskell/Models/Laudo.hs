@@ -19,8 +19,8 @@ toString l =
 instance Show Laudo where
     show (Laudo id idM idP t) = "----------------------------\n" ++
                                 "LAUDO " ++ (show id) ++ "\n" ++
-                                "Médico responsável: " ++ (show idM) ++ "\n" ++
-                                "Paciente: " ++ (show idP) ++ "\n" ++
+                                "Id do Médico responsável: " ++ (show idM) ++ "\n" ++
+                                "Id do Paciente: " ++ (show idP) ++ "\n" ++
                                 "Resultado: " ++ t
 
 instance Read Laudo where
