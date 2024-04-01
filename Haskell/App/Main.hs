@@ -1277,11 +1277,10 @@ emitirExame idM dados = do
                 emitirM idM dados
             else do
                 tipo <- prompt "Tipo do Exame > "
-                dia <- prompt "Dia do Exame > "
                 putStrLn ("Solicitação de Exame feita com sucesso! O id da solicitação é: " ++ (show (BD.idAtualExame dados)))
                 threadDelay 2000000  -- waits for 2 seconds
 
-                let exame = MControl.solicitaExame (BD.idAtualExame dados) idM (read idPStr) tipo dia
+                let exame = MControl.solicitaExame (BD.idAtualExame dados) idM (read idPStr) tipo
                 BD.escreveNoArquivo "Haskell/Persistence/exames.txt" (Exame.toString exame)
 
                 menuMedico idM dados { BD.exames = (BD.exames dados) ++ [exame],

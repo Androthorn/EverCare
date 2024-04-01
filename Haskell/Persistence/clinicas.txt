@@ -1,1 +1,1 @@
-1;UBS;rua;08:00;Unimed;Ordem de Chegada;99;123
+1;UBS;rua;Unimed;Ordem de Chegada;99;123

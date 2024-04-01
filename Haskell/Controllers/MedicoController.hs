@@ -64,8 +64,8 @@ emiteReceita id idMedico infos = Receita.Receita id idMedico idPaciente texto
 emiteLaudo :: Int -> Int -> Int -> String -> Laudo.Laudo
 emiteLaudo id idMedico idPaciente texto = read (intercalate ";" ([show (id), show (idMedico), show (idPaciente)] ++ [texto])) :: Laudo.Laudo
 
-solicitaExame :: Int -> Int -> Int -> String -> String -> Exame.Exame
-solicitaExame id idMedico idPaciente tipo dia = Exame.Exame id idPaciente idMedico tipo dia
+solicitaExame :: Int -> Int -> Int -> String -> Exame.Exame
+solicitaExame id idMedico idPaciente tipo = Exame.Exame id idPaciente idMedico tipo
 
 -- atualizarMediaNotasMedico :: Int -> Float -> [Medico.Medico] -> [Medico.Medico]
 -- atualizarMediaNotasMedico _ _ [] = []

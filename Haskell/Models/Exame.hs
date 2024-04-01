@@ -8,8 +8,7 @@ data Exame = Exame {
     id :: Int,
     idPaciente :: Int,
     idMedico :: Int,
-    tipo :: String,
-    dia :: String
+    tipo :: String
 }
 
 --Ajeitar o tipo da data
@@ -19,17 +18,15 @@ toString e =
     show (id e) ++ ";" ++
     show (idPaciente e) ++ ";" ++
     show (idMedico e) ++ ";" ++
-    tipo e ++ ";" ++
-    show (dia e)
+    tipo e
     
 
 instance Show Exame where
-    show (Exame id idP idM t d) = "----------------------------\n" ++
+    show (Exame id idP idM t) = "----------------------------\n" ++
                                         "EXAME " ++ (show id) ++ "\n" ++
                                         "Id do Paciente: " ++ (show idP) ++ "\n" ++
                                         "Id do Médico responsável: " ++ (show idM) ++ "\n" ++
-                                        "Tipo do exame: " ++ t ++ "\n" ++
-                                        "Data: " ++ (show d) ++ "\n"
+                                        "Tipo do exame: " ++ t ++ "\n"
 
 instance Read Exame where
     readsPrec _ str = do
@@ -38,5 +35,4 @@ instance Read Exame where
         let idPaciente = read (l !! 1) :: Int
         let idMedico = read (l !! 2) :: Int
         let tipo = l !! 3
-        let dia = read (l !! 4) :: String
-        [(Exame id idPaciente idMedico tipo dia, "")]
+        [(Exame id idPaciente idMedico tipo, "")]

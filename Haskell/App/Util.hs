@@ -118,7 +118,6 @@ leituraDadosClinica :: IO [String]
 leituraDadosClinica = do
     sequence [prompt "Nome > ",
               prompt "Endereço > ",
-              prompt "Horários de Funcionamento > ",
               prompt "Planos Vinculados > ",
               prompt "Método de Agendamento > ",
               prompt "Contato > ",
