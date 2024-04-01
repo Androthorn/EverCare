@@ -871,6 +871,9 @@ menuClinicaO idC dados = do
 
     if toUpper (head op) == 'C' then do
         cadastraMedico idC dados
+
+    else if toUpper (head op) == 'F' then do
+        filaVirtualClinica idC dados
     else if toUpper (head op) == 'V' then do
         visualizaInformacaoClinica idC dados
     else if toUpper (head op) == 'D' then do
@@ -979,6 +982,9 @@ filaVirtualClinica idC dados = do
                     else do
                         let idF = read idFStr :: Int
                         let bdAtualizado = deletarFilaVirtual idF dados
+                        threadDelay 1000000
+                        BD.limpaArquivo "Haskell/Persistence/filas.txt"
+                        BD.escreveNoArquivoSemContra "Haskell/Persistence/filas.txt" (BD.filasToString (BD.filas bdAtualizado) "")
                         putStrLn ("Fila deletada com sucesso!")
                         threadDelay 2000000
                         menuClinica idC bdAtualizado

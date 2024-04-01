@@ -73,7 +73,6 @@ filaVirtualC :: String
 filaVirtualC = " [C] - Criar Fila\n"
             ++ " [V] - Ver Filas\n"
             ++ " [A] - Atualizar Fila\n"
-            ++ " [D] - Deletar Fila\n"
             ++ " [S] - Sair\n"
 
 chatP :: String
