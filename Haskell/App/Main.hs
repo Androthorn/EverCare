@@ -463,9 +463,10 @@ cadastraConsulta idPac dados = do
                             threadDelay 1000000
                             cadastraConsulta idPac dados
                         else do
-                            if (head (Clinica.metodoAgendamento clinica) /= 'O') then do
+                            if (head (Clinica.metodoAgendamento clinica) == 'O') then do
                                 queixas <- prompt "Queixas > "
-                                putStrLn "Consulta marcada com sucesso! Essa consulta é por ordem de chegada."
+                                putStrLn ("Consulta marcada com sucesso! O id da consulta é: " ++ (show (BD.idAtualConsulta dados)))
+                                putStrLn "Essa consulta é por ordem de chegada."
                                 threadDelay 2000000
 
                                 let dadosCons = [show idPac, idStrC, idStrM, dia, "00:00", queixas]
