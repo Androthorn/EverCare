@@ -42,10 +42,9 @@ O sistema EverCare tem como objetivos o gerenciamento de clínicas médicas e ot
     - Conversa com paciente
 
 ## Como rodar?
-Para rodar o sistema é necessário apenas compilar e rodar o arquivo executável,
-abrindo do diretório raíz EverCare rode os comandos:
+Para rodar o sistema é necessário ter o `GHC` instalado na sua máquina, indicamos a intalção do [GHCup] (https://www.haskell.org/ghcup/install/). 
+É necessário apenas compilar e rodar o arquivo executável, abrindo do diretório raíz EverCare e rodar os comandos:
 ``` bash
 ghc -o EverCare Haskell/App/Main.hs
-
 ./EverCare
 ```

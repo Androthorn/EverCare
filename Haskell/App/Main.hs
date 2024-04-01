@@ -463,7 +463,7 @@ cadastraConsulta idPac dados = do
                             threadDelay 1000000
                             cadastraConsulta idPac dados
                         else do
-                            if not (Clinica.metodoAgendamento clinica == "O") then do
+                            if (head (Clinica.metodoAgendamento clinica) /= 'O') then do
                                 queixas <- prompt "Queixas > "
                                 putStrLn "Consulta marcada com sucesso! Essa consulta é por ordem de chegada."
                                 threadDelay 2000000
