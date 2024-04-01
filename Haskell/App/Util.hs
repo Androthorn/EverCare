@@ -10,9 +10,13 @@ titulo = " -------------------------------------------------\n"
        ++" -------------------------------------------------\n"
 
 tituloI :: String -> String
-tituloI t = " -------------------------------------------------\n"
-            ++" ----------- EVERCARE - " ++ t ++ " -----------\n"
-            ++" -------------------------------------------------\n"
+tituloI t =
+    let numTracos = (37 - length t) `div` 2
+        tracos = replicate numTracos '-'
+        tracoExtra = if even (length t) then "" else "-"
+    in  " -------------------------------------------------\n" ++
+        " " ++ tracos ++ " EVERCARE - " ++ t ++ " "  ++  replicate (37 - numTracos - length t - 1) '-' ++ "\n" ++
+        " -------------------------------------------------\n"
 
 escolheEntidade :: String
 escolheEntidade = " -----------------------------\n"
@@ -90,15 +94,24 @@ leituraDadosAvaliacao = do
               prompt "Nota (0-10) > ",
               prompt "Comentário > "]
 
+dashboardBusca :: String
+dashboardBusca = " [M] - Buscar Médicos\n" 
+        ++" [C] - Buscar Clínicas\n"
+        ++" [V] - Voltar\n"
+
 dashboardBuscaMedico :: String
 dashboardBuscaMedico = " [M] - Nome do Médico\n" 
-        ++" [C] - Nome da Clínica\n"
-        ++" [P] - Plano de Saúde\n"
+        ++" [C] - Por Clínica\n"
         ++" [H] - Horário\n"
         ++" [E] - Especialidade\n"
-        ++" [T] - Tipo de Agendamento\n"
         ++" [A] - Avaliação acima de (0-10)\n"
         ++" [S] - Sintoma\n"
+        ++" [V] - Voltar\n"
+
+dashboardBuscaClinica :: String
+dashboardBuscaClinica = " [C] - Nome da Clínica\n"
+        ++" [P] - Plano de Saúde\n"
+        ++" [T] - Tipo de Agendamento\n"
         ++" [V] - Voltar\n"
 
 leituraDadosClinica :: IO [String]

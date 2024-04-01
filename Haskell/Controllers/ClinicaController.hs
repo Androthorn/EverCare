@@ -25,6 +25,7 @@ import qualified Haskell.Models.Consulta as Consulta
 import qualified Haskell.Controllers.PacienteController as PControl
 import qualified Haskell.Controllers.MedicoController as MControl
 import qualified Haskell.Models.Fila as Fila
+import Data.Char (toLower)
 
 import Haskell.App.Util (leituraDadosClinica, imprime)
 import Data.Ord (comparing)
@@ -152,6 +153,6 @@ Essa função retorna o ID da clinica dado o seu nome.
 -}
 getClinicaId :: String -> [Clinica.Clinica] -> Int
 getClinicaId name clinicas = 
-    case find (\clinica -> Clinica.nome clinica == name) clinicas of
+    case find (\clinica -> (map toLower $ Clinica.nome clinica) == (map toLower name)) clinicas of
         Just clinica -> Clinica.id clinica
-        Nothing -> error "clinica not found"
+        Nothing -> -1

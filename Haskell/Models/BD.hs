@@ -131,35 +131,42 @@ uploadAvaliacoes path = do
     let avaliacoesList = stringToAvaliacoes linhas
     return avaliacoesList
 
-
 uploadReceitas :: FilePath -> IO [Receita.Receita]
 uploadReceitas path = do
-    conteudo <- readFile path
+    h <- openFile path ReadMode     
+    conteudo <- hGetContents h     
+    evaluate (rnf conteudo)     
+    hClose h 
     let linhas = lines conteudo
     let receitasList = stringToReceitas linhas
     return receitasList
 
 uploadLaudos :: FilePath -> IO [Laudo.Laudo]
 uploadLaudos path = do
-    conteudo <- readFile path
+    h <- openFile path ReadMode     
+    conteudo <- hGetContents h     
+    evaluate (rnf conteudo)     
+    hClose h 
     let linhas = lines conteudo
     let laudosList = stringToLaudos linhas
     return laudosList
 
-stringToLaudos :: [String] -> [Laudo.Laudo]
-stringToLaudos [] = []
-stringToLaudos l = map read l :: [Laudo.Laudo]
-
 uploadPacientes :: FilePath -> IO [Paciente.Paciente]
 uploadPacientes path = do
-    conteudo <- readFile path
+    h <- openFile path ReadMode
+    conteudo <- hGetContents h
+    evaluate (rnf conteudo)
+    hClose h
     let linhas = lines conteudo
-    let pacientsList = stringToPacientes linhas
-    return pacientsList
+    let pacientesList = stringToPacientes linhas
+    return pacientesList
 
 uploadClinicas :: FilePath -> IO [Clinica.Clinica]
 uploadClinicas path = do
-    conteudo <- readFile path
+    h <- openFile path ReadMode
+    conteudo <- hGetContents h
+    evaluate (rnf conteudo)
+    hClose h
     let linhas = lines conteudo
     let clinicasList = stringToClinicas linhas
     return clinicasList
@@ -176,21 +183,20 @@ uploadMedicos path = do
 
 uploadConsultas :: FilePath -> IO [Consulta.Consulta]
 uploadConsultas path = do
-    conteudo <- readFile path
+    h <- openFile path ReadMode     
+    conteudo <- hGetContents h     
+    evaluate (rnf conteudo)     
+    hClose h 
     let linhas = lines conteudo
     let consultasList = stringToConsultas linhas
     return consultasList
 
--- uploadChats :: FilePath -> IO [Chat.Chat]
--- uploadChats path = do
---     conteudo <- readFile path
---     let linhas = lines conteudo
---     let chatsList = stringToChats linhas
---     return chatsList
-
 uploadExames :: FilePath -> IO [Exame.Exame]
 uploadExames path = do
-    conteudo <- readFile path
+    h <- openFile path ReadMode     
+    conteudo <- hGetContents h     
+    evaluate (rnf conteudo)     
+    hClose h 
     let linhas = lines conteudo
     let examesList = stringToExames linhas
     return examesList
@@ -273,6 +279,10 @@ medicosToString (x:xs) str = str ++ (Medico.toString x) ++ "\n" ++ medicosToStri
 stringToMedicos :: [String] -> [Medico.Medico]
 stringToMedicos [] = []
 stringToMedicos l = map read l :: [Medico.Medico]
+
+stringToLaudos :: [String] -> [Laudo.Laudo]
+stringToLaudos [] = []
+stringToLaudos l = map read l :: [Laudo.Laudo]
 
 
 horariosMarcados :: BD -> Int -> String -> [String]

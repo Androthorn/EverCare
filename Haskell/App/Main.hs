@@ -265,85 +265,176 @@ buscar :: Int -> BD.BD -> IO()
 buscar idPac dados = do
     limpaTela
     putStrLn (tituloI "BUSCAR")
-    putStrLn (dashboardBuscaMedico)
+    putStrLn (dashboardBusca)
     op <- prompt "Opção > "
 
-    if toUpper (head op) == 'M' then do
-        nomeMedico <- prompt "Nome do Médico > "
-        let medicos = PControl.filtrarPorMedico nomeMedico (BD.medicos dados)
-        imprime medicos
-        prompt "Pressione Enter para voltar"
-        menuPaciente idPac dados
+    if toUpper (head op) == 'C' then do
+        buscarClinicas idPac dados
 
-    else if toUpper (head op) == 'C' then do
-        nomeClinica <- prompt "Nome da Clínica > "
-        let clinicas = PControl.filtrarPorClinica nomeClinica (BD.clinicas dados)
-        imprime clinicas
-        prompt "Pressione Enter para voltar"
-        menuPaciente idPac dados
-
-    else if toUpper (head op) == 'P' then do
-        plano <- prompt "Plano de Saúde ou Particular > "
-        let clinicas = PControl.filtrarClinicasPorPlanoDeSaude plano (BD.clinicas dados)
-        imprime clinicas
-        prompt "Pressione Enter para voltar"
-        menuPaciente idPac dados
-
-    else if toUpper (head op) == 'H' then do
-        dia <- prompt "Dia > "
-        if not (isValidDate dia) then do
-            putStrLn "Data inválida"
-            threadDelay 1000000
-            buscar idPac dados
-        else do
-            hora <- prompt "Horário > "
-            if not (isValidHour hora) then do
-                putStrLn "Hora inválida"
-                threadDelay 1000000
-                buscar idPac dados
-            else do
-                let medicos = BD.filtraMedicosNoHorario dados dia hora
-                imprime medicos
-                prompt "Pressione Enter para voltar"
-                menuPaciente idPac dados
-
-    else if toUpper (head op) == 'E' then do
-        especialidade <- prompt "Especialidade > "
-        let medicos = BD.filtraMedicoPorEspecialidade dados especialidade
-        imprime medicos
-        prompt "Pressione Enter para voltar"
-        menuPaciente idPac dados
-    
-    else if toUpper (head op) == 'T' then do
-        tipo <- prompt "Tipo do Agendamento ( (A)gendamento ou (O)rdem de Chegada ) > "
-        let clinicas = PControl.filtrarClinicasPorAgendamento tipo (BD.clinicas dados)
-        imprime clinicas
-        prompt "Pressione Enter para voltar"
-        menuPaciente idPac dados
-    
-    
-    else if toUpper (head op) == 'A' then do
-        acimaStr <- prompt "Avaliação acima de (0-10) > "
-        let acimaValor = read acimaStr :: Float
-        let medicos = (PControl.filtrarMedicosPorAvaliacoes acimaValor (BD.medicos dados))
-        let avaliacoes = map Medico.toStringAval medicos
-        putStrLn (unlines avaliacoes)
-        prompt "Pressione Enter para voltar"
-        menuPaciente idPac dados
-    
-
-    else if toUpper (head op) == 'S' then do
-        sintoma <- prompt "Descreva o que está sentindo > "
-        let medicos = BD.filtrarMedicoPorSintoma dados sintoma
-        imprime medicos
-        prompt "Pressione Enter para voltar"
-        menuPaciente idPac dados
+    else if toUpper (head op) == 'M' then do
+        buscarMedicos idPac dados
 
     else if toUpper (head op) == 'V' then do
         menuPaciente idPac dados
     else do
         putStrLn "Opção inválida"
         buscar idPac dados
+
+buscarClinicas :: Int -> BD.BD -> IO()
+buscarClinicas idPac dados = do
+    limpaTela
+    putStrLn (tituloI "BUSCAR CLÍNICAS")
+    putStrLn (dashboardBuscaClinica)
+    op <- prompt "Opção > "
+
+    if toUpper (head op) == 'C' then do
+        nomeClinica <- prompt "Nome da Clínica > "
+        let clinicas = PControl.filtrarPorClinica nomeClinica (BD.clinicas dados)
+        if null clinicas then do
+            putStrLn "Clínica não encontrada"
+            threadDelay 1000000
+            buscarClinicas idPac dados
+        else do
+            imprime clinicas
+            prompt "Pressione Enter para voltar"
+            menuPaciente idPac dados
+
+    else if toUpper (head op) == 'P' then do
+        plano <- prompt "Plano de Saúde ou Particular > "
+        let clinicas = PControl.filtrarClinicasPorPlanoDeSaude plano (BD.clinicas dados)
+        if null clinicas then do
+            putStrLn "Clínica não encontrada"
+            threadDelay 1000000
+            buscarClinicas idPac dados
+        else do
+            imprime clinicas
+            prompt "Pressione Enter para voltar"
+            menuPaciente idPac dados
+    
+    else if toUpper (head op) == 'T' then do
+        tipo <- prompt "Tipo do Agendamento [(A)gendamento ou (O)rdem de Chegada] > "
+        let clinicas = PControl.filtrarClinicasPorAgendamento tipo (BD.clinicas dados)
+        if null clinicas then do
+            putStrLn "Nenhuma clínica encontrada com esse tipo de agendamento"
+            threadDelay 1000000
+            buscarClinicas idPac dados
+        else do
+            imprime clinicas
+            prompt "Pressione Enter para voltar"
+            menuPaciente idPac dados
+
+    else if toUpper (head op) == 'V' then do
+        buscar idPac dados
+
+    else do
+        putStrLn "Opção inválida"
+        buscarClinicas idPac dados
+
+buscarMedicos :: Int -> BD.BD -> IO()
+buscarMedicos idPac dados = do
+    limpaTela
+    putStrLn (tituloI "BUSCAR MÉDICO")
+    putStrLn (dashboardBuscaMedico)
+    op <- prompt "Opção > "
+
+    if toUpper (head op) == 'M' then do
+        nomeMedico <- prompt "Nome do Médico > "
+        let medicos = PControl.filtrarPorMedico nomeMedico (BD.medicos dados)
+        if null medicos then do
+            putStrLn "Médico não encontrado"
+            threadDelay 1000000
+            buscarMedicos idPac dados
+        else do
+            imprime medicos
+            prompt "Pressione Enter para voltar"
+            menuPaciente idPac dados
+
+    else if toUpper (head op) == 'C' then do
+        nomeClinica <- prompt "Nome da Clínica > "
+        let idClinicaMaybe = CControl.getClinicaId nomeClinica (BD.clinicas dados)
+        if idClinicaMaybe == -1 then do
+            putStrLn "Clínica não encontrada"
+            threadDelay 1000000
+            buscarMedicos idPac dados
+        else do
+            let idClinica = idClinicaMaybe
+            let medicos = BD.filtraMedicosDaClinica dados idClinica
+            if null medicos then do
+                putStrLn "Nenhum médico encontrado nessa clínica"
+                threadDelay 1000000
+                buscarMedicos idPac dados
+            else do
+                imprime medicos
+                prompt "Pressione Enter para voltar"
+                menuPaciente idPac dados
+
+    else if toUpper (head op) == 'H' then do
+        dia <- prompt "Dia > "
+        if not (isValidDate dia) then do
+            putStrLn "Data inválida"
+            threadDelay 1000000
+            buscarMedicos idPac dados
+        else do
+            hora <- prompt "Horário > "
+            if not (isValidHour hora) then do
+                putStrLn "Hora inválida"
+                threadDelay 1000000
+                buscarMedicos idPac dados
+            else do
+                let medicos = BD.filtraMedicosNoHorario dados dia hora
+                if null medicos then do
+                    putStrLn "Nenhum médico disponível nesse horário"
+                    threadDelay 1000000
+                    buscarMedicos idPac dados
+                else do
+                    imprime medicos
+                    prompt "Pressione Enter para voltar"
+                    menuPaciente idPac dados
+
+    else if toUpper (head op) == 'E' then do
+        especialidade <- prompt "Especialidade > "
+        let medicos = BD.filtraMedicoPorEspecialidade dados especialidade
+        if null medicos then do
+            putStrLn "Nenhum médico encontrado com essa especialidade"
+            threadDelay 1000000
+            buscarMedicos idPac dados
+        else do
+            imprime medicos
+            prompt "Pressione Enter para voltar"
+            menuPaciente idPac dados
+    
+    else if toUpper (head op) == 'A' then do
+        acimaStr <- prompt "Avaliação acima de (0-10) > "
+        let acimaValor = read acimaStr :: Float
+        let medicos = (PControl.filtrarMedicosPorAvaliacoes acimaValor (BD.medicos dados))
+        let avaliacoes = map Medico.toStringAval medicos
+        if null avaliacoes then do
+            putStrLn "Nenhum médico encontrado com avaliação acima do esperado."
+            threadDelay 1000000
+            buscarMedicos idPac dados
+        else do
+            putStrLn (unlines avaliacoes)
+            prompt "Pressione Enter para voltar"
+            menuPaciente idPac dados
+    
+    else if toUpper (head op) == 'S' then do
+        sintoma <- prompt "Descreva o que está sentindo > "
+        let medicos = BD.filtrarMedicoPorSintoma dados sintoma
+        if null medicos then do
+            putStrLn "Nenhum médico encontrado com esse sintoma"
+            threadDelay 1000000
+            buscarMedicos idPac dados
+        else do
+            imprime medicos
+            prompt "Pressione Enter para voltar"
+            menuPaciente idPac dados
+
+    else if toUpper (head op) == 'V' then do
+        buscar idPac dados
+
+    else do
+        putStrLn "Opção inválida"
+        buscarMedicos idPac dados
 
 cadastraConsulta :: Int -> BD.BD -> IO()
 cadastraConsulta idPac dados = do
@@ -372,7 +463,7 @@ cadastraConsulta idPac dados = do
                             cadastraConsulta idPac dados
                         else do
                             if not (Clinica.metodoAgendamento clinica == "O") then do
-                                putStrLn "Consulta marcada com sucesso!"
+                                putStrLn "Consulta marcada com sucesso! Essa consulta é por ordem de chegada."
                                 threadDelay 2000000
 
                                 let dadosCons = [show idPac, idStrC, idStrM, dia, "00:00", "Sem queixas"]
