@@ -13,7 +13,8 @@ module Haskell.Controllers.ClinicaController(
     verPaciente,
     verConsultas,
     criarFilaVirtual,
-    verFilasClinica
+    verFilasClinica,
+    getClinicaById
 ) where
 
 import Data.List (intercalate, find, nub, sortBy)
@@ -156,3 +157,9 @@ getClinicaId name clinicas =
     case find (\clinica -> (map toLower $ Clinica.nome clinica) == (map toLower name)) clinicas of
         Just clinica -> Clinica.id clinica
         Nothing -> -1
+
+getClinicaById :: Int -> [Clinica.Clinica] -> Clinica.Clinica
+getClinicaById idC clinicas = 
+    case find (\clinica -> Clinica.id clinica == idC) clinicas of
+        Just clinica -> clinica
+        Nothing -> error "clinica not found"

@@ -99,7 +99,7 @@ filtrarClinicasPorPlanoDeSaude planoSaudeDesejado clinicas =
 -}
 filtrarClinicasPorAgendamento :: String -> [Clinica.Clinica] -> [Clinica.Clinica]
 filtrarClinicasPorAgendamento tipoAgendamentoDesejado clinicas =
-    filter (\clinica -> Clinica.metodoAgendamento clinica == tipoAgendamentoDesejado) clinicas
+    filter (\clinica -> head (Clinica.metodoAgendamento clinica) == head (tipoAgendamentoDesejado)) clinicas
 
 {-
 Essa função filtra uma lista de médicos que tem notas acima de um certo valor.

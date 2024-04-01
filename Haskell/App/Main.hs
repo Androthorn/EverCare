@@ -834,28 +834,51 @@ loginClinica dados = do
 
 menuClinica :: Int -> BD.BD -> IO()
 menuClinica idC dados = do
+    let clinica = CControl.getClinicaById idC (BD.clinicas dados)
+    if (head (Clinica.metodoAgendamento clinica) == 'A') then do
+        menuClinicaA idC dados
+    else do
+        menuClinicaO idC dados
+
+menuClinicaA :: Int -> BD.BD -> IO()
+menuClinicaA idC dados = do
     limpaTela
     putStrLn (tituloI "DASHBOARD CLÍNICA")
-    putStrLn (dashboardClinica)
+    putStrLn (dashboardClinicaA)
 
     op <- prompt "Opção > "
 
     if toUpper (head op) == 'C' then do
         cadastraMedico idC dados
-
     else if toUpper (head op) == 'V' then do
         visualizaInformacaoClinica idC dados
-
     else if toUpper (head op) == 'D' then do
         dashBoardC idC dados
     else if toUpper (head op) == 'S' then do
         inicial dados
-    else if toUpper (head op) == 'F' then do
-        filaVirtualClinica idC dados
-
     else do
         putStrLn "Opção inválida"
-        menuClinica idC dados
+        menuClinicaA idC dados
+
+menuClinicaO :: Int -> BD.BD -> IO()
+menuClinicaO idC dados = do
+    limpaTela
+    putStrLn (tituloI "DASHBOARD CLÍNICA")
+    putStrLn (dashboardClinicaO)
+
+    op <- prompt "Opção > "
+
+    if toUpper (head op) == 'C' then do
+        cadastraMedico idC dados
+    else if toUpper (head op) == 'V' then do
+        visualizaInformacaoClinica idC dados
+    else if toUpper (head op) == 'D' then do
+        dashBoardC idC dados
+    else if toUpper (head op) == 'S' then do
+        inicial dados
+    else do
+        putStrLn "Opção inválida"
+        menuClinicaO idC dados
 
 filaVirtualClinica :: Int -> BD.BD -> IO()
 filaVirtualClinica idC dados = do

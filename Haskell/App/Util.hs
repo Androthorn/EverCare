@@ -135,8 +135,14 @@ leituraEmissaoReceita = do
     sequence [prompt "ID do Paciente > ",
               prompt "Remédios e Instruções > "]
 
-dashboardClinica :: String
-dashboardClinica = " [C] - Cadastrar Médico\n"
+dashboardClinicaA :: String
+dashboardClinicaA = " [C] - Cadastrar Médico\n"
+                 ++" [V] - Ver Informações\n"
+                 ++" [D] - Dashboard\n"
+                 ++" [S] - Sair\n"
+
+dashboardClinicaO :: String
+dashboardClinicaO = " [C] - Cadastrar Médico\n"
                  ++" [F] - Fila Virtual\n"
                  ++" [V] - Ver Informações\n"
                  ++" [D] - Dashboard\n"

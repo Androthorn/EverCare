@@ -1,8 +1,0 @@
-1;1;João Silva;12345;Clinico;123;0.0
-1;2;Maria Santos;54321;Pediatra;123;8.0
-2;3;Carlos Oliveira;67890;Ortopedista;123;7.5
-3;4;Ana Souza;13579;Dermatologista;123;0.0
-4;5;Pedro Costa;24680;Ortopedista;123;2.0
-1;6;Camila Oliveira;98765;Ginecologista;123;0.0
-2;7;Rafael Santos;54321;Neurologista;123;10.0
-3;8;Laura Mendes;45678;Pediatra;123;0.0
