@@ -464,10 +464,11 @@ cadastraConsulta idPac dados = do
                             cadastraConsulta idPac dados
                         else do
                             if not (Clinica.metodoAgendamento clinica == "O") then do
+                                queixas <- prompt "Queixas > "
                                 putStrLn "Consulta marcada com sucesso! Essa consulta é por ordem de chegada."
                                 threadDelay 2000000
 
-                                let dadosCons = [show idPac, idStrC, idStrM, dia, "00:00", "Sem queixas"]
+                                let dadosCons = [show idPac, idStrC, idStrM, dia, "00:00", queixas]
 
                                 let consulta = PControl.criaConsulta (BD.idAtualConsulta dados) (dadosCons)
                                 BD.escreveNoArquivo "Haskell/Persistence/consultas.txt" (Consulta.toString consulta)
