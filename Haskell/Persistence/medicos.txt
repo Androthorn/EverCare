@@ -1,0 +1,6 @@
+1;1;Maria Souza;87495;Dermatologista;123;0.0
+1;2;Hugo Oscar;54168;Psiquiatra;123;0.0
+1;3;Jonas Gomes;74136;Ortopedista;123;0.0
+2;4;Camila Holanda;79212;Otorrino;123;0.0
+2;5;Alfredo Dantas;60456;Neurologista;123;0.0
+2;6;Maria da Cunha;88943;Pediatra;123;0.0

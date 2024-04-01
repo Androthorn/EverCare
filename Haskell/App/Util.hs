@@ -119,7 +119,7 @@ leituraDadosClinica = do
     sequence [prompt "Nome > ",
               prompt "Endereço > ",
               prompt "Planos Vinculados > ",
-              prompt "Método de Agendamento > ",
+              prompt "Método de Agendamento [(A)gendamento ou (O)rdem de Chegada] > ",
               prompt "Contato > ",
               prompt "Senha > "]
 

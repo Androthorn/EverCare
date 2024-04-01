@@ -1,0 +1,2 @@
+1;UBS;Rua de Cima;Bradesco, Unimed, HapVida;Agendamento;83 3647-8746;123
+2;CliniMed;Rua de Baixo;Unimed;Ordem de Chegada;83 3228-5489;123
