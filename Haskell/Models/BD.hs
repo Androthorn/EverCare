@@ -286,6 +286,11 @@ horariosDisponiveis bd idMedico dia =
     let horarios = ["08:00", "09:00", "10:00", "11:00", "14:00", "15:00", "16:00", "17:00"]
     in filter (\horario -> notElem horario (horariosMarcados bd idMedico dia)) horarios
 
+filtraMedicosNoHorario :: BD -> String -> String -> [Medico.Medico]
+filtraMedicosNoHorario bd dia horario =
+    let allMedicos = medicos bd
+    in filter (\medico -> horario `elem` horariosDisponiveis bd (Medico.id medico) dia) allMedicos
+
 consultasToHorarios :: [Consulta.Consulta] -> [String]
 consultasToHorarios consultas = map (\consulta -> Consulta.horario consulta) consultas
 

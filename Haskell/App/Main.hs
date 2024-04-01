@@ -289,13 +289,23 @@ buscar idPac dados = do
         prompt "Pressione Enter para voltar"
         menuPaciente idPac dados
 
-    {-
     else if toUpper (head op) == 'H' then do
-        horario <- prompt "Horário > "
-        putStrLn (PControl.buscarHorario horario (BD.consultas dados))
-        prompt "Pressione Enter para voltar"
-        menuPaciente idPac dados
-    -}
+        dia <- prompt "Dia > "
+        if not (isValidDate dia) then do
+            putStrLn "Data inválida"
+            threadDelay 1000000
+            buscar idPac dados
+        else do
+            hora <- prompt "Horário > "
+            if not (isValidHour hora) then do
+                putStrLn "Hora inválida"
+                threadDelay 1000000
+                buscar idPac dados
+            else do
+                let medicos = BD.filtraMedicosNoHorario dados dia hora
+                imprime medicos
+                prompt "Pressione Enter para voltar"
+                menuPaciente idPac dados
 
     else if toUpper (head op) == 'E' then do
         especialidade <- prompt "Especialidade > "
@@ -407,13 +417,6 @@ cadastraConsulta idPac dados = do
 getClinicaId :: Int -> BD.BD -> Clinica.Clinica
 getClinicaId idC dados = head (filter (\clinica -> Clinica.id clinica == idC) (BD.clinicas dados))
 
-isValidDate :: String -> Bool
-isValidDate date = 
-    let dateList = split date '/' ""
-        day = read (dateList !! 0) :: Int
-        month = read (dateList !! 1) :: Int
-        year = read (dateList !! 2) :: Int
-    in day >= 1 && day <= 31 && month >= 1 && month <= 12 && year >= 2024
 
 cadastraAvaliacao :: Int -> BD.BD -> IO ()
 cadastraAvaliacao idPac dados = do
@@ -477,12 +480,6 @@ atualizaBDmedicos idMed dados = do
         bdAtualizado = dados { BD.medicos = medicosAtualizados }
     bdAtualizado
 
--- atualizaBDMedicos :: Int -> Float -> BD.BD -> BD.BD
--- atualizaBDMedicos idMed novaNota dados = do
---     let medicosAtualizados1 = MControl.atualizaNumAvaliacoesMedico idMed (BD.medicos dados)
---         medicosAtualizados2 = MControl.atualizarMediaNotasMedico idMed novaNota medicosAtualizados1
---         bdAtualizado = dados { BD.medicos = medicosAtualizados2 }
---     bdAtualizado
 
 chatsPac :: Int -> BD.BD -> IO()
 chatsPac idPac dados = do
@@ -676,11 +673,6 @@ confirmaConsulta idPac idConsulta dados = do
     else do
         putStrLn "Opção inválida"
         confirmaConsulta idPac idConsulta dados
-
--- É NECESSARIA A IMPLEMENTAÇÃO DESSA FUNÇÃO E RESOLVER COMO IMPLEMENTAR 
--- O LOCAL TIME E O LOCAL DATE (essas funcoes estao no fim do arquivo)
--- ACREDITO QUE POSSA SER DIRETAMENTE AQUI NO MAIN UMA VEZ QUE SE TRATA DE UMA FUNCAO IO. 
--- POR ENQUANTO VOU DEIXAR AQUI COMENTADO
 
 
 inicialClinica :: BD.BD -> IO()

@@ -143,7 +143,6 @@ leituraDadosMedico = do
     sequence [prompt "Nome > ",
               prompt "CRM > ",
               prompt "Especialidade > ",
-              prompt "Horário de atendimento > ",
               prompt "Senha > "]
 
 
@@ -206,3 +205,16 @@ imprimeEmUmaLinha l = do
 formataListaEmUmaLinha :: [String] -> String
 formataListaEmUmaLinha [] = ""
 formataListaEmUmaLinha (x:xs) = (x) ++ " " ++ (formataListaEmUmaLinha xs)
+
+isValidDate :: String -> Bool
+isValidDate date = 
+    let dateList = split date '/' ""
+        day = read (dateList !! 0) :: Int
+        month = read (dateList !! 1) :: Int
+        year = read (dateList !! 2) :: Int
+    in day >= 1 && day <= 31 && month >= 1 && month <= 12 && year >= 2024
+
+isValidHour :: String -> Bool
+isValidHour hour = 
+    let horarios = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00"]
+    in elem hour horarios

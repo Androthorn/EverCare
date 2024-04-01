@@ -11,7 +11,6 @@ data Medico = Medico {
     nome :: String,
     crm :: String,
     especialidade :: String,
-    horarios :: String, 
     senha :: String,
     nota :: Float
 }
@@ -22,19 +21,17 @@ toString m = show (clinica m) ++ ";" ++
              nome m ++ ";" ++
              crm m ++ ";" ++
              especialidade m ++ ";" ++
-             horarios m ++ ";" ++
              senha m ++ ";" ++
              show (nota m)
 
 instance Show Medico where
     
-    show (Medico clinica id nome crm esp horario _ _) =  "----------------------------\n" ++
+    show (Medico clinica id nome crm esp _ _) =  "----------------------------\n" ++
                                             "Médico " ++ (show id) ++ "\n" ++
                                             "Nome: " ++ nome ++ "\n" ++
                                             "CRM: " ++ crm ++ "\n" ++
                                             "Clínica: " ++ (show clinica) ++ "\n" ++
                                             "Especialidade: " ++ esp ++ "\n" ++
-                                            "Horários de Atendimento: " ++ horario ++ "\n" ++
                                             "-------------------\n"
 
 instance Read Medico where
@@ -45,10 +42,9 @@ instance Read Medico where
         let nome = medico !! 2
         let crm = medico !! 3
         let especialidade = medico !! 4
-        let horarios = if (length medico == 8) then medico !! 5 else ""
-        let senha = if (length medico == 8) then medico !! 6 else ""
-        let nota = if (length medico == 8) then read (medico !! 7) :: Float else 0.0
-        [(Medico clinica id nome crm especialidade horarios senha nota, "")]
+        let senha = if (length medico == 7) then medico !! 5 else ""
+        let nota = if (length medico == 7) then read (medico !! 6) :: Float else 0.0
+        [(Medico clinica id nome crm especialidade senha nota, "")]
 
 toStringAval :: Medico -> String
 toStringAval m = "----------------------------\n" ++
@@ -57,7 +53,6 @@ toStringAval m = "----------------------------\n" ++
                                             "CRM: " ++ crm m ++ "\n" ++
                                             "Clínica: " ++ show (clinica m) ++ "\n" ++
                                             "Especialidade: " ++ especialidade m ++ "\n" ++
-                                            "Horários de Atendimento: " ++ (horarios m) ++ "\n" ++
                                             "Nota: " ++ show (nota m) ++ "\n" ++
                                             "-------------------\n"
 
