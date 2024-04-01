@@ -42,8 +42,8 @@ O sistema EverCare tem como objetivos o gerenciamento de clínicas médicas e ot
     - Conversa com paciente
 
 ## Como rodar?
-Para rodar o sistem é necessário apenas compilar e rodar o arquivo executável,
-abrindo do diretório raíz EverCare:
+Para rodar o sistema é necessário apenas compilar e rodar o arquivo executável,
+abrindo do diretório raíz EverCare rode os comandos:
 ``` bash
 ghc -o EverCare Haskell/App/Main.hs
 
