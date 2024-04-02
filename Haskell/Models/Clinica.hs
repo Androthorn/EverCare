@@ -36,7 +36,7 @@ instance Show Clinica where
                                       "Endereço: " ++ e ++ "\n" ++
                                       "Planos: " ++ (concatMap (++ ", ") p) ++ "\n" ++
                                       "Método de Agendamento: " ++ m ++ "\n" ++
-                                      "Contato: " ++ "\n" ++
+                                      "Contato: " ++ c ++ "\n" ++
                                       "----------------------------\n"
 
 
