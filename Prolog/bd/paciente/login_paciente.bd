@@ -1,0 +1,4 @@
+:- dynamic login_paciente/2.
+
+login_paciente(1, "1").
+

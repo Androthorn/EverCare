@@ -1,21 +1,21 @@
-:- module(persistence, [savePaciente/0, saveClinica/0, saveMedico/0, saveConsulta/0]).
+:- module(persistence, [savePaciente/0, saveIdPaciente/0, saveIdPaciente/0]).
 
 :- use_module('../Models/model.pl').
 
-savePaciente :- tell('bd/paciente.pl'),
+/*
+lePaciente/0, leUBS/0, leMedico/0, leMedico/0, leReceita/0, leMedicamento/0,
+                        leLaudo/0, leExame/0, leLogins/0, leConsulta/0, leId/0, 
+
+*/
+
+savePaciente :- tell('bd/paciente/paciente.bd'),
                 listing(model:paciente),
                 told.
 
-saveClinica :- tell('bd/clinica.pl'),
-                listing(model:clinica),
-                told.
+saveLoginPaciente :- tell('bd/paciente/login_paciente.bd'),
+                     listing(model:login_paciente),
+                     told.
 
-saveMedico :- tell('bd/medico.pl'),
-                listing(model:medico),
-                told.
-
-
-saveConsulta :- tell('bd/consulta.pl'),
-                listing(model:consulta),
-                told.
-                
+saveIdPaciente :- tell('bd/paciente/id_paciente.bd'),
+                  listing(model:id_paciente),
+                  told.

@@ -3,36 +3,14 @@
 %
 :- use_module('./App/utils.pl').
 :- use_module('./Models/model.pl').
-:- use_module('./Controllers/pacienteController.pl').
-:- use_module('./Controllers/medicoController.pl').
-:- use_module('./Controllers/clinicaController.pl').
 :- use_module('./Controllers/persistence.pl').
 
 begin :- model:iniciaSistema,
          main.
 
-tituloI(Titulo, Resultado) :-
-    string_length(Titulo, TamTitulo),
-    NumTracos is (37 - TamTitulo) // 2,
-    length(Tracos, NumTracos),
-    maplist(=(''), Tracos, ['-']),
-    string_chars(TracoExtra, ['-']),
-    length(TracoFinal, 37 - NumTracos - TamTitulo - 1),
-    maplist(=(''), TracoFinal, ['-']),
-    string_concat(" -------------------------------------------------\n",
-                  EspacoInicial),
-    string_concat(EspacoInicial, Tracos, ParteTitulo1),
-    string_concat(ParteTitulo1, " EVERCARE - ", ParteTitulo2),
-    string_concat(ParteTitulo2, Titulo, ParteTitulo3),
-    string_concat(ParteTitulo3, TracoFinal, ParteTitulo4),
-    string_concat(ParteTitulo4, "\n -------------------------------------------------\n", Resultado).
-
-/* Menu inicial. */
-
 main :-
-    writeln( '-------------------------------------------------'),
-    writeln( '------------------- EVERCARE --------------------'),
-    writeln( '-------------------------------------------------'),
+    tty_clear,
+    utils:tituloI,
     writeln('[P] - Paciente'),
     writeln('[C] - Clínica'),
     writeln('[M] - Médico'),
@@ -44,50 +22,55 @@ main :-
       OP = "S" -> writeln('Saindo...');
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, main).
 
-/* Menu de login do paciente. */
 inicialPaciente :-
-    tituloI('PACIENTE', Titulo),
-    writeln(Titulo),
+    tty_clear,
+    utils:tituloInformacao('PACIENTE'),
     writeln('[C] - Cadastrar'),
     writeln('[L] - Login'),
     writeln('[S] - Sair'),
     promptOption('Opção > ', OP),
-    ( OP = "C" -> tty_clear, cadastraPaciente, tty_clear, inicialPaciente;
+    ( OP = "C" -> tty_clear, cadastraPaciente;
       OP = "L" -> tty_clear, loginPaciente;
       OP = "S" -> tty_clear, main;
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, inicialPaciente).
 
 cadastraPaciente :-
-    tituloI('CADASTRO DE PACIENTE', Titulo),
-    writeln(Titulo),
+    tty_clear,
+    utils:tituloInformacao('CADASTRO DE PACIENTE'),
     promptString('Nome > ', Nome),
     promptString('CPF > ', CPF),
     promptString('Sexo > ', Sexo),
     promptString('Data de Nascimento (dd/mm/aaaa) > ', DataNascimento),
     promptString('Endereço > ', Endereco),
-    promptString('Tipo Sanguineo > ', Telefone),
+    promptString('Tipo Sanguineo > ', TipoSanguineo),
     promptString('Plano de Saúde > ', PlanoSaude),
     promptString('Cardiopata (S ou N) > ', Cardiopata),
     promptString('Hipertenso (S ou N) > ', Hipertenso),
     promptString('Diabético (S ou N) > ', Diabetico),
-    promptString('Senha > ', Senha),
-    model:nextIdPaciente(IdPac),
+    promptPassword('Senha > ', Senha),
 
-    assertz(paciente(IdPac, Nome, CPF, Sexo, DataNascimento, Endereco, Telefone, PlanoSaude, Cardiopata, Hipertenso, Diabetico, Senha)),
+    model:nextIdPaciente(N),
+    assertz(model:paciente(N, Nome, CPF, Sexo, DataNascimento, Endereco, TipoSanguineo, PlanoSaude, Cardiopata, Hipertenso, Diabetico, Senha)),
+    assertz(model:login_paciente(N, Senha)),
+   
+    persistence:saveIdPaciente,
     persistence:savePaciente,
-    format('Paciente cadastrado com sucesso! Seu id é: ~d', [IdPac]).
-    utils:mensagemEspera, tty_clear, loginPaciente.
+    persistence:saveLoginPaciente,
 
-loginPaciente() :-
-    promptString('ID > ', ID),
-    promptString('Senha > ', Senha),
-    autenticaPaciente(ID, Senha, N),
+    writeln('Paciente cadastrado com sucesso! Seu id é: ~d', [N]), sleep(1), loginPaciente.
+
+loginPaciente :-
+    tty_clear,
+    utils:tituloInformacao('LOGIN PACIENTE'),
+    prompt('ID > ', ID),
+    promptPassword('Senha > ', Senha),
+    utils:autenticaPaciente(ID, Senha, N),
     ( N =:= 1 -> tty_clear, menuPaciente(ID);
       writeln('Login ou senha inválidos'), utils:mensagemEspera, tty_clear, inicialPaciente).
 
 menuPaciente(IdPac) :-
-    tituloI('DASHBOARD PACIENTE', Titulo),
-    write(Titulo),
+    tty_clear,
+    utils:tituloInformacao('DASHBOARD PACIENTE'),
     write('[B] Buscar'), nl,
     write('[M] Marcar Consulta'), nl,
     write('[V] Ver Agendamentos'), nl,
