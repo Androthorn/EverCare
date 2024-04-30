@@ -1,8 +1,9 @@
 :- module(model, [iniciaPaciente/0, iniciaIdPaciente/0, iniciaLoginPaciente/0, nextIdPaciente/1, iniciaSistema/0,
                 iniciaClinica/0, iniciaIdClinica/0, iniciaLoginClinica/0, nextIdClinica/1, 
-                inicialMedico/0, inicialIdMedico/0, inicialLoginMedico/0, nextIdMedico/1]).
+                inicialMedico/0, inicialIdMedico/0, inicialLoginMedico/0, nextIdMedico/1, iniciaConsulta/0, iniciaIdConsulta/0, nextIdConsulta/1 ]).
 
 :- use_module('../Controllers/persistence.pl').
+
 
 /*
  Inicializa a tabela dinâmica de pacientes.
@@ -82,4 +83,27 @@ verificaIdMedico :- exists_file('bd/medico/id_medico.bd') -> leIdMedico ; inicia
 iniciaSistema :- 
     verificaPaciente, verificaLoginPaciente, verificaIdPaciente, 
     verificaClinica, verificaIdClinica, verificaLoginClinica, 
-    verificaMedico, verificaIdMedico, verificaLoginMedico.
+    verificaMedico, verificaIdMedico, verificaLoginMedico,
+    verificaConsulta, verificaIdConsulta.
+
+/*
+
+Inicializa a tabela de consultas.
+Os campos são: idClinica:: Int, idMedico :: Int, data :: String, horario :: String, queixa :: String
+
+*/
+
+iniciaConsulta :- dynamic(consulta/5).
+
+iniciaIdConsulta :-
+    asserta(id_consulta(0)).
+
+nextIdConsulta(N) :-
+    id_consulta(X), retract(id_consulta(X)), N is X + 1, asserta(id_consulta(N)).
+
+leConsulta :- consult('bd/consulta/consulta.bd').
+verificaConsulta :- 
+    exists_file('bd/consulta/consulta.bd') -> leConsulta ; iniciaConsulta.
+verificaIdConsulta :- 
+    exists_file('bd/consulta/id_consulta.bd') -> leIdConsulta ; iniciaIdConsulta.
+leIdConsulta :- consult('bd/consulta/id_consulta.bd'). 

@@ -4,6 +4,7 @@
 :- use_module('./App/utils.pl').
 :- use_module('./Models/model.pl').
 :- use_module('./Controllers/persistence.pl').
+:- use_module('./Controllers/pacienteController.pl').
 
 begin :- model:iniciaSistema,
          main.
@@ -82,7 +83,7 @@ menuPaciente(IdPac) :-
     promptOption('Opção > ', OP),
 
     ( OP = "B" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
-      OP = "M" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
+      OP = "M" -> tty_clear, cadastraConsulta(IdPac), tty_clear, menuPaciente(IdPac);
       OP = "V" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
       OP = "R" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
       OP = "A" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
@@ -220,3 +221,24 @@ menuMedico(ID) :-
       OP = "S" -> tty_clear, main;
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuMedico).
 
+
+cadastraConsulta(IdPac) :-
+    tty_clear,
+    utils:tituloInformacao('MARCAR CONSULTA'),
+    promptString('ID Clínica > ', IdClinica),
+    promptString('ID Médico > ', IdMedico),
+    promptString('Data da Consulta (dd/mm/aaaa) > ', Data),
+    promptString('Horário da Consulta (hh:mm) > ', Horario),
+    promptString('Queixa > ', Queixa),
+
+    model:nextIdConsulta(IdConsulta),
+    assertz(model:consulta(IdConsulta, IdClinica, IdMedico, Data, Horario, Queixa)),
+    
+    persistence:saveIdConsulta,
+    persistence:saveConsulta,
+ 
+
+    format('Consulta marcada com sucesso! Seu ID de consulta é: ~d~n', [IdConsulta]),
+    utils:mensagemEspera,
+    tty_clear,
+    menuPaciente(IdPac).
