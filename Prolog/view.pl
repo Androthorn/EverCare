@@ -17,7 +17,7 @@ main :-
     writeln('[S] - Sair'),
     promptOption('Opção > ', OP),
     ( OP = "P" -> tty_clear, inicialPaciente;
-      OP = "C" -> tty_clear, inicialPaciente;
+      OP = "C" -> tty_clear, inicialClinica;
       OP = "M" -> tty_clear, inicialPaciente;
       OP = "S" -> writeln('Saindo...');
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, main).
@@ -57,7 +57,7 @@ cadastraPaciente :-
     persistence:savePaciente,
     persistence:saveLoginPaciente,
 
-    writeln('Paciente cadastrado com sucesso! Seu id é: ~d', [N]), sleep(1), loginPaciente.
+    ( N > 0 -> format('Paciente cadastrado com sucesso! Seu id é: ~d~n', [N]), sleep(2), tty_clear, loginPaciente).
 
 loginPaciente :-
     tty_clear,
@@ -90,3 +90,61 @@ menuPaciente(IdPac) :-
       OP = "F" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
       OP = "S" -> tty_clear, main;
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuPaciente(IdPac)).
+
+inicialClinica :-
+    tty_clear,
+    utils:tituloInformacao('CLÍNICA'),
+    writeln('[C] - Cadastrar'),
+    writeln('[L] - Login'),
+    writeln('[S] - Sair'),
+    promptOption('Opção > ', OP),
+    ( OP = "C" -> tty_clear, cadastraClinica;
+      OP = "L" -> tty_clear, loginClinica;
+      OP = "S" -> tty_clear, main;
+      writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, inicialClinica).
+
+cadastraClinica :-
+    tty_clear,
+    utils:tituloInformacao('CADASTRO DE CLÍNICA'),
+    promptString('Nome > ', Nome),
+    promptString('CNPJ > ', CNPJ),
+    promptString('Endereço > ', Endereco),
+    promptString('Telefone > ', Telefone),
+    promptString('Horário de Funcionamento > ', HorarioFuncionamento),
+    promptString('Senha > ', Senha),
+
+    model:nextIdClinica(N),
+    assertz(model:clinica(N, Nome, CNPJ, Endereco, Telefone, HorarioFuncionamento, Senha)),
+    assertz(model:login_clinica(N, Senha)),
+   
+    persistence:saveIdClinica,
+    persistence:saveClinica,
+    persistence:saveLoginClinica,
+
+    ( N > 0 -> format('Clínica cadastrado com sucesso! Seu id é: ~d~n', [N]), sleep(2), tty_clear, loginClinica).
+
+loginClinica :-
+    tty_clear,
+    utils:tituloInformacao('LOGIN CLÍNICA'),
+    prompt('ID > ', ID),
+    promptPassword('Senha > ', Senha),
+    utils:autenticaClinica(ID, Senha, N),
+    ( N =:= 1 -> tty_clear, menuClinica(ID);
+      writeln('Login ou senha inválidos'), utils:mensagemEspera, tty_clear, inicialClinica).
+
+menuClinica(IdClin) :-
+    tty_clear,
+    utils:tituloInformacao('DASHBOARD CLÍNICA'),
+    write('[C] Cadastrar Médico'), nl,
+    write('[F] Fila Virtual'), nl,
+    write('[V] Ver Informações'), nl,
+    write('[D] Dashboard'), nl,
+    write('[S] Sair'), nl,
+    promptOption('Opção > ', OP),
+
+    ( OP = "C" -> tty_clear, menuClinica(IdClin), tty_clear, menuClinica(IdClin);
+      OP = "F" -> tty_clear, menuClinica(IdClin), tty_clear, menuClinica(IdClin);
+      OP = "V" -> tty_clear, menuClinica(IdClin), tty_clear, menuClinica(IdClin);
+      OP = "D" -> tty_clear, menuClinica(IdClin), tty_clear, menuClinica(IdClin);
+      OP = "S" -> tty_clear, main;
+      writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuClinica(IdClin)).

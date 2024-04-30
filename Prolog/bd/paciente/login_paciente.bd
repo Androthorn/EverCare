@@ -1,4 +1,5 @@
 :- dynamic login_paciente/2.
 
 login_paciente(1, "1").
+login_paciente(2, "123").
 

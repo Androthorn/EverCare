@@ -1,5 +1,5 @@
 :- module(utils, [prompt/2, promptString/2, autentica/3, mensagemEspera/0, promptOption/2, promptPassword/2,
-                  tituloI/0, tituloInformacao/1, autenticaPaciente/3]).
+                  tituloI/0, tituloInformacao/1, autenticaPaciente/3, autenticaClinica/3]).
 
 :- use_module('../Models/model.pl').
 
@@ -24,6 +24,9 @@ autentica(_, _, Tipo) :- Tipo is -1.
 
 autenticaPaciente(ID, Senha, 1) :- model:login_paciente(ID, Senha), !.
 autenticaPaciente(_, _, 0) :- false.
+
+autenticaClinica(ID, Senha, 1) :- model:login_clinica(ID, Senha), !.
+autenticaClinica(_, _, 0) :- false.
 
 mensagemEspera :- promptString('\n\nPressione qualquer tecla para continuar', _), tty_clear.
 

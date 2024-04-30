@@ -1,4 +1,5 @@
-:- module(persistence, [savePaciente/0, saveIdPaciente/0, saveIdPaciente/0]).
+:- module(persistence, [savePaciente/0, saveIdPaciente/0, saveIdPaciente/0, saveClinica/0, saveIdClinica/0,
+                        saveLoginClinica/0]).
 
 :- use_module('../Models/model.pl').
 
@@ -19,3 +20,15 @@ saveLoginPaciente :- tell('bd/paciente/login_paciente.bd'),
 saveIdPaciente :- tell('bd/paciente/id_paciente.bd'),
                   listing(model:id_paciente),
                   told.
+
+saveClinica :- tell('bd/clinica/clinica.bd'),
+               listing(model:clinica),
+               told.
+
+saveLoginClinica :- tell('bd/clinica/login_clinica.bd'),
+                    listing(model:login_clinica),
+                    told.
+
+saveIdClinica :- tell('bd/clinica/id_clinica.bd'),
+                    listing(model:id_clinica),
+                    told.

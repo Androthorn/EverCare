@@ -1,0 +1,3 @@
+:- dynamic clinica/7.
+
+clinica(1, "q", "q", "q", "q", "q", "123").
