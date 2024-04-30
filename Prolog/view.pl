@@ -91,6 +91,22 @@ menuPaciente(IdPac) :-
       OP = "S" -> tty_clear, main;
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuPaciente(IdPac)).
 
+# verPosConsulta(IdPac) :-
+#     tty_clear,
+#     utils:tituloInformacao('RECEITAS / LAUDOS / SOLICITAÇÃO DE EXAMES'),
+#     writeln('[R] - Receitas'),
+#     writeln('[L] - Laudos'),
+#     writeln('[E] - Solicitação de Exames'),
+#     writeln('[V] - Voltar'),
+#     promptOption('Opção > ', OP),
+#     ( OP = "R" -> tty_clear, verReceita(IdPac), tty_clear, menuPaciente(IdPac);
+#       OP = "L" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
+#       OP = "E" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
+#       OP = "V" -> tty_clear, menuPaciente(IdPac);
+#       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, verPosConsulta(IdPac)).
+
+# verReceita(IdPac) :- paciente:verReceita(IdPac).
+
 inicialClinica :-
     tty_clear,
     utils:tituloInformacao('CLÍNICA'),
@@ -203,7 +219,4 @@ menuMedico(ID) :-
       OP = "C" -> tty_clear, menuMedico, tty_clear, menuMedico;
       OP = "S" -> tty_clear, main;
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuMedico).
-
-
-
 
