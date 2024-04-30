@@ -1,5 +1,6 @@
 :- module(model, [iniciaPaciente/0, iniciaIdPaciente/0, iniciaLoginPaciente/0, nextIdPaciente/1, iniciaSistema/0,
-                iniciaClinica/0, iniciaIdClinica/0, iniciaLoginClinica/0, nextIdClinica/1]).
+                iniciaClinica/0, iniciaIdClinica/0, iniciaLoginClinica/0, nextIdClinica/1, 
+                inicialMedico/0, inicialIdMedico/0, inicialLoginMedico/0, nextIdMedico/1]).
 
 :- use_module('../Controllers/persistence.pl').
 
@@ -53,5 +54,32 @@ verificaClinica :- exists_file('bd/clinica/clinica.bd') -> leClinica ; iniciaCli
 verificaLoginClinica :- exists_file('bd/clinica/login_clinica.bd') -> leLoginClinica ; iniciaLoginClinica.
 verificaIdClinica :- exists_file('bd/clinica/id_clinica.bd') -> leIdClinica ; iniciaIdClinica.
 
+
+/*
+Inicializa a tabela dinamica de médicos.
+Campos esperados: ID Clínica, ID, Nome, CPF, CRM, Especialidade, Telefone, Senha.
+*/
+iniciaMedico :-
+    dynamic(medico/8).
+
+iniciaLoginMedico :-
+    dynamic(login_medico/2).
+
+iniciaIdMedico :-
+    asserta(id_medico(0)).
+
+nextIdMedico(N) :-
+    id_medico(X), retract(id_medico(X)), N is X + 1, asserta(id_medico(N)).
+
+leMedico :- consult('bd/medico/medico.bd').
+leIdMedico :- consult('bd/medico/id_medico.bd').
+leLoginMedico :- consult('bd/medico/login_medico.bd').
+
+verificaMedico :- exists_file('bd/medico/medico.bd') -> leMedico ; iniciaMedico.
+verificaLoginMedico :- exists_file('bd/medico/login_medico.bd') -> leLoginMedico ; iniciaLoginMedico.
+verificaIdMedico :- exists_file('bd/medico/id_medico.bd') -> leIdMedico ; iniciaIdMedico.
+
 iniciaSistema :- 
-    verificaPaciente, verificaLoginPaciente, verificaIdPaciente, verificaClinica, verificaIdClinica, verificaLoginClinica.
+    verificaPaciente, verificaLoginPaciente, verificaIdPaciente, 
+    verificaClinica, verificaIdClinica, verificaLoginClinica, 
+    verificaMedico, verificaIdMedico, verificaLoginMedico.

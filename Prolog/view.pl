@@ -18,7 +18,7 @@ main :-
     promptOption('Opção > ', OP),
     ( OP = "P" -> tty_clear, inicialPaciente;
       OP = "C" -> tty_clear, inicialClinica;
-      OP = "M" -> tty_clear, inicialPaciente;
+      OP = "M" -> tty_clear, inicialMedico;
       OP = "S" -> writeln('Saindo...');
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, main).
 
@@ -142,9 +142,68 @@ menuClinica(IdClin) :-
     write('[S] Sair'), nl,
     promptOption('Opção > ', OP),
 
-    ( OP = "C" -> tty_clear, menuClinica(IdClin), tty_clear, menuClinica(IdClin);
+    ( OP = "C" -> tty_clear, cadastraMedico(IdClin), tty_clear, menuClinica(IdClin);
       OP = "F" -> tty_clear, menuClinica(IdClin), tty_clear, menuClinica(IdClin);
       OP = "V" -> tty_clear, menuClinica(IdClin), tty_clear, menuClinica(IdClin);
       OP = "D" -> tty_clear, menuClinica(IdClin), tty_clear, menuClinica(IdClin);
       OP = "S" -> tty_clear, main;
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuClinica(IdClin)).
+
+cadastraMedico(IdClin) :-
+    tty_clear,
+    utils:tituloInformacao('CADASTRO DE MÉDICO'),
+    promptString('Nome > ', Nome),
+    promptString('CRM > ', CRM),
+    promptString('Especialidade > ', Especialidade),
+    promptString('Telefone > ', Telefone),
+    promptString('Endereço > ', Endereco),
+    promptString('Senha > ', Senha),
+
+    model:nextIdMedico(N),
+    assertz(model:medico(IdClin, N, Nome, CRM, Especialidade, Telefone, Endereco, Senha)),
+    assertz(model:login_medico(N, Senha)),
+   
+    persistence:saveIdMedico,
+    persistence:saveMedico,
+    persistence:saveLoginMedico,
+
+    ( N > 0 -> format('Médico cadastrado com sucesso! Seu id é: ~d~n', [N]), sleep(2), tty_clear, menuClinica(IdClin)).
+  
+inicialMedico :-
+    tty_clear,
+    utils:tituloInformacao('MÉDICO'),
+    writeln('[L] - Login'),
+    writeln('[S] - Sair'),
+    promptOption('Opção > ', OP),
+    ( OP = "L" -> tty_clear, loginMedico;
+      OP = "S" -> tty_clear, main;
+      writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, inicialMedico).
+
+loginMedico :-
+    tty_clear,
+    utils:tituloInformacao('LOGIN MÉDICO'),
+    prompt('ID > ', ID),
+    promptPassword('Senha > ', Senha),
+    utils:autenticaMedico(ID, Senha, N),
+    ( N =:= 1 -> tty_clear, menuMedico(ID);
+      writeln('Login ou senha inválidos'), utils:mensagemEspera, tty_clear, inicialMedico).
+
+
+menuMedico(ID) :-
+    tty_clear,
+    utils:tituloInformacao('DASHBOARD MÉDICO'),
+    write('[V] Ver Agendamentos'), nl,
+    write('[E] Emitir'), nl,
+    write('[C] Chats'), nl,
+    write('[S] Sair'), nl,
+    promptOption('Opção > ', OP),
+
+    ( OP = "V" -> tty_clear, menuMedico, tty_clear, menuMedico;
+      OP = "E" -> tty_clear, menuMedico, tty_clear, menuMedico;
+      OP = "C" -> tty_clear, menuMedico, tty_clear, menuMedico;
+      OP = "S" -> tty_clear, main;
+      writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuMedico).
+
+
+
+

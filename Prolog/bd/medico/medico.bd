@@ -1,0 +1,4 @@
+:- dynamic medico/8.
+
+medico(1, 1, "ana", "00", "linda", "09", "09", "123").
+
