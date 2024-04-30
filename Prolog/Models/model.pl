@@ -84,7 +84,7 @@ verificaLoginMedico :- exists_file('bd/medico/login_medico.bd') -> leLoginMedico
 verificaIdMedico :- exists_file('bd/medico/id_medico.bd') -> leIdMedico ; iniciaIdMedico.
 
 iniciaExame :-
-    dynamic(exame/4).
+    dynamic(exame/3).
 
 
 leExame :- consult('bd/exame/exame.bd').
@@ -92,7 +92,7 @@ leExame :- consult('bd/exame/exame.bd').
 verificaExame :- exists_file('bd/exame/exame.bd') -> leExame; iniciaExame.
 
 iniciaLaudo :-
-    dynamic(laudo/4).
+    dynamic(laudo/3).
 
 leLaudo :- consult('bd/laudo/laudo.bd').
 
@@ -100,7 +100,7 @@ verificaLaudo :- exists_file('bd/laudo/laudo.bd') -> leLaudo ; iniciaLaudo.
 
 
 iniciaReceita :-
-    dynamic(receita/4).
+    dynamic(receita/3).
 
 leReceita :- consult('bd/receita/receita.bd').
 
