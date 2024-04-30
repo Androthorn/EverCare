@@ -97,10 +97,7 @@ iniciaIdConsulta :-
     asserta(id_consulta(0)).
 
 nextIdConsulta(N) :-
-    id_consulta(X),
-    retract(id_consulta(X)),
-    N is X + 1,
-    asserta(id_consulta(N)).
+    id_consulta(X), retract(id_consulta(X)), N is X + 1, asserta(id_consulta(N)).
 
 leConsulta :- consult('bd/consulta/consulta.bd').
 verificaConsulta :- 
