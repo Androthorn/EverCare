@@ -85,48 +85,34 @@ verificaIdMedico :- exists_file('bd/medico/id_medico.bd') -> leIdMedico ; inicia
 
 iniciaExame :-
     dynamic(exame/4).
-iniciaIdExame :-
-    asserta(id_exame(0)).
-nextIdExame(N) :-
-    id_exame(X), retract(id_exame(X)), N is X + 1, asserta(id_exame(N)).
+
 
 leExame :- consult('bd/exame/exame.bd').
-leIdExame :- consult('bd/exame/id_exame.bd').
 
 verificaExame :- exists_file('bd/exame/exame.bd') -> leExame; iniciaExame.
-verificaIdExame :- exists_file('bd/exame/id_exame.bd') -> leIdExame ; iniciaIdExame.
 
 iniciaLaudo :-
     dynamic(laudo/4).
-iniciaIdLaudo :-
-    asserta(id_laudo(0)).
-nextIdLaudo(N) :-
-    id_laudo(X), retract(id_laudo(X)), N is X + 1, asserta(id_laudo(N)).
 
 leLaudo :- consult('bd/laudo/laudo.bd').
-leIdLaudo :- consult('bd/laudo/id_laudo.bd').
 
 verificaLaudo :- exists_file('bd/laudo/laudo.bd') -> leLaudo ; iniciaLaudo.
-verificaIdLaudo :- exists_file('bd/laudo/id_laudo.bd') -> leIdLaudo ; iniciaIdLaudo.
+
 
 iniciaReceita :-
     dynamic(receita/4).
-iniciaIdReceita :-
-    asserta(id_receita(0)).
-nextIdReceita(N) :-
-    id_receita(X), retract(id_receita(X)), N is X + 1, asserta(id_receita(N)).
 
 leReceita :- consult('bd/receita/receita.bd').
-leIdReceita :- consult('bd/receita/id_receita.bd').
+
 
 verificaReceita :- exists_file('bd/receita/receita.bd') -> leReceita ; iniciaReceita.
-verificaIdReceita :- exists_file('bd/receita/id_receita.bd') -> leIdReceita ; iniciaIdReceita.
+
 
 
 iniciaSistema :- 
     verificaPaciente, verificaLoginPaciente, verificaIdPaciente, 
     verificaClinica, verificaIdClinica, verificaLoginClinica, 
     verificaMedico, verificaIdMedico, verificaLoginMedico, 
-    verificaExame, verificaIdExame,
-    verificaLaudo, verificaIdLaudo,
-    verificaReceita, verificaIdReceita.
+    verificaExame, 
+    verificaLaudo, 
+    verificaReceita.
