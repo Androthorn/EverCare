@@ -93,7 +93,7 @@ Os campos são: idClinica:: Int, idMedico :: Int, data :: String, horario :: Str
 
 */
 
-iniciaConsulta :- dynamic(consulta/5).
+iniciaConsulta :- dynamic(consulta/6).
 
 iniciaIdConsulta :-
     asserta(id_consulta(0)).
