@@ -4,6 +4,8 @@
 :- use_module('./App/utils.pl').
 :- use_module('./Models/model.pl').
 :- use_module('./Controllers/persistence.pl').
+:- use_module('./Controllers/medicoController.pl').
+:- use_module('./Controllers/pacienteController.pl').
 
 begin :- model:iniciaSistema,
          main.
@@ -198,11 +200,40 @@ menuMedico(ID) :-
     write('[S] Sair'), nl,
     promptOption('Opção > ', OP),
 
-    ( OP = "V" -> tty_clear, menuMedico, tty_clear, menuMedico;
-      OP = "E" -> tty_clear, menuMedico, tty_clear, menuMedico;
-      OP = "C" -> tty_clear, menuMedico, tty_clear, menuMedico;
+    ( OP = "V" -> tty_clear, menuMedico(ID), !;
+      OP = "E" -> tty_clear, menuMedicoEmitir(ID), !;
+      OP = "C" -> tty_clear, menuMedico(ID), !;
       OP = "S" -> tty_clear, main;
-      writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuMedico).
+      writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuMedico(ID)).
+
+menuMedicoEmitir(IDM) :-
+    write('[R] - Emitir Receita'), nl,
+    write('[E] - Solicitar Exame'), nl,
+    write('[L] - Emitir Laudo'), nl,
+   
+    promptOption('Opção > ', O),
+    ( O = "R" -> menuMedicoEmitirReceita(IDM), !;
+      O = "E" -> menuMedicoEmitirResultado(IDM), !;
+      O = "L" -> menuMedicoSolicitaExame(IDM), !;
+      write('Opção Inválida'), menuMedicoEmitir(IDM)).
+
+menuMedicoEmitirReceita(IDM) :-
+    ((prompt('ID do Paciente > ', ID), paciente:validaIDPaciente(ID)) -> 
+        medico:emitirReceita(IDM) ;
+        (write('ID inválido!'), menuMedico(IDM))).
+
+menuMedicoEmitirLaudo(IDM) :-
+    ((prompt('ID do Paciente > ', ID), paciente:validaIDPaciente(ID)) -> 
+        medico:emitirLaudo(IDM) ;
+        (write('ID inválido!'), menuMedico(IDM))).
+
+
+
+menuMedicoSolicitaExame(IDM) :-
+    ((prompt('ID do Paciente > ', ID), paciente:validaIDPaciente(ID)) -> 
+        medico:solicitarExame(IDM) ;
+        (write('ID inválido!'), menuMedico(IDM))).
+
 
 
 
