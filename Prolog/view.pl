@@ -217,7 +217,10 @@ cadastraConsulta(IdPac) :-
 
     model:nextIdConsulta(IdConsulta),
     assertz(model:consulta(IdConsulta, IdClinica, IdMedico, Data, Horario, Queixa)),
-
+    
+    persistence:saveIdConsulta,
+    persistence:saveConsulta,
+ 
 
     format('Consulta marcada com sucesso! Seu ID de consulta é: ~d~n', [IdConsulta]),
     utils:mensagemEspera,
