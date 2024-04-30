@@ -83,7 +83,9 @@ verificaIdMedico :- exists_file('bd/medico/id_medico.bd') -> leIdMedico ; inicia
 iniciaSistema :- 
     verificaPaciente, verificaLoginPaciente, verificaIdPaciente, 
     verificaClinica, verificaIdClinica, verificaLoginClinica, 
-    verificaMedico, verificaIdMedico, verificaLoginMedico.
+    verificaMedico, verificaIdMedico, verificaLoginMedico,
+    verificaConsulta, verificaIdConsulta.
+
 /*
 
 Inicializa a tabela de consultas.
@@ -102,3 +104,6 @@ nextIdConsulta(N) :-
 leConsulta :- consult('bd/consulta/consulta.bd').
 verificaConsulta :- 
     exists_file('bd/consulta/consulta.bd') -> leConsulta ; iniciaConsulta.
+verificaIdConsulta :- 
+    exists_file('bd/consulta/id_consulta.bd') -> leIdConsulta ; iniciaIdConsulta.
+leIdConsulta :- consult('bd/consulta/id_consulta.bd'). 
