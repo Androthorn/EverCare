@@ -85,8 +85,8 @@ menuPaciente(IdPac) :-
 
     ( OP = "B" -> tty_clear, buscarOpcoes(IdPac), tty_clear, menuPaciente(IdPac);
       OP = "M" -> tty_clear, cadastraConsulta(IdPac), tty_clear, menuPaciente(IdPac);
-      OP = "V" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
-      OP = "R" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
+      OP = "V" -> tty_clear, verAgendamento(IdPac), utils:mensagemEspera, menuPaciente(IdPac);
+      OP = "R" -> tty_clear, verPosConsulta(IdPac), utils:mensagemEspera, menuPaciente(IdPac);
       OP = "A" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
       OP = "C" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
       OP = "F" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
@@ -120,21 +120,25 @@ buscarClinica(IDPac):-
 
 
 
-# verPosConsulta(IdPac) :-
-#     tty_clear,
-#     utils:tituloInformacao('RECEITAS / LAUDOS / SOLICITAÇÃO DE EXAMES'),
-#     writeln('[R] - Receitas'),
-#     writeln('[L] - Laudos'),
-#     writeln('[E] - Solicitação de Exames'),
-#     writeln('[V] - Voltar'),
-#     promptOption('Opção > ', OP),
-#     ( OP = "R" -> tty_clear, verReceita(IdPac), tty_clear, menuPaciente(IdPac);
-#       OP = "L" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
-#       OP = "E" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
-#       OP = "V" -> tty_clear, menuPaciente(IdPac);
-#       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, verPosConsulta(IdPac)).
+verAgendamento(IdPac) :- paciente:verConsulta(IdPac).
 
-# verReceita(IdPac) :- paciente:verReceita(IdPac).
+verPosConsulta(IdPac) :-
+    tty_clear,
+    utils:tituloInformacao('RECEITAS / LAUDOS / SOLICITAÇÃO DE EXAMES'),
+    writeln('[R] - Receitas'),
+    writeln('[L] - Laudos'),
+    writeln('[E] - Solicitação de Exames'),
+    writeln('[V] - Voltar'),
+    promptOption('Opção > ', OP),
+    ( OP = "R" -> tty_clear, verReceita(IdPac);
+      OP = "L" -> tty_clear, verLaudo(IdPac);
+      OP = "E" -> tty_clear, verExame(IdPac);
+      OP = "V" -> tty_clear, menuPaciente(IdPac);
+      writeln('Opção Inválida')).
+
+verReceita(IdPac) :- paciente:verReceita(IdPac).
+verLaudo(IdPac) :- paciente:verLaudo(IdPac).
+verExame(IdPac) :- paciente:verExame(IdPac).
 
 inicialClinica :-
     tty_clear,

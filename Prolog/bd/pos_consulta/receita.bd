@@ -1,4 +1,5 @@
 :- dynamic receita/3.
 
-receita(1, 1, "acido").
+receita(1, 2, "2").
+receita(1, 2, "2").
 
