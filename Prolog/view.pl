@@ -105,17 +105,96 @@ buscarOpcoes(IDPac):-
       promptOption('Opção > ', OP),
   
       ( OP = "C" -> tty_clear, menuBuscarClinica;
-        %OP = "L" -> tty_clear, emitirLaudo(IDM), !;
-        %OP = "E" -> tty_clear, emitirExame(IDM), !;
+        OP = "M" -> tty_clear, menuBuscarMedico;
+        OP = "P" -> tty_clear, menuBuscarClinicaPorPlano;
+        OP = "A" -> tty_clear, menuBuscarClinicaAgendamento;
+        %OP = "N" -> tty_clear, menuMedicoAvaliacao;
         OP = "V" -> tty_clear, menuPaciente(IDPac);
         writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac)).
   
   menuBuscarClinica:-
-      tty_clear,
-      utils:tituloInformacao('Buscar Clínica'),
-      promptString('Nome da Clínica > ', NomeClinica),
-      paciente:buscarClinica(NomeClinica).
-      
+    tty_clear,
+    utils:tituloInformacao('Buscar Clínica'),
+    promptString('Nome da Clínica > ', NomeClinica),
+    (clinicaExiste(NomeClinica) ->
+        paciente:buscarClinica(NomeClinica),
+        utils:mensagemEspera,
+        buscarOpcoes(IDPac)
+    ; 
+        
+        utils:mensagemEspera,
+        buscarOpcoes(IDPac)
+    ).
+
+clinicaExiste(NomeClinica) :-
+    paciente:buscarClinica(NomeClinica),
+    !.
+clinicaExiste(_).
+
+    menuBuscarMedico:-
+    tty_clear,
+    utils:tituloInformacao('Buscar Médico'),
+    promptString('Nome do Médico> ', Nome),
+    (medicoExiste(Nome) ->
+        paciente:buscarMedico(Nome),
+        utils:mensagemEspera,
+        buscarOpcoes(IDPac)
+    ; 
+        writeln('Médico não encontrado'),
+        utils:mensagemEspera,
+        buscarOpcoes(IDPac)
+    ).
+
+medicoExiste(Nome) :-
+    paciente:buscarMedico(Nome),
+    !.
+medicoExiste(_).
+
+
+  menuBuscarClinicaPorPlano:-
+    tty_clear,
+    utils:tituloInformacao('Buscar Por Plano'),
+    write('Digite o seu Plano> '),
+    read_string(user_input, "\n", "\r", _, Planos),
+    (clinicasPorPlanoExiste(Planos) ->
+        paciente:buscarClinicaPorPlano(Planos),
+        utils:mensagemEspera,
+        buscarOpcoes(IDPac)
+    ; 
+        writeln('Não há clínicas que aceitem esse plano'),
+        utils:mensagemEspera,
+        buscarOpcoes(IDPac)
+    ).
+
+clinicasPorPlanoExiste(Planos) :-
+    paciente:buscarClinicaPorPlano(Planos),
+    !.
+clinicasPorPlanoExiste(_).
+
+ 
+
+ menuBuscarClinicaAgendamento:-
+    tty_clear,
+    utils:tituloInformacao('Informação sobre Agendeamento'),
+    write('Digite Hora Marcada ou Agendamento Prévio> '),
+    read_string(user_input, "\n", "\r", _, MetodoAgendamento),
+    (clinicaPorAgendamentoExiste(MetodoAgendamento) ->
+        paciente:buscarClinicaAgendamento(MetodoAgendamento),
+        utils:mensagemEspera,
+        buscarOpcoes(IDPac)
+    ; 
+        writeln('Não há clínicas com esse método de agendamento'),
+        utils:mensagemEspera,
+        buscarOpcoes(IDPac)
+    ).
+
+clinicaPorAgendamentoExiste(MetodoAgendamento) :-
+    paciente:buscarClinicaAgendamento(MetodoAgendamento),
+    !.
+clinicaPorAgendamentoExiste(_).
+
+
+
 verAgendamento(IdPac) :- paciente:verConsulta(IdPac).
 
 verPosConsulta(IdPac) :-

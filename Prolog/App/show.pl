@@ -59,7 +59,7 @@ showLaudo(model:laudo(IdMedico, IdPaciente, Texto)) :-
     format('Id do Paciente: ~w~n', [IdPaciente]),
     format('Resultado: ~w', [Texto]).
 
-showMedico(model:medico(Clinica, Id, Nome, CRM, Especialidade, _, _)) :-
+showMedico(model:medico(Clinica, Id, Nome, CRM, Especialidade, _, _,_)) :-
     format('----------------------------~n', []),
     format('Médico ~w~n', [Id]),
     format('Nome: ~w~n', [Nome]),

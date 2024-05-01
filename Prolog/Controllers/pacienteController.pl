@@ -1,4 +1,4 @@
-:-module(paciente, [verReceita/1, verLaudo/1, verExame/1, validaIDPaciente/1, verConsulta/1, buscarClinica/1]).
+:-module(paciente, [verReceita/1, verLaudo/1, verExame/1, validaIDPaciente/1, verConsulta/1, buscarClinica/1, bucarMedico/1, buscarClinicaPorPlano/1, buscarClinicaAgendamento/1]).
 
 :- use_module('../App/show.pl').
 :- use_module('../Models/model.pl').
@@ -44,3 +44,18 @@ validaIDPaciente(_, _) :-
 buscarClinica(NomeClinica) :-
     forall(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Contato,_),
            (show:showClinica(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Contato, _)), !)).
+
+
+buscarMedico(Nome) :-
+    forall(
+        model:medico(Clinica, Id, Nome, CRM, Especialidade, _, _,_),
+        show:showMedico(model:medico(Clinica, Id, Nome, CRM, Especialidade, _, _,_))
+    ).
+
+buscarClinicaPorPlano(Planos) :-
+    forall(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Contato,_),
+           show:showClinica(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Contato, _))).
+
+buscarClinicaAgendamento(MetodoAgendamento) :-
+     forall(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Contato,_),
+           show:showClinica(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Contato, _))).
