@@ -1,5 +1,4 @@
 :- dynamic medico/8.
 
 medico(1, 1, "ana", "00", "linda", "09", "09", "123").
-medico(2, 2, "vivi", "1", "dermatologista", "888888", "rua q", "123").
 

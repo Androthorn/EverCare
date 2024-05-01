@@ -119,4 +119,27 @@ Inicializa todas as tabelas dinâmicas do sistema.
 iniciaSistema :- 
     verificaPaciente, verificaLoginPaciente, verificaIdPaciente, 
     verificaClinica, verificaIdClinica, verificaLoginClinica, 
-    verificaMedico, verificaIdMedico, verificaLoginMedico.
+    verificaMedico, verificaIdMedico, verificaLoginMedico,
+    verificaConsulta, verificaIdConsulta.
+
+/*
+
+Inicializa a tabela de consultas.
+Os campos são: idClinica:: Int, idMedico :: Int, data :: String, horario :: String, queixa :: String
+
+*/
+
+iniciaConsulta :- dynamic(consulta/5).
+
+iniciaIdConsulta :-
+    asserta(id_consulta(0)).
+
+nextIdConsulta(N) :-
+    id_consulta(X), retract(id_consulta(X)), N is X + 1, asserta(id_consulta(N)).
+
+leConsulta :- consult('bd/consulta/consulta.bd').
+verificaConsulta :- 
+    exists_file('bd/consulta/consulta.bd') -> leConsulta ; iniciaConsulta.
+verificaIdConsulta :- 
+    exists_file('bd/consulta/id_consulta.bd') -> leIdConsulta ; iniciaIdConsulta.
+leIdConsulta :- consult('bd/consulta/id_consulta.bd'). 
