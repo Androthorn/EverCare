@@ -31,6 +31,9 @@ autenticaClinica(_, _, 0) :- false.
 autenticaMedico(ID, Senha, 1) :- model:login_medico(ID, Senha), !.
 autenticaMedico(_, _, 0) :- false.
 
+validaIDPaciente(ID) :- model:paciente(ID, _, _, _, _, _, _, _, _, _, _,_), !.
+validaIDPaciente(_, _) :- false.
+
 mensagemEspera :- promptString('\n\nPressione qualquer tecla para continuar', _), tty_clear.
 
 tituloI :-

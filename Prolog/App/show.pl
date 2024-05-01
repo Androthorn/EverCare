@@ -39,9 +39,8 @@ showConsulta(consulta(IdCons, IdPaciente, IdClinica, IdMedico, DataConsulta, Hor
     format('Confirmado: ~w~n', [Confirmado]),
     format('-------------------~n', []).
 
-showExame(exame(Id, IdPaciente, IdMedico, Tipo)) :-
+showExame(exame( IdPaciente, IdMedico, Tipo)) :-
     format('----------------------------~n', []),
-    format('EXAME ~w~n', [Id]),
     format('Id do Paciente: ~w~n', [IdPaciente]),
     format('Id do Médico responsável: ~w~n', [IdMedico]),
     format('Tipo do exame: ~w~n', [Tipo]).
@@ -53,9 +52,8 @@ showFila(fila(Id, IdClinica, IdMedico, Fila)) :-
     format('Médico: ~w~n', [IdMedico]),
     format('Fila: ~w~n', [Fila]).
 
-showLaudo(laudo(Id, IdMedico, IdPaciente, Resultado)) :-
+showLaudo(laudo( IdMedico, IdPaciente, Resultado)) :-
     format('----------------------------~n', []),
-    format('LAUDO ~w~n', [Id]),
     format('Id do Médico responsável: ~w~n', [IdMedico]),
     format('Id do Paciente: ~w~n', [IdPaciente]),
     format('Resultado: ~w', [Resultado]).
@@ -83,9 +81,8 @@ showPaciente(paciente(Id, Nome, Cpf, DataNascimento, Sexo, Endereco, TipoSanguin
     format('Diabético? ~w~n', [Diabetico]),
     format('-------------------~n', []).
 
-showReceita(receita(Id, IdMedico, IdPaciente, Texto)) :-
+showReceita(receita( IdMedico, IdPaciente, Texto)) :-
     format('----------------------------~n', []),
-    format('RECEITUÁRIO ~w~n', [Id]),
     format('Id do Médico responsável: ~w~n', [IdMedico]),
     format('Paciente: ~w~n', [IdPaciente]),
     format('Remédios:~n~w', [Texto]).

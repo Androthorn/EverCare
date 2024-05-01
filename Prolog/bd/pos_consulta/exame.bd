@@ -1,0 +1,4 @@
+:- dynamic exame/3.
+
+exame(1, 3, "opa").
+

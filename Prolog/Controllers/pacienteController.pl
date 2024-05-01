@@ -21,7 +21,6 @@
 #     @param IDPac ID do paciente.
 # */
 # consultarExames(IDPac) :- forall(model:exame(Id, IdMed, IdPac, tipo), show:showExame(model:exame(Id, IdMed, IdPac, tipo))).
-:- module (paciente, [cadastraConsulta/5]).
 :- use_module('../Models/model.pl').
 :- use_module('../Controllers/persistence.pl').
 :- use_module('../App/utils.pl').
@@ -40,3 +39,10 @@
 # */
 # cadastraConsulta(IDClinica, IDMedico, Data, Horario, Queixa) :- 
 #     assertz(model:consulta(ID, IDClinica, IDMedico, Data, Horario, Queixa)).
+:- module(paciente, [validaIDPaciente/1]).
+:- use_module('../Models/model.pl').
+
+validaIDPaciente(ID) :-
+    model:paciente(ID, _, _, _, _, _, _, _, _, _, _,_), !.
+validaIDPaciente(_, _) :-
+    false.

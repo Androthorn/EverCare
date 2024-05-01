@@ -52,3 +52,15 @@ saveConsulta :- tell('bd/consulta/consulta.bd'),
 saveIdConsulta :- tell('bd/consulta/id_consulta.bd'),
                   listing(model:id_consulta),
                   told.
+saveReceita :-
+    tell('bd/pos_consulta/receita.bd'), 
+    listing(model:receita), 
+    told. 
+saveLaudo :-
+    tell('bd/pos_consulta/laudo.bd'),
+    listing(model:laudo), 
+    told. 
+saveExame :-
+    tell('bd/pos_consulta/exame.bd'), 
+    listing(model:exame), 
+    told. 

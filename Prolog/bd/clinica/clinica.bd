@@ -1,3 +1,5 @@
 :- dynamic clinica/7.
 
 clinica(1, "q", "q", "q", "q", "q", "123").
+clinica(2, "clinia help", "12", "rua d", "999999", "02:00-06:00", "123").
+
