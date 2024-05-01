@@ -3,10 +3,9 @@
                   iniciaMedico/0, iniciaIdMedico/0, iniciaLoginMedico/0, nextIdMedico/1, 
                   iniciaConsulta/0, iniciaIdConsulta/0, nextIdConsulta/1 ,
                   iniciaReceita/0, iniciaLaudo/0, iniciaExame/0, 
-                  iniciaSistema/0]).
+                  iniciaSistema/0, receita/0]).
 
 :- use_module('../Controllers/persistence.pl').
-
 
 /*
  Inicializa a tabela dinâmica de pacientes.
@@ -120,12 +119,13 @@ iniciaSistema :-
     verificaPaciente, verificaLoginPaciente, verificaIdPaciente, 
     verificaClinica, verificaIdClinica, verificaLoginClinica, 
     verificaMedico, verificaIdMedico, verificaLoginMedico,
-    verificaConsulta, verificaIdConsulta.
+    verificaConsulta, verificaIdConsulta,
+    verificaLaudo, verificaReceita, verificaExame.
 
 /*
 
 Inicializa a tabela de consultas.
-Os campos são: idClinica:: Int, idMedico :: Int, data :: String, horario :: String, queixa :: String
+Os campos são: Id, IdPaciente, IdClinica, IdMedico, DataConsulta, HoraConsulta, Queixas.
 
 */
 
