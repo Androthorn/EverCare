@@ -157,19 +157,37 @@ loginClinica :-
 menuClinica(IdClin) :-
     tty_clear,
     utils:tituloInformacao('DASHBOARD CLÍNICA'),
-    write('[C] Cadastrar Médico'), nl,
-    write('[F] Fila Virtual'), nl,
-    write('[V] Ver Informações'), nl,
-    write('[D] Dashboard'), nl,
-    write('[S] Sair'), nl,
+    write('-----------------------------'), nl,
+    write('| [C] Cadastrar Médico'), nl,
+    write('| [F] Fila Virtual'), nl,
+    write('| [V] Ver Informações'), nl,
+    write('| [D] Dashboard'), nl,
+    write('| [S] Sair'), nl,
+    write('-----------------------------'), nl,
     promptOption('Opção > ', OP),
 
     ( OP = "C" -> tty_clear, cadastraMedico(IdClin), tty_clear, menuClinica(IdClin);
       OP = "F" -> tty_clear, menuClinica(IdClin), tty_clear, menuClinica(IdClin);
-      OP = "V" -> tty_clear, menuClinica(IdClin), tty_clear, menuClinica(IdClin);
+      OP = "V" -> tty_clear, visualizarInformacaoClinica(IdClin), !;
       OP = "D" -> tty_clear, menuClinica(IdClin), tty_clear, menuClinica(IdClin);
       OP = "S" -> tty_clear, main;
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuClinica(IdClin)).
+
+visualizarInformacaoClinica(IdClin) :-
+    tty_clear,
+    write('-----------------------------'), nl,
+    write('| [A] - Agendamentos'), nl,
+    write('| [P] - Pacientes'), nl,
+    write('| [M] - Médicos'), nl,
+    write('| [V] - Voltar'), nl,
+    write('-----------------------------'), nl,
+    promptOption('Opção > ', OP),
+    ( OP = "A" -> tty_clear, visualizarAgendamentos(IdClin), !;
+      OP = "P" -> tty_clear, visualizarInformacaoClinica(IdClin), !;
+      OP = "M" -> tty_clear, visualizarInformacaoClinica(IdClin), !;
+      OP = "V" -> tty_clear, menuClinica(IdClin);
+      writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, visualizarInformacaoClinica(IdClin)).
+
 
 cadastraMedico(IdClin) :-
     tty_clear,
@@ -214,17 +232,18 @@ loginMedico :-
 menuMedico(ID) :-
     tty_clear,
     utils:tituloInformacao('DASHBOARD MÉDICO'),
-    write('[V] Ver Agendamentos'), nl,
-    write('[E] Emitir'), nl,
+    write('[V] Ver Consultas'), nl,
+    write('[E] Emitir Receita/Laudo'), nl,
     write('[C] Chats'), nl,
     write('[S] Sair'), nl,
     promptOption('Opção > ', OP),
 
-    ( OP = "V" -> tty_clear, menuMedico(ID), !;
-      OP = "E" -> tty_clear, menuMedicoEmitir(ID), !;
-      OP = "C" -> tty_clear, menuMedico(ID), !;
+    ( OP = "V" -> tty_clear, verConsulta(ID), utils:mensagemEspera, menuMedico(ID);
+      OP = "E" -> tty_clear, menuMedicoEmitir(ID);
+      OP = "C" -> tty_clear, menuMedico(ID);
       OP = "S" -> tty_clear, main;
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuMedico(ID)).
+
 
 menuMedicoEmitir(IDM) :-
     tty_clear,

@@ -35,16 +35,26 @@ showClinica(model:clinica(Id, Nome, Endereco, Planos, MetodoAgendamento, Contato
     format('Contato: ~w~n', [Contato]),
     format('----------------------------~n', []).
 
-showConsulta(model:consulta(IdCons, IdPaciente, IdClinica, IdMedico, DataConsulta, HoraConsulta, Queixas)) :-
+showConsultaPaciente(model:consulta(IdCons, IdPaciente, IdClinica, IdMedico, DataConsulta, HoraConsulta, Queixas)) :-
     format('-------------------~n', []),
     format('Id da Consulta: ~w~n', [IdCons]),
-    format('Id do paciente: ~w~n', [IdPaciente]),
     format('Id da Clínica: ~w~n', [IdClinica]),
     format('Id do Médico: ~w~n', [IdMedico]),
     format('Data da consulta: ~w~n', [DataConsulta]),
     format('Hora da consulta: ~w~n', [HoraConsulta]),
     format('Queixas: ~w~n', [Queixas]),
     format('-------------------~n', []).
+
+showConsultaMedico(model:consulta(IdCons, IdPaciente, IdClinica, IdMedico, DataConsulta, HoraConsulta, Queixas)) :-
+    format('-------------------~n', []),
+    format('Id da Consulta: ~w~n', [IdCons]),
+    format('Id da Clínica: ~w~n', [IdClinica]),
+    format('Id do Paciente: ~w~n', [IdPaciente]),
+    format('Data da consulta: ~w~n', [DataConsulta]),
+    format('Hora da consulta: ~w~n', [HoraConsulta]),
+    format('Queixas: ~w~n', [Queixas]),
+    format('-------------------~n', []).
+
 
 showExame(model:exame(IdMedico, IdPaciente, Texto)) :-
     format('----------------------------~n', []),

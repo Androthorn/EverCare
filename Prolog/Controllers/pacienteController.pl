@@ -1,4 +1,4 @@
-:-module(paciente, [verReceita/1, verLaudo/1, verExame/1, validaIDPaciente/1, verConsulta/1]).
+:-module(paciente, [verReceita/1, verLaudo/1, verExame/1, validaIDPaciente/1, verConsulta/1, paciente_logado/1]).
 
 :- use_module('../App/show.pl').
 :- use_module('../Models/model.pl').
@@ -21,22 +21,7 @@ verLaudo(IDPac) :- forall(model:laudo(IdMed, IdPac, texto), show:showLaudo(model
 */
 verExame(IDPac) :- forall(model:exame(IdMed, IdPac, tipo), show:showExame(model:exame(IdMed, IdPac, tipo))).
 
-verConsulta(IDPac) :- forall(model:consulta(IdCons, IDPac, IdClinica, IdMedico, DataConsulta, HoraConsulta, Queixas), 
-                        show:showConsulta(model:consulta(IdCons, IDPac, IdClinica, IdMedico, DataConsulta, HoraConsulta, Queixas))).
-% # /* 
-% # Cria uma consulta.
 
-% # @param ID: id da consulta.
-% # @param IDClinica: id da clínica.
-% # @param IDMedico: id do médico.
-% # @param Data: data da consulta.
-% # @param Horario: horário da consulta.
-% # @param Queixa: queixa do paciente.
-% # */
-% # cadastraConsulta(IDClinica, IDMedico, Data, Horario, Queixa) :- 
-% #     assertz(model:consulta(ID, IDClinica, IDMedico, Data, Horario, Queixa)).
-
-validaIDPaciente(ID) :-
-    model:paciente(ID, _, _, _, _, _, _, _, _, _, _,_), !.
-validaIDPaciente(_, _) :-
-    false.
+verConsulta(IDPac) :- 
+    forall(model:consulta(IdCons, IDPac, IdClinica, IdMedico, DataConsulta, HoraConsulta, Queixas), 
+           show:showConsultaPaciente(model:consulta(IdCons, IDPac, IdClinica, IdMedico, DataConsulta, HoraConsulta, Queixas))).
