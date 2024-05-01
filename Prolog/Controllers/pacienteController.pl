@@ -1,4 +1,4 @@
-# :- module (paciente, [consultarReceitas/1]).
+# :- module (paciente, [consultarReceitas/1, buscarClinica/1]).
 
 # :- use_module('../App/show.pl').
 # :- use_module('../Models/model.pl').
@@ -46,3 +46,7 @@ validaIDPaciente(ID) :-
     model:paciente(ID, _, _, _, _, _, _, _, _, _, _,_), !.
 validaIDPaciente(_, _) :-
     false.
+
+buscarClinica(NomeClinica) :-
+    forall(model:clinica(_, NomeClinica, Endereco, Planos, MetodoAgendamento, Contato),
+           (show:showClinica(model:clinica(_, NomeClinica, Endereco, Planos, MetodoAgendamento, Contato)), !)).

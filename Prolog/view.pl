@@ -83,7 +83,7 @@ menuPaciente(IdPac) :-
     write('[S] Sair'), nl,
     promptOption('Opção > ', OP),
 
-    ( OP = "B" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
+    ( OP = "B" -> tty_clear, buscarOpcoes(IdPac), tty_clear, menuPaciente(IdPac);
       OP = "M" -> tty_clear, cadastraConsulta(IdPac), tty_clear, menuPaciente(IdPac);
       OP = "V" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
       OP = "R" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
@@ -92,6 +92,33 @@ menuPaciente(IdPac) :-
       OP = "F" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
       OP = "S" -> tty_clear, main;
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuPaciente(IdPac)).
+buscarOpcoes(IDPac):-
+    tty_clear,
+    utils:tituloInformacao('Escolha uma opção de busca:'),
+    write('[C] Buscar por Clínica'), nl,
+    write('[M] Buscar por Médico'), nl,
+    write('[P] Buscar Clínicas que aceitam meu plano de saúde'), nl,
+    write('[A] Buscar Clínicas por opção de agendamento'), nl,
+    write('[N] Buscar Médicos por Avaliação'), nl,
+    write('[V] Voltar'), nl,
+    promptOption('Opção > ', OP),
+
+    ( OP = "C" -> tty_clear, menubuscarClinica(IDPac), !;
+      %OP = "L" -> tty_clear, emitirLaudo(IDM), !;
+      %OP = "E" -> tty_clear, emitirExame(IDM), !;
+      OP = "V" -> tty_clear, menuMedico(IDPac);
+      writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac)).
+
+buscarClinica(IDPac):- 
+    prompt('Nome da Clínica > ', NomeClinica),
+    
+
+  
+
+
+
+
+
 
 # verPosConsulta(IdPac) :-
 #     tty_clear,

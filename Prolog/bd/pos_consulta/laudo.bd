@@ -1,4 +1,4 @@
 :- dynamic laudo/3.
 
-laudo(1, 2, "opa").
+laudo(1, 1, "acne triste").
 
