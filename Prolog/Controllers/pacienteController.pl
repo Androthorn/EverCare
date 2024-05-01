@@ -42,5 +42,5 @@ validaIDPaciente(_, _) :-
     false.
 
 buscarClinica(NomeClinica) :-
-    forall(model:clinica(_, NomeClinica, Endereco, Planos, MetodoAgendamento, Contato),
-           (show:showClinica(model:clinica(_, NomeClinica, Endereco, Planos, MetodoAgendamento, Contato)), !)).
+    forall(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Contato,_),
+           (show:showClinica(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Contato, _)), !)).
