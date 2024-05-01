@@ -225,20 +225,30 @@ menuMedico(ID) :-
 cadastraConsulta(IdPac) :-
     tty_clear,
     utils:tituloInformacao('MARCAR CONSULTA'),
-    promptString('ID Clínica > ', IdClinica),
-    promptString('ID Médico > ', IdMedico),
-    promptString('Data da Consulta (dd/mm/aaaa) > ', Data),
-    promptString('Horário da Consulta (hh:mm) > ', Horario),
-    promptString('Queixa > ', Queixa),
+    prompt('ID Clínica > ', IdClinica),
 
-    model:nextIdConsulta(IdConsulta),
-    assertz(model:consulta(IdConsulta, IdClinica, IdMedico, Data, Horario, Queixa)),
-    
-    persistence:saveIdConsulta,
-    persistence:saveConsulta,
- 
+    utils:autenticaLoginClinica(IdClinica, N),
+    ( N =:= 0 -> writeln('Clínica não encontrada'), utils:mensagemEspera, tty_clear, menuPaciente(IdPac);
 
-    format('Consulta marcada com sucesso! Seu ID de consulta é: ~d~n', [IdConsulta]),
-    utils:mensagemEspera,
-    tty_clear,
-    menuPaciente(IdPac).
+      prompt('ID Médico > ', IdMedico),
+      utils:autenticaMedicoClinica(IdClinica, IdMedico, M),
+      ( M =:= 0 -> writeln('Médico não encontrado ou não pertence a clínica'), utils:mensagemEspera, tty_clear, menuPaciente(IdPac);
+
+        promptString('Data da Consulta (dd/mm/aaaa) > ', Data),
+        (\+ dataValida(Data) -> writeln('Data Inválida'),utils:mensagemEspera, tty_clear, menuPaciente(IdPac);
+
+          utils:horariosDisponiveis(IdMedico, Data, Horarios),
+          writeln('Horários Disponíveis:'), imprimirListaComEspacos(Horarios), nl,
+          promptString('Horário da Consulta (hh:mm) > ', Horario),
+          (\+ horaValida(Horario, Horarios) -> writeln('Horário Inválido'), utils:mensagemEspera, tty_clear, menuPaciente(IdPac);
+        
+              promptString('Queixa > ', Queixa),
+  
+              model:nextIdConsulta(IdConsulta),
+              assertz(model:consulta(IdConsulta, IdClinica, IdMedico, IdPac, Data, Horario, Queixa)),
+              
+              persistence:saveIdConsulta,
+              persistence:saveConsulta,
+          
+  
+              format('Consulta marcada com sucesso! Seu ID de consulta é: ~d~n', [IdConsulta]), utils:mensagemEspera, tty_clear, menuPaciente(IdPac))))).

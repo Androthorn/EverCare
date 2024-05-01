@@ -3,11 +3,6 @@
 
 :- use_module('../Models/model.pl').
 
-/*
-lePaciente/0, leUBS/0, leMedico/0, leMedico/0, leReceita/0, leMedicamento/0,
-                        leLaudo/0, leExame/0, leLogins/0, leConsulta/0, leId/0, 
-
-*/
 
 savePaciente :- tell('bd/paciente/paciente.bd'),
                 listing(model:paciente),

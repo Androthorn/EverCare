@@ -1,6 +1,6 @@
 :- module(model, [iniciaPaciente/0, iniciaIdPaciente/0, iniciaLoginPaciente/0, nextIdPaciente/1, iniciaSistema/0,
                 iniciaClinica/0, iniciaIdClinica/0, iniciaLoginClinica/0, nextIdClinica/1, 
-                inicialMedico/0, inicialIdMedico/0, inicialLoginMedico/0, nextIdMedico/1, iniciaConsulta/0, iniciaIdConsulta/0, nextIdConsulta/1 ]).
+                iniciaMedico/0, iniciaIdMedico/0, iniciaLoginMedico/0, nextIdMedico/1, iniciaConsulta/0, iniciaIdConsulta/0, nextIdConsulta/1 ]).
 
 :- use_module('../Controllers/persistence.pl').
 
@@ -93,7 +93,7 @@ Os campos são: idClinica:: Int, idMedico :: Int, data :: String, horario :: Str
 
 */
 
-iniciaConsulta :- dynamic(consulta/6).
+iniciaConsulta :- dynamic(consulta/7).
 
 iniciaIdConsulta :-
     asserta(id_consulta(0)).

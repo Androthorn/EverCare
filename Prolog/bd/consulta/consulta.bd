@@ -1,4 +1,4 @@
-:- dynamic consulta/6.
+:- dynamic consulta/7.
 
-consulta(1, "23", "2", "12", "12", "23").
-
+consulta(1, 1, 1, 1, "05/08/2024", "08:00", "sem").
+consulta(2, 1, 1, 1, "05/08/2024", "17:00", "nao sei").
