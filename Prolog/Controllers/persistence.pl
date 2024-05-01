@@ -44,3 +44,19 @@ saveMedico :- tell('bd/medico/medico.bd'),
 saveLoginMedico :- tell('bd/medico/login_medico.bd'),
                     listing(model:login_medico),
                     told.
+
+saveLoginMedico :- tell('bd/medico/login_medico.bd'),
+                    listing(model:login_medico),
+                    told.
+saveReceita :-
+    tell('bd/receita/receita.bd'), 
+    listing(model:receita), 
+    told. 
+saveLaudo :-
+    tell('bd/laudo/laudo.bd'),
+    listing(model:laudo), 
+    told. 
+saveExame :-
+    tell('bd/exame/exame.bd'), 
+    listing(model:exame), 
+    told. 

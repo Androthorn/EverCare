@@ -212,27 +212,48 @@ menuMedicoEmitir(IDM) :-
     write('[L] - Emitir Laudo'), nl,
    
     promptOption('Opção > ', O),
+
     ( O = "R" -> menuMedicoEmitirReceita(IDM), !;
-      O = "E" -> menuMedicoEmitirResultado(IDM), !;
-      O = "L" -> menuMedicoSolicitaExame(IDM), !;
+      O = "E" -> menuMedicoSolicitaExame(IDM), !;
+      O = "L" -> menuMedicoEmitirLaudo(IDM), !;
       write('Opção Inválida'), menuMedicoEmitir(IDM)).
 
 menuMedicoEmitirReceita(IDM) :-
-    ((prompt('ID do Paciente > ', ID), paciente:validaIDPaciente(ID)) -> 
-        medico:emitirReceita(IDM) ;
-        (write('ID inválido!'), menuMedico(IDM))).
+    prompt('ID do Paciente > ', ID), 
+    (paciente:validaIDPaciente(ID) -> 
+        medico:emitirReceita(IDM,ID), 
+        writeln ('Receita emitida com sucesso'), 
+        sleep(1),
+        tty_clear, 
+        menuMedico(IDM) 
+        ;
+        write('ID inválido!'), menuMedico(IDM)
+        ).
 
 menuMedicoEmitirLaudo(IDM) :-
-    ((prompt('ID do Paciente > ', ID), paciente:validaIDPaciente(ID)) -> 
-        medico:emitirLaudo(IDM) ;
-        (write('ID inválido!'), menuMedico(IDM))).
-
-
+    prompt('ID do Paciente > ', ID), 
+    (paciente:validaIDPaciente(ID) -> 
+        medico:emitirLaudo(IDM, ID), 
+        writeln ('Laudo emitido com sucesso'), 
+        sleep(1),tty_clear, menuMedico(IDM)
+        ;
+      write('ID inválido!'), 
+      menuMedico(IDM)).
 
 menuMedicoSolicitaExame(IDM) :-
-    ((prompt('ID do Paciente > ', ID), paciente:validaIDPaciente(ID)) -> 
-        medico:solicitarExame(IDM) ;
-        (write('ID inválido!'), menuMedico(IDM))).
+    prompt('ID do Paciente > ', ID),
+    (paciente:validaIDPaciente(ID) ->
+        medico:solicitarExame(IDM, ID),
+        writeln('Solicitação de exame emitida com sucesso'),
+
+        sleep(1),
+        tty_clear,
+        menuMedico(IDM)
+    ;
+        write('ID inválido!'),
+        menuMedico(IDM)
+    ).
+
 
 
 

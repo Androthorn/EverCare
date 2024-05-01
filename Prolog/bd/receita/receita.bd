@@ -1,0 +1,4 @@
+:- dynamic receita/3.
+
+receita(1, 1, "rivotril").
+
