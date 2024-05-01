@@ -207,55 +207,58 @@ menuMedico(ID) :-
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuMedico(ID)).
 
 menuMedicoEmitir(IDM) :-
-    write('[R] - Emitir Receita'), nl,
-    write('[E] - Solicitar Exame'), nl,
-    write('[L] - Emitir Laudo'), nl,
-   
-    promptOption('Opção > ', O),
+    tty_clear,
+    utils:tituloInformacao('EMITIR'),
+    write('[R] Receita'), nl,
+    write('[L] Laudo'), nl,
+    write('[E] Exame'), nl,
+    write('[V] Voltar'), nl,
+    promptOption('Opção > ', OP),
 
-    ( O = "R" -> menuMedicoEmitirReceita(IDM), !;
-      O = "E" -> menuMedicoSolicitaExame(IDM), !;
-      O = "L" -> menuMedicoEmitirLaudo(IDM), !;
-      write('Opção Inválida'), menuMedicoEmitir(IDM)).
+    ( OP = "R" -> tty_clear, emitirReceita(IDM), !;
+      OP = "L" -> tty_clear, emitirLaudo(IDM), !;
+      OP = "E" -> tty_clear, emitirExame(IDM), !;
+      OP = "V" -> tty_clear, menuMedico(IDM);
+      writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuMedicoEmitir(IDM)).
 
-menuMedicoEmitirReceita(IDM) :-
-    prompt('ID do Paciente > ', ID), 
-    (paciente:validaIDPaciente(ID) -> 
-        medico:emitirReceita(IDM,ID), 
-        writeln ('Receita emitida com sucesso'), 
-        sleep(1),
-        tty_clear, 
-        menuMedico(IDM) 
-        ;
-        write('ID inválido!'), menuMedico(IDM)
-        ).
-
-menuMedicoEmitirLaudo(IDM) :-
-    prompt('ID do Paciente > ', ID), 
-    (paciente:validaIDPaciente(ID) -> 
-        medico:emitirLaudo(IDM, ID), 
-        writeln ('Laudo emitido com sucesso'), 
-        sleep(1),tty_clear, menuMedico(IDM)
-        ;
-      write('ID inválido!'), 
-      menuMedico(IDM)).
-
-menuMedicoSolicitaExame(IDM) :-
-    prompt('ID do Paciente > ', ID),
-    (paciente:validaIDPaciente(ID) ->
-        medico:solicitarExame(IDM, ID),
-        writeln('Solicitação de exame emitida com sucesso'),
-
-        sleep(1),
-        tty_clear,
-        menuMedico(IDM)
+emitirReceita(IDM) :-
+    tty_clear,
+    utils:tituloInformacao('EMITIR RECEITA'),
+    prompt('ID Paciente > ', IDP),
+    (utils:validaIDPaciente(IDP) -> 
+      promptString('Texto > ', Texto),
+      assertz(model:receita(IDM, IDP, Texto)),
+      persistence:saveReceita,
+      writeln('Receita emitida com sucesso!'), sleep(1), tty_clear, menuMedico(IDM)
     ;
-        write('ID inválido!'),
-        menuMedico(IDM)
+      writeln('Paciente não encontrado'), utils:mensagemEspera, tty_clear, menuMedicoEmitir(IDM)
     ).
 
+emitirLaudo(IDM) :-
+    tty_clear,
+    utils:tituloInformacao('EMITIR LAUDO'),
+    prompt('ID Paciente > ', IDP),
+    (utils:validaIDPaciente(IDP) -> 
+      promptString('Texto > ', Texto),
+      assertz(model:laudo(IDM, IDP, Texto)),
+      persistence:saveLaudo,
+      writeln('Laudo emitido com sucesso!'), sleep(1), tty_clear, menuMedico(IDM)
+    ;
+      writeln('Paciente não encontrado'), utils:mensagemEspera, tty_clear, menuMedicoEmitir(IDM)
+    ).
 
-
+emitirExame(IDM) :-
+    tty_clear,
+    utils:tituloInformacao('EMITIR EXAME'),
+    prompt('ID Paciente > ', IDP),
+    (utils:validaIDPaciente(IDP) -> 
+      promptString('Texto > ', Texto),
+      assertz(model:exame(IDM, IDP, Texto)),
+      persistence:saveExame,
+      writeln('Exame emitido com sucesso!'), sleep(1), tty_clear, menuMedico(IDM)
+    ;
+      writeln('Paciente não encontrado'), utils:mensagemEspera, tty_clear, menuMedicoEmitir(IDM)
+    ).
 
 
 

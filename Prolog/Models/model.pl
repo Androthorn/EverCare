@@ -1,9 +1,7 @@
 :- module(model, [iniciaPaciente/0, iniciaIdPaciente/0, iniciaLoginPaciente/0, nextIdPaciente/1,
                   iniciaClinica/0, iniciaIdClinica/0, iniciaLoginClinica/0, nextIdClinica/1, 
-                  iniciaMedico/0, iniciaIdMedico/0, iniciaLoginMedico/0, nextIdMedico/1, 
-                  iniciaExame/0,  
-                  iniciaLaudo/0, 
-                  iniciaReceita/0, 
+                  iniciaMedico/0, iniciaIdMedico/0, iniciaLoginMedico/0, nextIdMedico/1,
+                  iniciaReceita/0, iniciaLaudo/0, iniciaExame/0, 
                   iniciaSistema/0]).
 
 :- use_module('../Controllers/persistence.pl').
@@ -83,35 +81,41 @@ verificaMedico :- exists_file('bd/medico/medico.bd') -> leMedico ; iniciaMedico.
 verificaLoginMedico :- exists_file('bd/medico/login_medico.bd') -> leLoginMedico ; iniciaLoginMedico.
 verificaIdMedico :- exists_file('bd/medico/id_medico.bd') -> leIdMedico ; iniciaIdMedico.
 
-iniciaExame :-
-    dynamic(exame/3).
-
-leExame :- consult('bd/exame/exame.bd').
-
-verificaExame :- exists_file('bd/exame/exame.bd') -> leExame; iniciaExame.
-
-iniciaLaudo :-
-    dynamic(laudo/3).
-
-leLaudo :- consult('bd/laudo/laudo.bd').
-
-verificaLaudo :- exists_file('bd/laudo/laudo.bd') -> leLaudo ; iniciaLaudo.
-
-
+/*
+Inicializa a tabela dinamica de receitas.
+Campos esperados: ID Médico, ID Paciente, Texto.
+*/
 iniciaReceita :-
     dynamic(receita/3).
 
-leReceita :- consult('bd/receita/receita.bd').
+leReceita :- consult('bd/pos_consulta/receita.bd').
+verificaReceita :- exists_file('bd/pos_consulta/receita.bd') -> leReceita ; iniciaReceita.
 
+/*
+Inicializa a tabela dinamica de laudos.
+Campos esperados: ID Médico, ID Paciente, Texto.
+*/
+iniciaLaudo :-
+    dynamic(laudo/3).
 
-verificaReceita :- exists_file('bd/receita/receita.bd') -> leReceita ; iniciaReceita.
+leLaudo :- consult('bd/pos_consulta/laudo.bd').
+verificaLaudo :- exists_file('bd/pos_consulta/laudo.bd') -> leLaudo ; iniciaLaudo.
 
+/*
+Inicializa a tabela dinamica de exames.
+Campos esperados: ID Médico, ID Paciente, Texto.
+*/
+iniciaExame :-
+    dynamic(exame/3).
 
+leExame :- consult('bd/pos_consulta/exame.bd').
+verificaExame :- exists_file('bd/pos_consulta/exame.bd') -> leExame ; iniciaExame.
 
+/*
+Inicializa todas as tabelas dinâmicas do sistema.
+*/
 iniciaSistema :- 
     verificaPaciente, verificaLoginPaciente, verificaIdPaciente, 
     verificaClinica, verificaIdClinica, verificaLoginClinica, 
-    verificaMedico, verificaIdMedico, verificaLoginMedico, 
-    verificaExame, 
-    verificaLaudo, 
-    verificaReceita.
+    verificaMedico, verificaIdMedico, verificaLoginMedico,
+    verificaReceita, verificaLaudo, verificaExame.

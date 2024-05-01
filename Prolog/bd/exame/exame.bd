@@ -1,6 +1,0 @@
-:- dynamic exame/3.
-
-exame(1, 1, "hjk").
-exame(1, 1, "blas").
-exame(1, 1, "gab").
-
