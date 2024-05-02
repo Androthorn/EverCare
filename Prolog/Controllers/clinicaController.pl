@@ -8,21 +8,13 @@ verAgendamentoClin(IdClinica) :- forall(model:consulta(IdCons, IdClinica, IdMedi
             show:showConsulta(model:consulta(IdCons, IdClinica, IdMedico, IDPac, DataConsulta, HoraConsulta, Queixas, C))).  
 
 verPaciente(IdClinica) :-
-    findall(IDPac, model:consulta(_, IdClinica, _, IDPac, _, _, _, _), PacientesConsulta),
-    list_to_set(PacientesConsulta, PacientesFiltrados),
-    getPacientes(PacientesFiltrados, Pacientes),
-    showPacientes(Pacientes).
+  forall(model:consulta(IdCons, IdClinica, IdMedico, IDPac, DataConsulta, HoraConsulta, Queixas, C), 
+        (
+            model:paciente(IDPac, Nome, CPF, Sexo, DataNascimento, Endereco, TipoSanguineo, PlanoSaude, Cardiopata, Hipertenso, Diabetico, Senha),
+            show:showPacientes(model:paciente(IDPac, Nome, CPF, Sexo, DataNascimento, Endereco, TipoSanguineo, PlanoSaude, Cardiopata, Hipertenso, Diabetico, Senha))).
+        ).
 
-getPacientes([], []).
-getPacientes([IDPac|T], [Paciente|Pacientes]) :-
-    model:paciente(IDPac, Nome, Cpf, DataNascimento, Sexo, Endereco, TipoSanguineo, Cardiopata, Hipertenso, Diabetico, _, _),
-    Paciente = paciente(IDPac, Nome, Cpf, DataNascimento, Sexo, Endereco, TipoSanguineo, Cardiopata, Hipertenso, Diabetico),
-    getPacientes(T, Pacientes).
 
-showPacientes([]).
-showPacientes([Paciente|T]) :-
-    showPaciente(Paciente),
-    showPacientes(T).
 
 verMedicos(IdClinica) :-
     forall(model:medico(IdClinica, IdMed, Nome, CRM, Especialidade, Telefone, Endereco, Senha), 
