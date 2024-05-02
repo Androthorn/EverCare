@@ -2,8 +2,9 @@
                   iniciaClinica/0, iniciaIdClinica/0, iniciaLoginClinica/0, nextIdClinica/1, 
                   iniciaMedico/0, iniciaIdMedico/0, iniciaLoginMedico/0, nextIdMedico/1, 
                   iniciaConsulta/0, iniciaIdConsulta/0, nextIdConsulta/1 ,
-                  iniciaReceita/0, iniciaLaudo/0, iniciaExame/0, 
-                  iniciaSistema/0, receita/0]).
+                  iniciaReceita/0, iniciaLaudo/0, iniciaExame/0,
+                  iniciaChat/0, iniciaIdChat/0, nextIdChat/1,
+                  iniciaSistema/0]).
 
 :- use_module('../Controllers/persistence.pl').
 
@@ -113,16 +114,6 @@ leExame :- consult('bd/pos_consulta/exame.bd').
 verificaExame :- exists_file('bd/pos_consulta/exame.bd') -> leExame ; iniciaExame.
 
 /*
-Inicializa todas as tabelas dinâmicas do sistema.
-*/
-iniciaSistema :- 
-    verificaPaciente, verificaLoginPaciente, verificaIdPaciente, 
-    verificaClinica, verificaIdClinica, verificaLoginClinica, 
-    verificaMedico, verificaIdMedico, verificaLoginMedico,
-    verificaConsulta, verificaIdConsulta,
-    verificaLaudo, verificaReceita, verificaExame.
-
-/*
 
 Inicializa a tabela de consultas.
 Os campos são: Id, IdPaciente, IdClinica, IdMedico, DataConsulta, HoraConsulta, Queixas.
@@ -143,3 +134,32 @@ verificaConsulta :-
 verificaIdConsulta :- 
     exists_file('bd/consulta/id_consulta.bd') -> leIdConsulta ; iniciaIdConsulta.
 leIdConsulta :- consult('bd/consulta/id_consulta.bd'). 
+
+/*
+Inicializa a tabela dinâmica de chats.
+Campos esperados: ID, ID Paciente, ID Médico, Mensagens.
+*/
+iniciaChat :-
+    dynamic(chat/4).
+iniciaIdChat :-
+    asserta(id_chat(0)).
+
+nextIdChat(N) :-
+    id_chat(X), retract(id_chat(X)), N is X + 1, asserta(id_chat(N)).
+
+leIdChat :- consult('bd/chat/id_chat.bd').
+leChat :- consult('bd/chat/chat.bd').
+
+verificaIdChat :- exists_file('bd/chat/id_chat.bd') -> leIdChat ; iniciaIdChat.
+verificaChat :- exists_file('bd/chat/chat.bd') -> leChat ; iniciaChat.
+
+/*
+Inicializa todas as tabelas dinâmicas do sistema.
+*/
+iniciaSistema :- 
+    verificaPaciente, verificaLoginPaciente, verificaIdPaciente, 
+    verificaClinica, verificaIdClinica, verificaLoginClinica, 
+    verificaMedico, verificaIdMedico, verificaLoginMedico,
+    verificaConsulta, verificaIdConsulta,
+    verificaLaudo, verificaReceita, verificaExame,
+    verificaChat, verificaIdChat.

@@ -2,7 +2,8 @@
                   tituloI/0, tituloInformacao/1, autenticaPaciente/3, autenticaClinica/3, autenticaMedico/3,
                   autenticaLoginClinica/2, autenticaLoginMedico/2, autenticaLoginPaciente/2, autenticaMedicoClinica/3,
                   horaValida/2, dataValida/1, horariosDisponiveis/3, tituloI/0, tituloInformacao/1,
-                  imprimirListaComEspacos/1]).
+                  imprimirListaComEspacos/1, validaIDMedico/1, validaIDChat/1,
+                  adicionarPrefixoString/2]).
 
 :- use_module('../Models/model.pl').
 
@@ -33,6 +34,12 @@ autenticaMedico(_, _, 0).
 
 validaIDPaciente(ID) :- model:paciente(ID, _, _, _, _, _, _, _, _, _, _,_), !.
 validaIDPaciente(_, _) :- false.
+
+validaIDMedico(ID) :- model:medico(_, ID, _, _, _, _, _, _), !.
+validaIDMedico(_, _) :- false.
+
+validaIDChat(ID) :- model:chat(ID, _, _, _), !.
+validaIDChat(_, _) :- false.
 
 mensagemEspera :- promptString('\n\nPressione qualquer tecla para continuar', _), tty_clear.
 
@@ -75,6 +82,15 @@ imprimirListaComEspacos([H|T]) :-
 
 % Exemplo de uso:
 imprimirListaComEspacos(Horarios).
+
+adicionarPrefixoString(StringOriginal, StringComPrefixo) :-
+    string_chars(StringOriginal, ListaOriginal), % Converte a string original para uma lista de caracteres
+    adicionarPrefixoLista(ListaOriginal, ['P', ':' | ListaOriginal], ListaComPrefixo), % Adiciona 'P:' à lista de caracteres
+    string_chars(StringComPrefixo, ListaComPrefixo). % Converte a lista de caracteres de volta para uma string
+
+adicionarPrefixoLista([], Prefixo, Prefixo). % Caso base: se a lista original é vazia, o resultado é o prefixo
+adicionarPrefixoLista([Cabeça|Cauda], Prefixo, [Cabeça|Resultado]) :-
+    adicionarPrefixoLista(Cauda, Prefixo, Resultado). % Recursivamente, adiciona os elementos da lista original ao prefixo
 
 
 tituloI :-

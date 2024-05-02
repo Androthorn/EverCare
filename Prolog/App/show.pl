@@ -11,12 +11,12 @@
 % % #     format('Comentário: ~w~n', [Comentario]),
 % % #     format('-------------------~n', []).
 
-% # showChat(model:chat(Id, IdPaciente, IdMedico, Mensagens)) :-
-% #     format('----------------------------~n', []),
-% #     format('CHAT ~w~n', [Id]),
-% #     format('Paciente: ~w~n', [IdPaciente]),
-% #     format('Médico: ~w~n', [IdMedico]),
-% #     format('Mensagens: ~w~n', [Mensagens]).
+ showChat(model:chat(Id, IdPaciente, IdMedico, Mensagens)) :-
+     format('----------------------------~n', []),
+     format('CHAT ~w~n', [Id]),
+     format('Paciente: ~w~n', [IdPaciente]),
+     format('Médico: ~w~n', [IdMedico]),
+     format('Mensagens: ~w~n', [Mensagens]).
 
 % # showFila(model:fila(Id, IdClinica, IdMedico, Fila)) :-
 % #     format('----------------------------~n', []),

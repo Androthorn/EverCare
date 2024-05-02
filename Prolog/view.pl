@@ -89,10 +89,63 @@ menuPaciente(IdPac) :-
       OP = "V" -> tty_clear, verAgendamento(IdPac), utils:mensagemEspera, menuPaciente(IdPac);
       OP = "R" -> tty_clear, verPosConsulta(IdPac), utils:mensagemEspera, menuPaciente(IdPac);
       OP = "A" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
-      OP = "C" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
+      OP = "C" -> tty_clear, menuChatPac(IdPac), tty_clear, menuPaciente(IdPac);
       OP = "F" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
       OP = "S" -> tty_clear, main;
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuPaciente(IdPac)).
+
+menuChatPac(IdPac):-
+    tty_clear,
+    utils:tituloInformacao('CHAT'),
+    writeln('[C] - Criar Chat com Médico'),
+    writeln('[A] - Chats Ativos'),
+    writeln('[M] - Enviar Mensagem em Chat Ativo'),
+    writeln('[V] - Voltar'),
+    promptOption('Opção > ', OP),
+    ( OP = "C" -> tty_clear, criarChatPac(IdPac), tty_clear, menuChatPac(IdPac);
+      OP = "A" -> tty_clear, chatsAtivosPac(IdPac), utils:mensagemEspera, tty_clear, menuChatPac(IdPac);
+    OP = "M" -> tty_clear, enviarMensagem(IdPac), tty_clear, menuChatPac(IdPac);
+      OP = "V" -> tty_clear, menuPaciente(IdPac);
+      writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuChatPac(IdPac)).
+
+criarChatPac(IdPac):-
+    tty_clear,
+    utils:tituloInformacao('CRIAR CHAT'),
+    prompt('ID Médico > ', IdMedico),
+    (utils:validaIDMedico(IdMedico) -> 
+      model:nextIdChat(IdChat),
+      promptString('Mensagem > ', Mensagem),
+      assertz(model:chat(IdChat, IdPac, IdMedico, Mensagem)),
+
+      persistence:saveChat,
+      persistence:saveIdChat,
+      (IdChat > 0 -> format('Chat criado com sucesso! O id do Chat é: ~d~n', [IdChat]), sleep(2), 
+      utils:mensagemEspera, tty_clear, menuPaciente(IdPac))
+    ;
+      writeln('Médico não encontrado'), sleep(1), menuChatPac(IdPac)
+    ).
+
+chatsAtivosPac(IdPac):- paciente:chatsAtivos(IdPac).
+
+enviarMensagem(IdPac):-
+    tty_clear,
+    utils:tituloInformacao('ENVIAR MENSAGEM'),
+    prompt('ID Chat > ', IdChat),
+    (utils:validaIDChat(IdChat) -> 
+      promptString('Mensagem > ', MensagemAtual),
+      string_concat('P: ', MensagemAtual, MensagemAtualP),
+
+      retract(model:chat(IdChat, IdPaciente, IdMedico, Mensagem)),
+
+      atomic_list_concat([Mensagem, MensagemAtualP], ' ', Mensagens),
+      
+      assertz(model:chat(IdChat, IdPaciente, IdMedico, Mensagens)),
+
+      persistence:saveChat,
+      writeln('Mensagem enviada com sucesso!'), sleep(1), utils:mensagemEspera, tty_clear, menuChatPac(IdPac)
+    ;
+      writeln('Chat não encontrado'), sleep(1)
+    ).
 
 buscarOpcoes(IDPac):-
       tty_clear,

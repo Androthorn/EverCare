@@ -1,5 +1,7 @@
 :- module(persistence, [savePaciente/0, saveIdPaciente/0, saveIdPaciente/0, saveClinica/0, saveIdClinica/0,
-                        saveLoginClinica/0, saveMedico/0, saveIdMedico/0, saveLoginMedico/0, saveConsulta/0, saveIdConsulta/0]).
+                        saveLoginClinica/0, saveMedico/0, saveIdMedico/0, saveLoginMedico/0, 
+                        saveConsulta/0, saveIdConsulta/0,
+                        saveChat/0, saveIdChat/0]).
 
 :- use_module('../Models/model.pl').
 
@@ -59,3 +61,12 @@ saveExame :-
     tell('bd/pos_consulta/exame.bd'), 
     listing(model:exame), 
     told. 
+
+saveChat :-
+    tell('bd/chat/chat.bd'), 
+    listing(model:chat), 
+    told.
+saveIdChat :-
+    tell('bd/chat/id_chat.bd'), 
+    listing(model:id_chat), 
+    told.
