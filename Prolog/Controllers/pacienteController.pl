@@ -22,6 +22,4 @@ verLaudo(IDPac) :- forall(model:laudo(IdMed, IdPac, texto), show:showLaudo(model
 verExame(IDPac) :- forall(model:exame(IdMed, IdPac, tipo), show:showExame(model:exame(IdMed, IdPac, tipo))).
 
 
-verConsulta(IDPac) :- 
-    forall(model:consulta(IdCons, IDPac, IdClinica, IdMedico, DataConsulta, HoraConsulta, Queixas), 
-           show:showConsultaPaciente(model:consulta(IdCons, IDPac, IdClinica, IdMedico, DataConsulta, HoraConsulta, Queixas))).
+verConsulta(IDPac) :- forall(model:consulta(IdCons, IdClinica, IdMedico, IDPac, DataConsulta, HoraConsulta, Queixas), show:showConsultaPaciente(model:consulta(IdCons, IdClinica, IdMedico, IDPac, DataConsulta, HoraConsulta, Queixas))).  

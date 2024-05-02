@@ -4,6 +4,6 @@
 :- use_module('../Models/model.pl').
 :- use_module('../App/utils.pl').
 
-verConsulta(IDMedico) :- 
-    forall(model:consulta(IdCons, IDPac, IdClinica, IdMedico, DataConsulta, HoraConsulta, Queixas), 
-           show:showConsultaMedico(model:consulta(IdCons, IDPac, IdClinica, IdMedico, DataConsulta, HoraConsulta, Queixas))).
+verConsulta(IDMed) :- 
+    forall(model:consulta(IdCons, IdClinica, IDMed, IdPac, DataConsulta, HoraConsulta, Queixas), 
+           show:showConsultaMedico(model:consulta(IdCons, IdClinica, IDMed, IdPac, DataConsulta, HoraConsulta, Queixas))).
