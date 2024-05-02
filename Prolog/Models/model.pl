@@ -116,7 +116,7 @@ verificaExame :- exists_file('bd/pos_consulta/exame.bd') -> leExame ; iniciaExam
 /*
 
 Inicializa a tabela de consultas.
-Os campos são: Id, IdPaciente, IdClinica, IdMedico, DataConsulta, HoraConsulta, Queixas.
+Os campos são: Id, IdClinica, IdMedico, IdPaciente, DataConsulta, HoraConsulta, Queixas.
 
 */
 

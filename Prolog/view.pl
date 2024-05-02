@@ -338,13 +338,13 @@ visualizarInformacaoClinica(IdClin) :-
     write('[V] - Voltar'), nl,
     write('-----------------------------'), nl,
     promptOption('Opção > ', OP),
-    ( OP = "A" -> tty_clear, verConsulta(IdClin), utils:mensagemEspera, visualizarInformacaoClinica(IdClin);
+    ( OP = "A" -> tty_clear, verConsultaClin(IdClin), utils:mensagemEspera, tty_clear, visualizarInformacaoClinica(IdClin);
       OP = "P" -> tty_clear, visualizarInformacaoClinica(IdClin), !;
       OP = "M" -> tty_clear, visualizarInformacaoClinica(IdClin), !;
       OP = "V" -> tty_clear, menuClinica(IdClin);
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, visualizarInformacaoClinica(IdClin)).
 
-verConsulta(IdClin) :- clinica:verAgendamento(IdClin).
+verConsultaClin(IdClin) :- clinica:verAgendamentoClin(IdClin).
 
 
 cadastraMedico(IdClin) :-
@@ -396,12 +396,13 @@ menuMedico(ID) :-
     write('[S] Sair'), nl,
     promptOption('Opção > ', OP),
 
-    ( OP = "V" -> tty_clear, medico:verConsulta(ID), utils:mensagemEspera, menuMedico(ID);
+    ( OP = "V" -> tty_clear, verConsultaMed(ID), utils:mensagemEspera, tty_clear, menuMedico(ID);
       OP = "E" -> tty_clear, menuMedicoEmitir(ID), utils:mensagemEspera, menuMedico(ID);
       OP = "C" -> tty_clear, menuMedico(ID), tty_clear, menuMedico(ID);
       OP = "S" -> tty_clear, main;
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuMedico(ID)).
 
+verConsultaMed(IDM) :- medico:verConsulta(IDM).
 
 menuMedicoEmitir(IDM) :-
     tty_clear,

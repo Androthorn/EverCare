@@ -36,8 +36,6 @@ showClinica(model:clinica(Id, Nome, CNPJ, Endereco, Planos, MetodoAgendamento, C
     format('Contato: ~w~n', [Contato]),
     format('----------------------------~n', []).
 
-:- use_module('../Models/model.pl').
-
 showConsulta(model:consulta(IdCons, IdClinica, IdMedico, IdPaciente, DataConsulta, HoraConsulta, Queixas)) :-
     format('-------------------~n', []),
     format('Id da Consulta: ~w~n', [IdCons]),

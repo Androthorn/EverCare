@@ -13,13 +13,13 @@ verReceita(IdPaciente) :- forall(model:receita(IdMedico, IdPaciente, Texto), sho
     Consulta os medicamentos de um paciente.
     @param IDPac ID do paciente.
 */
-verLaudo(IDPac) :- forall(model:laudo(IdMed, IdPac, texto), show:showLaudo(model:laudo(IdMed, IdPac, texto))).
+verLaudo(IDPac) :- forall(model:laudo(IdMed, IDPac, texto), show:showLaudo(model:laudo(IdMed, IDPac, texto))).
 
 /*
     Consulta os exames de um paciente.
     @param IDPac ID do paciente.
 */
-verExame(IDPac) :- forall(model:exame(IdMed, IdPac, tipo), show:showExame(model:exame(IdMed, IdPac, tipo))).
+verExame(IDPac) :- forall(model:exame(IdMed, IDPac, tipo), show:showExame(model:exame(IdMed, IDPac, tipo))).
 
 
 verConsulta(IDPac) :- forall(model:consulta(IdCons, IdClinica, IdMedico, IDPac, DataConsulta, HoraConsulta, Queixas), 
