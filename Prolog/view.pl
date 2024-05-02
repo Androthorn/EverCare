@@ -165,89 +165,31 @@ buscarOpcoes(IDPac):-
         %OP = "N" -> tty_clear, menuMedicoAvaliacao;
         OP = "V" -> tty_clear, menuPaciente(IDPac);
         writeln('Opção Inválida')).
-  
-  menuBuscarClinica:-
+
+menuBuscarClinica:-
     tty_clear,
     utils:tituloInformacao('Buscar Clínica'),
     promptString('Nome da Clínica > ', NomeClinica),
-    (clinicaExiste(NomeClinica) ->
-        paciente:buscarClinica(NomeClinica),
-        utils:mensagemEspera,
-        buscarOpcoes(IDPac)
-    ; 
-        
-        utils:mensagemEspera,
-        buscarOpcoes(IDPac)
-    ).
+    paciente:buscarClinica(NomeClinica).
 
-clinicaExiste(NomeClinica) :-
-    paciente:buscarClinica(NomeClinica),
-    !.
-clinicaExiste(_).
-
-    menuBuscarMedico:-
+menuBuscarMedico:-
     tty_clear,
     utils:tituloInformacao('Buscar Médico'),
-    promptString('Nome do Médico> ', Nome),
-    (medicoExiste(Nome) ->
-        paciente:buscarMedico(Nome),
-        utils:mensagemEspera,
-        buscarOpcoes(IDPac)
-    ; 
-        writeln('Médico não encontrado'),
-        utils:mensagemEspera,
-        buscarOpcoes(IDPac)
-    ).
+    promptString('Nome do Médico > ', Nome),
+    paciente:buscarMedico(Nome).
+   
 
-medicoExiste(Nome) :-
-    paciente:buscarMedico(Nome),
-    !.
-medicoExiste(_).
-
-
-  menuBuscarClinicaPorPlano:-
+menuBuscarClinicaPorPlano:-
     tty_clear,
     utils:tituloInformacao('Buscar Por Plano'),
-    write('Digite o seu Plano> '),
-    read_string(user_input, "\n", "\r", _, Planos),
-    (clinicasPorPlanoExiste(Planos) ->
-        paciente:buscarClinicaPorPlano(Planos),
-        utils:mensagemEspera,
-        buscarOpcoes(IDPac)
-    ; 
-        writeln('Não há clínicas que aceitem esse plano'),
-        utils:mensagemEspera,
-        buscarOpcoes(IDPac)
-    ).
-
-clinicasPorPlanoExiste(Planos) :-
-    paciente:buscarClinicaPorPlano(Planos),
-    !.
-clinicasPorPlanoExiste(_).
+    promptString('Digite o seu Plano > ', Planos),
+    paciente:buscarClinicaPorPlano(Planos).
 
 menuBuscarClinicaAgendamento :-
     tty_clear,
     utils:tituloInformacao('Informação sobre Agendamento'),
     promptString('Digite o método de agendamento (A)gendado ou (O)rdem de Chegada > ', Metodo),
     paciente:buscarClinicaAgendamento(Metodo).
-
-%  menuBuscarClinicaAgendamento:-
-%     tty_clear,
-%     utils:tituloInformacao('Informação sobre Agendeamento'),
-%     write('Digite o método de agendamento (A)gendado ou (O)rdem de Chegada > '),
-%     read_string(user_input, "\n", "\r", _, MetodoAgendamento),
-%     (clinicaPorAgendamentoExiste(MetodoAgendamento) ->
-%         paciente:buscarClinicaAgendamento(MetodoAgendamento)
-%     ; 
-%         writeln('Não há clínicas com esse método de agendamento')
-%     ).
-
-% clinicaPorAgendamentoExiste(MetodoAgendamento) :-
-%     paciente:buscarClinicaAgendamento(MetodoAgendamento),
-%     !.
-% clinicaPorAgendamentoExiste(_).
-
-
 
 verAgendamento(IdPac) :- paciente:verConsulta(IdPac).
 
@@ -268,6 +210,7 @@ verPosConsulta(IdPac) :-
 verReceita(IdPac) :- paciente:verReceita(IdPac).
 verLaudo(IdPac) :- paciente:verLaudo(IdPac).
 verExame(IdPac) :- paciente:verExame(IdPac).
+
 inicialClinica :-
     tty_clear,
     utils:tituloInformacao('CLÍNICA'),
