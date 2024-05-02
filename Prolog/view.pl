@@ -314,11 +314,11 @@ menuClinica(IdClin) :-
     tty_clear,
     utils:tituloInformacao('DASHBOARD CLÍNICA'),
     write('-----------------------------'), nl,
-    write('| [C] Cadastrar Médico'), nl,
-    write('| [F] Fila Virtual'), nl,
-    write('| [V] Ver Informações'), nl,
-    write('| [D] Dashboard'), nl,
-    write('| [S] Sair'), nl,
+    write('[C] Cadastrar Médico'), nl,
+    write('[F] Fila Virtual'), nl,
+    write('[V] Ver Informações'), nl,
+    write('[D] Dashboard'), nl,
+    write('[S] Sair'), nl,
     write('-----------------------------'), nl,
     promptOption('Opção > ', OP),
 
@@ -332,19 +332,19 @@ menuClinica(IdClin) :-
 visualizarInformacaoClinica(IdClin) :-
     tty_clear,
     write('-----------------------------'), nl,
-    write(' [A] - Agendamentos'), nl,
-    write(' [P] - Pacientes'), nl,
-    write(' [M] - Médicos'), nl,
-    write(' [V] - Voltar'), nl,
+    write('[A] - Agendamentos'), nl,
+    write('[P] - Pacientes'), nl,
+    write('[M] - Médicos'), nl,
+    write('[V] - Voltar'), nl,
     write('-----------------------------'), nl,
     promptOption('Opção > ', OP),
-    ( OP = "A" -> tty_clear, visualizarAgendamentos(IdClin), !;
+    ( OP = "A" -> tty_clear, verConsulta(IdClin), utils:mensagemEspera, visualizarInformacaoClinica(IdClin);
       OP = "P" -> tty_clear, visualizarInformacaoClinica(IdClin), !;
       OP = "M" -> tty_clear, visualizarInformacaoClinica(IdClin), !;
       OP = "V" -> tty_clear, menuClinica(IdClin);
-      writeln('Opção Inválida')).
+      writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, visualizarInformacaoClinica(IdClin)).
 
-visualizarAgendamentos(IdClin) :- clinica:verAgendamentos(IdClin).
+verConsulta(IdClin) :- clinica:verAgendamento(IdClin).
 
 
 cadastraMedico(IdClin) :-
