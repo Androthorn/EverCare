@@ -88,11 +88,40 @@ menuPaciente(IdPac) :-
       OP = "M" -> tty_clear, cadastraConsulta(IdPac), tty_clear, menuPaciente(IdPac);
       OP = "V" -> tty_clear, verAgendamento(IdPac), utils:mensagemEspera, menuPaciente(IdPac);
       OP = "R" -> tty_clear, verPosConsulta(IdPac), utils:mensagemEspera, menuPaciente(IdPac);
-      OP = "A" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
+      OP = "A" -> tty_clear, menuAvaliacao(IdPac), tty_clear, menuPaciente(IdPac);
       OP = "C" -> tty_clear, menuChatPac(IdPac), tty_clear, menuPaciente(IdPac);
       OP = "F" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
       OP = "S" -> tty_clear, main;
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuPaciente(IdPac)).
+
+
+  menuAvaliacao(IdPac) :-
+  tty_clear,
+  utils:tituloInformacao('AVALIAR CONSULTA'),
+  prompt('ID Médico > ', IdMedico),
+  (medicoExiste(IdMedico) ->
+    (
+      prompt('Nota > ', Nota),
+      (between(1, 5, Nota) -> % Verifica se a nota está entre 1 e 5
+        promptString('Comentário > ', Comentario),
+        assertz(model:avaliacao(IdPac, IdMedico, Nota, Comentario)),
+        persistence:saveAvaliacao,
+        writeln('Mensagem enviada e médico avaliado com sucesso!')
+      ;
+        writeln('Nota inválida. Por favor, insira uma nota entre 1 e 5.')
+      )
+    )
+  ).
+
+medicoExiste(IdMedico) :-
+    model:medico(_, IdMedico, _, _, _, _, _, _).
+
+
+
+    
+
+
+
 
 menuChatPac(IdPac):-
     tty_clear,

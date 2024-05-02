@@ -2,14 +2,13 @@
             showExame/1, showFila/1, showLaudo/1, showMedico/1, showPaciente/1, showReceita/1]).
 :- use_module('../Models/model.pl').
 
-% % # showAvaliacao(model:avaliacao(IdAvaliacao, IdPac, IdMed, Nota, Comentario)) :-
-% % #     format('-------------------~n', []),
-% % #     format('ID Avaliacao: ~w~n', [IdAvaliacao]),
-% % #     format('Paciente: ~w~n', [IdPac]),
-% % #     format('Médico: ~w~n', [IdMed]),
-% % #     format('Nota: ~w~n', [Nota]),
-% % #     format('Comentário: ~w~n', [Comentario]),
-% % #     format('-------------------~n', []).
+ showAvaliacao(model:avaliacao( IdPac, IdMed, Nota, Comentario)) :-
+     format('-------------------~n', []),
+     format('Paciente: ~w~n', [IdPac]),
+     format('Médico: ~w~n', [IdMed]),
+     format('Nota: ~w~n', [Nota]),
+     format('Comentário: ~w~n', [Comentario]),
+     format('-------------------~n', []).
 
  showChat(model:chat(Id, IdPaciente, IdMedico, Mensagens)) :-
      format('----------------------------~n', []),

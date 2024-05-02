@@ -1,0 +1,11 @@
+:- dynamic avaliacao/4.
+
+avaliacao(1, 1, 4, "n curti").
+avaliacao(1, 1, 4, "asmei").
+avaliacao(1, 2, 5, "perfect").
+avaliacao(1, 1, 2, "ruim").
+
+avaliacao(_, 1, 1, 1, "massa").
+
+avaliacao(_, _, 1, 1, 4, "mak").
+

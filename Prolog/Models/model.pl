@@ -4,6 +4,7 @@
                   iniciaConsulta/0, iniciaIdConsulta/0, nextIdConsulta/1 ,
                   iniciaReceita/0, iniciaLaudo/0, iniciaExame/0,
                   iniciaChat/0, iniciaIdChat/0, nextIdChat/1,
+                  iniciaAvaliacao/0,
                   iniciaSistema/0]).
 
 :- use_module('../Controllers/persistence.pl').
@@ -153,6 +154,16 @@ leChat :- consult('bd/chat/chat.bd').
 verificaIdChat :- exists_file('bd/chat/id_chat.bd') -> leIdChat ; iniciaIdChat.
 verificaChat :- exists_file('bd/chat/chat.bd') -> leChat ; iniciaChat.
 
+
+iniciaAvaliacao:-
+        dynamic(avaliacao/4).
+
+leAvaliacao :- consult('bd/avaliacao/avaliacao.bd').
+
+
+verificaAvaliacao :- exists_file('bd/avaliacao/avaliacao.bd') -> leAvaliacao ; iniciaAvaliacao.
+
+
 /*
 Inicializa todas as tabelas dinâmicas do sistema.
 */
@@ -162,4 +173,5 @@ iniciaSistema :-
     verificaMedico, verificaIdMedico, verificaLoginMedico,
     verificaConsulta, verificaIdConsulta,
     verificaLaudo, verificaReceita, verificaExame,
-    verificaChat, verificaIdChat.
+    verificaChat, verificaIdChat,
+    verificaAvaliacao.
