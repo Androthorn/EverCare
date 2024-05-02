@@ -6,6 +6,7 @@
 :- use_module('./Controllers/persistence.pl').
 :- use_module('./Controllers/medicoController.pl').
 :- use_module('./Controllers/pacienteController.pl').
+:- use_module('./Controllers/clinicaController.pl').
 
 begin :- model:iniciaSistema,
          main.
@@ -168,7 +169,7 @@ menuClinica(IdClin) :-
 
     ( OP = "C" -> tty_clear, cadastraMedico(IdClin), tty_clear, menuClinica(IdClin);
       OP = "F" -> tty_clear, menuClinica(IdClin), tty_clear, menuClinica(IdClin);
-      OP = "V" -> tty_clear, visualizarInformacaoClinica(IdClin), !;
+      OP = "V" -> tty_clear, visualizarInformacaoClinica(IdClin), tty_clear, menuClinica(IdClin);
       OP = "D" -> tty_clear, menuClinica(IdClin), tty_clear, menuClinica(IdClin);
       OP = "S" -> tty_clear, main;
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuClinica(IdClin)).
@@ -176,17 +177,19 @@ menuClinica(IdClin) :-
 visualizarInformacaoClinica(IdClin) :-
     tty_clear,
     write('-----------------------------'), nl,
-    write('| [A] - Agendamentos'), nl,
-    write('| [P] - Pacientes'), nl,
-    write('| [M] - Médicos'), nl,
-    write('| [V] - Voltar'), nl,
+    write(' [A] - Agendamentos'), nl,
+    write(' [P] - Pacientes'), nl,
+    write(' [M] - Médicos'), nl,
+    write(' [V] - Voltar'), nl,
     write('-----------------------------'), nl,
     promptOption('Opção > ', OP),
     ( OP = "A" -> tty_clear, visualizarAgendamentos(IdClin), !;
       OP = "P" -> tty_clear, visualizarInformacaoClinica(IdClin), !;
       OP = "M" -> tty_clear, visualizarInformacaoClinica(IdClin), !;
       OP = "V" -> tty_clear, menuClinica(IdClin);
-      writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, visualizarInformacaoClinica(IdClin)).
+      writeln('Opção Inválida')).
+
+visualizarAgendamentos(IdClin) :- clinica:verAgendamentos(IdClin).
 
 
 cadastraMedico(IdClin) :-
@@ -207,7 +210,7 @@ cadastraMedico(IdClin) :-
     persistence:saveMedico,
     persistence:saveLoginMedico,
 
-    ( N > 0 -> format('Médico cadastrado com sucesso! Seu id é: ~d~n', [N]), sleep(2), tty_clear, menuClinica(IdClin)).
+    ( N > 0 -> format('Médico cadastrado com sucesso! Seu id é: ~d~n', [N]), sleep(2)).
   
 inicialMedico :-
     tty_clear,
@@ -238,9 +241,9 @@ menuMedico(ID) :-
     write('[S] Sair'), nl,
     promptOption('Opção > ', OP),
 
-    ( OP = "V" -> tty_clear, verConsulta(ID), utils:mensagemEspera, menuMedico(ID);
-      OP = "E" -> tty_clear, menuMedicoEmitir(ID);
-      OP = "C" -> tty_clear, menuMedico(ID);
+    ( OP = "V" -> tty_clear, medico:verConsulta(ID), utils:mensagemEspera, menuMedico(ID);
+      OP = "E" -> tty_clear, menuMedicoEmitir(ID), utils:mensagemEspera, menuMedico(ID);
+      OP = "C" -> tty_clear, menuMedico(ID), tty_clear, menuMedico(ID);
       OP = "S" -> tty_clear, main;
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuMedico(ID)).
 
@@ -258,7 +261,7 @@ menuMedicoEmitir(IDM) :-
       OP = "L" -> tty_clear, emitirLaudo(IDM), !;
       OP = "E" -> tty_clear, emitirExame(IDM), !;
       OP = "V" -> tty_clear, menuMedico(IDM);
-      writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuMedicoEmitir(IDM)).
+      writeln('Opção Inválida')).
 
 emitirReceita(IDM) :-
     tty_clear,
@@ -268,9 +271,9 @@ emitirReceita(IDM) :-
       promptString('Texto > ', Texto),
       assertz(model:receita(IDM, IDP, Texto)),
       persistence:saveReceita,
-      writeln('Receita emitida com sucesso!'), sleep(1), tty_clear, menuMedico(IDM)
+      writeln('Receita emitida com sucesso!'), sleep(1)
     ;
-      writeln('Paciente não encontrado'), utils:mensagemEspera, tty_clear, menuMedicoEmitir(IDM)
+      writeln('Paciente não encontrado')
     ).
 
 emitirLaudo(IDM) :-
@@ -281,9 +284,9 @@ emitirLaudo(IDM) :-
       promptString('Texto > ', Texto),
       assertz(model:laudo(IDM, IDP, Texto)),
       persistence:saveLaudo,
-      writeln('Laudo emitido com sucesso!'), sleep(1), tty_clear, menuMedico(IDM)
+      writeln('Laudo emitido com sucesso!'), sleep(1)
     ;
-      writeln('Paciente não encontrado'), utils:mensagemEspera, tty_clear, menuMedicoEmitir(IDM)
+      writeln('Paciente não encontrado')
     ).
 
 emitirExame(IDM) :-
@@ -294,9 +297,9 @@ emitirExame(IDM) :-
       promptString('Texto > ', Texto),
       assertz(model:exame(IDM, IDP, Texto)),
       persistence:saveExame,
-      writeln('Exame emitido com sucesso!'), sleep(1), tty_clear, menuMedico(IDM)
+      writeln('Exame emitido com sucesso!'), sleep(1)
     ;
-      writeln('Paciente não encontrado'), utils:mensagemEspera, tty_clear, menuMedicoEmitir(IDM)
+      writeln('Paciente não encontrado')
     ).
 
 cadastraConsulta(IdPac) :-
