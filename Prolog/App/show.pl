@@ -37,7 +37,7 @@ showClinica(model:clinica(Id, Nome, CNPJ, Endereco, Planos, MetodoAgendamento, H
     format('Contato: ~w~n', [Contato]),
     format('----------------------------~n', []).
 
-showConsulta(model:consulta(IdCons, IdClinica, IdMedico, IdPaciente, DataConsulta, HoraConsulta, Queixas)) :-
+showConsulta(model:consulta(IdCons, IdClinica, IdMedico, IdPaciente, DataConsulta, HoraConsulta, Queixas, Confirmacao)) :-
     format('-------------------~n', []),
     format('Id da Consulta: ~w~n', [IdCons]),
     format('Id da Clinica: ~w~n', [IdClinica]),
@@ -46,6 +46,7 @@ showConsulta(model:consulta(IdCons, IdClinica, IdMedico, IdPaciente, DataConsult
     format('Data da consulta: ~w~n', [DataConsulta]),
     format('Hora da consulta: ~w~n', [HoraConsulta]),
     format('Queixas: ~w~n', [Queixas]),
+    format('Confirmação: ~w~n', [Confirmacao]),
     format('-------------------~n', []).
 
 showExame(model:exame(IdMedico, IdPaciente, Texto)) :-

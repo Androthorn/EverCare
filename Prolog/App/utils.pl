@@ -2,7 +2,7 @@
                   tituloI/0, tituloInformacao/1, autenticaPaciente/3, autenticaClinica/3, autenticaMedico/3,
                   autenticaLoginClinica/2, autenticaLoginMedico/2, autenticaLoginPaciente/2, autenticaMedicoClinica/3,
                   horaValida/2, dataValida/1, horariosDisponiveis/3, tituloI/0, tituloInformacao/1,
-                  imprimirListaComEspacos/1, validaIDMedico/1, validaIDChat/1,
+                  imprimirListaComEspacos/1, validaIDMedico/1, validaIDChat/1, validaIDConsulta/1, validaIDPaciente/1,
                   adicionarPrefixoString/2]).
 
 :- use_module('../Models/model.pl').
@@ -41,12 +41,15 @@ validaIDMedico(_, _) :- false.
 validaIDChat(ID) :- model:chat(ID, _, _, _), !.
 validaIDChat(_, _) :- false.
 
+validaIDConsulta(ID) :- model:consulta(ID, _, _, _, _, _, _, _), !.
+validaIDConsulta(_, _) :- false.
+
 mensagemEspera :- promptString('\n\nPressione qualquer tecla para continuar', _), tty_clear.
 
 autenticaLoginPaciente(ID, 1) :- model:paciente(ID, _, _, _, _, _, _, _, _, _, _, _), !.
 autenticaLoginPaciente(_, 0).
 
-autenticaLoginClinica(ID, 1) :- model:clinica(ID, _, _, _, _, _, _), !.
+autenticaLoginClinica(ID, 1) :- model:clinica(ID, _, _, _, _, _, _, _, _), !.
 autenticaLoginClinica(_, 0).
 
 autenticaLoginMedico(ID, 1) :- model:medico(_, ID, _, _, _, _, _, _), !.
@@ -66,7 +69,7 @@ horaValida(Hour, Horarios) :-
     member(Hour, Horarios).
 
 consultasDoMedicoNodia(IDM, Dia, Horario) :-
-    model:consulta(_, _, IDM, _, Dia, Horario, _).
+    model:consulta(_, _, IDM, _, Dia, Horario, _, _).
 
 horariosDisponiveis(IDM, Dia, HorariosDisponiveis) :-
     Horarios = ["08:00", "09:00", "10:00", "11:00", "14:00", "15:00", "16:00", "17:00"],

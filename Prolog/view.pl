@@ -192,7 +192,34 @@ menuBuscarClinicaAgendamento :-
     promptString('Digite o método de agendamento (A)gendado ou (O)rdem de Chegada > ', Metodo),
     paciente:buscarClinicaAgendamento(Metodo).
 
-verAgendamento(IdPac) :- paciente:verConsulta(IdPac).
+verAgendamento(IdPac) :- 
+  paciente:verConsulta(IdPac),
+  promptOption('Deseja (C)onfirmar ou (D)esmarcar uma Consulta? Ou (V)oltar > ', Op),
+  ( Op = "C" -> confirmarConsulta(IdPac);
+    Op = "D" -> desmarcarConsulta(IdPac);
+    Op = "V" -> menuPaciente(IdPac);
+    writeln('Opção Inválida')).
+
+confirmarConsulta(IdPac) :-
+    prompt('ID da Consulta > ', IdCons),
+    (utils:validaIDConsulta(IdCons) -> 
+      retract(model:consulta(IdCons, IdClinica, IdMedico, IdPac, DataConsulta, HoraConsulta, Queixas, _)),
+      assertz(model:consulta(IdCons, IdClinica, IdMedico, IdPac, DataConsulta, HoraConsulta, Queixas, 'Confirmado')),
+      persistence:saveConsulta,
+      writeln('Consulta confirmada com sucesso!'), sleep(1), utils:mensagemEspera, tty_clear, menuPaciente(IdPac)
+    ;
+      writeln('Consulta não encontrada'), sleep(1)
+    ).
+
+desmarcarConsulta(IdPac) :-
+    prompt('ID da Consulta > ', IdCons),
+    (utils:validaIDConsulta(IdCons) -> 
+      retract(model:consulta(IdCons, IdClinica, IdMedico, IdPac, DataConsulta, HoraConsulta, Queixas, C)),
+      persistence:saveConsulta,
+      writeln('Consulta desmarcada com sucesso!'), sleep(1), utils:mensagemEspera, tty_clear, menuPaciente(IdPac)
+    ;
+      writeln('Consulta não encontrada'), sleep(1)
+    ).
 
 verPosConsulta(IdPac) :-
     tty_clear,
@@ -377,7 +404,7 @@ criarChatMed(IdMed):-
       (IdChat > 0 -> format('Chat criado com sucesso! O id do Chat é: ~d~n', [IdChat]), sleep(2), 
       utils:mensagemEspera, tty_clear, menuMedico(IdMed))
     ;
-      writeln('Médico não encontrado'), sleep(1), menuChatMed(IdMed)
+      writeln('Paciente não encontrado'), sleep(1), menuChatMed(IdMed)
     ).
 
 chatsAtivosMed(IdMed):- medico:chatsAtivos(IdMed).
@@ -503,7 +530,7 @@ cadastraConsulta(IdPac) :-
                 ;
                     promptString('Queixa > ', Queixa),
                     model:nextIdConsulta(IdConsulta),
-                    assertz(model:consulta(IdConsulta, IdClinica, IdMedico, IdPac, Data, Horario, Queixa)),
+                    assertz(model:consulta(IdConsulta, IdClinica, IdMedico, IdPac, Data, Horario, Queixa, 'Pendente')),
                     persistence:saveIdConsulta,
                     persistence:saveConsulta,
                     format('Consulta marcada com sucesso! Seu ID de consulta é: ~d~n', [IdConsulta]),
