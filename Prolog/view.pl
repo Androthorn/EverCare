@@ -311,13 +311,13 @@ visualizarInformacaoClinica(IdClin) :-
     write('-----------------------------'), nl,
     promptOption('Opção > ', OP),
     ( OP = "A" -> tty_clear, verConsultaClin(IdClin), utils:mensagemEspera, tty_clear, visualizarInformacaoClinica(IdClin);
-      OP = "P" -> tty_clear, verPacientes(IdClin), utils:mensagemEspera, tty_clear, visualizarInformacaoClinica(IdClin);
+      OP = "P" -> tty_clear, clinica:verPaciente(IdClin), utils:mensagemEspera, tty_clear, visualizarInformacaoClinica(IdClin);
       OP = "M" -> tty_clear, verMedicos(IdClin), utils:mensagemEspera, tty_clear, visualizarInformacaoClinica(IdClin);
       OP = "V" -> tty_clear, menuClinica(IdClin);
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, visualizarInformacaoClinica(IdClin)).
 
 verConsultaClin(IdClin) :- clinica:verAgendamentoClin(IdClin).
-verPacientes(IdClin) :- clinica:verPacientes(IdClin). 
+
 verMedicos(IdClin) :- clinica:verMedicos(IdClin).
 
 cadastraMedico(IdClin) :-
