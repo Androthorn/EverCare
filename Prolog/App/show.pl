@@ -25,10 +25,11 @@
 % #     format('Médico: ~w~n', [IdMedico]),
 % #     format('Fila: ~w~n', [Fila]).
 
-showClinica(model:clinica(Id, Nome, Endereco, Planos, MetodoAgendamento, Contato, _)) :-
+showClinica(model:clinica(Id, Nome, CNPJ, Endereco, Planos, MetodoAgendamento, Contato, _)) :-
     format('----------------------------~n', []),
     format('Clinica  ~w~n', [Id]),
     format('Nome: ~w~n', [Nome]),
+    format('CNPJ: ~w~n', [CNPJ]),
     format('Endereço: ~w~n', [Endereco]),
     format('Planos: ~w~n', [Planos]),
     format('Método de Agendamento: ~w~n', [MetodoAgendamento]),
@@ -60,7 +61,7 @@ showLaudo(model:laudo(IdMedico, IdPaciente, Texto)) :-
     format('Id do Paciente: ~w~n', [IdPaciente]),
     format('Resultado: ~w', [Texto]).
 
-showMedico(model:medico(Clinica, Id, Nome, CRM, Especialidade, _, _)) :-
+showMedico(model:medico(Clinica, Id, Nome, CRM, Especialidade, _, _,_)) :-
     format('----------------------------~n', []),
     format('Médico ~w~n', [Id]),
     format('Nome: ~w~n', [Nome]),

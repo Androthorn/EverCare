@@ -84,7 +84,7 @@ menuPaciente(IdPac) :-
     write('[S] Sair'), nl,
     promptOption('Opção > ', OP),
 
-    ( OP = "B" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
+    ( OP = "B" -> tty_clear, buscarOpcoes(IdPac), utils:mensagemEspera, buscarOpcoes(IdPac);
       OP = "M" -> tty_clear, cadastraConsulta(IdPac), tty_clear, menuPaciente(IdPac);
       OP = "V" -> tty_clear, verAgendamento(IdPac), utils:mensagemEspera, menuPaciente(IdPac);
       OP = "R" -> tty_clear, verPosConsulta(IdPac), utils:mensagemEspera, menuPaciente(IdPac);
@@ -93,6 +93,108 @@ menuPaciente(IdPac) :-
       OP = "F" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
       OP = "S" -> tty_clear, main;
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuPaciente(IdPac)).
+
+buscarOpcoes(IDPac):-
+      tty_clear,
+      utils:tituloInformacao('Escolha uma opção de busca:'),
+      write('[C] Buscar por Clínica'), nl,
+      write('[M] Buscar por Médico'), nl,
+      write('[P] Buscar Clínicas que aceitam meu plano de saúde'), nl,
+      write('[A] Buscar Clínicas por opção de agendamento'), nl,
+      write('[N] Buscar Médicos por Avaliação'), nl,
+      write('[V] Voltar'), nl,
+      promptOption('Opção > ', OP),
+  
+      ( OP = "C" -> tty_clear, menuBuscarClinica;
+        OP = "M" -> tty_clear, menuBuscarMedico;
+        OP = "P" -> tty_clear, menuBuscarClinicaPorPlano;
+        OP = "A" -> tty_clear, menuBuscarClinicaAgendamento;
+        %OP = "N" -> tty_clear, menuMedicoAvaliacao;
+        OP = "V" -> tty_clear, menuPaciente(IDPac);
+        writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac)).
+  
+  menuBuscarClinica:-
+    tty_clear,
+    utils:tituloInformacao('Buscar Clínica'),
+    promptString('Nome da Clínica > ', NomeClinica),
+    (clinicaExiste(NomeClinica) ->
+        paciente:buscarClinica(NomeClinica),
+        utils:mensagemEspera,
+        buscarOpcoes(IDPac)
+    ; 
+        
+        utils:mensagemEspera,
+        buscarOpcoes(IDPac)
+    ).
+
+clinicaExiste(NomeClinica) :-
+    paciente:buscarClinica(NomeClinica),
+    !.
+clinicaExiste(_).
+
+    menuBuscarMedico:-
+    tty_clear,
+    utils:tituloInformacao('Buscar Médico'),
+    promptString('Nome do Médico> ', Nome),
+    (medicoExiste(Nome) ->
+        paciente:buscarMedico(Nome),
+        utils:mensagemEspera,
+        buscarOpcoes(IDPac)
+    ; 
+        writeln('Médico não encontrado'),
+        utils:mensagemEspera,
+        buscarOpcoes(IDPac)
+    ).
+
+medicoExiste(Nome) :-
+    paciente:buscarMedico(Nome),
+    !.
+medicoExiste(_).
+
+
+  menuBuscarClinicaPorPlano:-
+    tty_clear,
+    utils:tituloInformacao('Buscar Por Plano'),
+    write('Digite o seu Plano> '),
+    read_string(user_input, "\n", "\r", _, Planos),
+    (clinicasPorPlanoExiste(Planos) ->
+        paciente:buscarClinicaPorPlano(Planos),
+        utils:mensagemEspera,
+        buscarOpcoes(IDPac)
+    ; 
+        writeln('Não há clínicas que aceitem esse plano'),
+        utils:mensagemEspera,
+        buscarOpcoes(IDPac)
+    ).
+
+clinicasPorPlanoExiste(Planos) :-
+    paciente:buscarClinicaPorPlano(Planos),
+    !.
+clinicasPorPlanoExiste(_).
+
+ 
+
+ menuBuscarClinicaAgendamento:-
+    tty_clear,
+    utils:tituloInformacao('Informação sobre Agendeamento'),
+    write('Digite Hora Marcada ou Agendamento Prévio> '),
+    read_string(user_input, "\n", "\r", _, MetodoAgendamento),
+    (clinicaPorAgendamentoExiste(MetodoAgendamento) ->
+        paciente:buscarClinicaAgendamento(MetodoAgendamento),
+        utils:mensagemEspera,
+        buscarOpcoes(IDPac)
+    ; 
+        writeln('Não há clínicas com esse método de agendamento'),
+        utils:mensagemEspera,
+        buscarOpcoes(IDPac)
+    ).
+
+clinicaPorAgendamentoExiste(MetodoAgendamento) :-
+    paciente:buscarClinicaAgendamento(MetodoAgendamento),
+    !.
+clinicaPorAgendamentoExiste(_).
+
+
 
 verAgendamento(IdPac) :- paciente:verConsulta(IdPac).
 
@@ -113,7 +215,6 @@ verPosConsulta(IdPac) :-
 verReceita(IdPac) :- paciente:verReceita(IdPac).
 verLaudo(IdPac) :- paciente:verLaudo(IdPac).
 verExame(IdPac) :- paciente:verExame(IdPac).
-
 inicialClinica :-
     tty_clear,
     utils:tituloInformacao('CLÍNICA'),
@@ -132,12 +233,13 @@ cadastraClinica :-
     promptString('Nome > ', Nome),
     promptString('CNPJ > ', CNPJ),
     promptString('Endereço > ', Endereco),
+    promptString('Planos de Saúde > ', Planos),
     promptString('Telefone > ', Telefone),
     promptString('Horário de Funcionamento > ', HorarioFuncionamento),
     promptString('Senha > ', Senha),
 
     model:nextIdClinica(N),
-    assertz(model:clinica(N, Nome, CNPJ, Endereco, Telefone, HorarioFuncionamento, Senha)),
+    assertz(model:clinica(N, Nome, CNPJ, Endereco, Planos, Telefone, HorarioFuncionamento, Senha)),
     assertz(model:login_clinica(N, Senha)),
    
     persistence:saveIdClinica,

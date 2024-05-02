@@ -35,10 +35,10 @@ verificaIdPaciente :- exists_file('bd/paciente/id_paciente.bd') -> leIdPaciente 
 
 /*
 Inicializa a tabela dinamica de clinicas.
-Campos esperados: ID, Nome, CNPJ, Endereço, Telefone, Horário de Funcionamento, Senha.
+Campos esperados: ID, Nome, CNPJ, Endereço, Planos, Telefone, Horário de Funcionamento, Senha.
 */
 iniciaClinica :-
-    dynamic(clinica/7).
+    dynamic(clinica/8).
 
 iniciaLoginClinica :-
     dynamic(login_clinica/2).

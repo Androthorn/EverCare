@@ -1,4 +1,4 @@
 :- dynamic id_clinica/1.
 
-id_clinica(2).
+id_clinica(6).
 

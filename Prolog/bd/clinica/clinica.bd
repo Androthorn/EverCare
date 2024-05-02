@@ -1,5 +1,9 @@
-:- dynamic clinica/7.
+:- dynamic clinica/8.
 
-clinica(1, "q", "q", "q", "q", "q", "123").
-clinica(2, "clinia help", "12", "rua d", "999999", "02:00-06:00", "123").
+clinica(1, "ana", "00", "l", "l", "l", "l", "123").
+clinica(2, "cpt", "12", "rua m", "unimed", "9999", "08:00-17:00", "123").
+clinica(3, "abc", "12", "rua b", "hap", "9898", "08:00-12:00", "1234").
+clinica(4, "as", "12", "12", "12", "123", "112", "").
+clinica(5, "sos", "123", "rua la", "help", "098", "24h", "123").
+clinica(6, "lol", "78", "rya x", "uno", "990", "7h", "123").
 
