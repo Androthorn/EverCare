@@ -28,8 +28,8 @@ verConsulta(IDPac) :- forall(model:consulta(IdCons, IdClinica, IdMedico, IDPac, 
 chatsAtivos(IDPac) :- forall(model:chat(Id, IDPac, IdMedico, Mensagens), show:showChat(model:chat(Id, IDPac, IdMedico, Mensagens))).
 
 buscarClinica(NomeClinica) :-
-    forall(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Contato,_),
-           (show:showClinica(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Contato, _)), !)).
+    forall(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Horario, Contato,_),
+           (show:showClinica(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Horario, Contato, _)), !)).
 
 
 buscarMedico(Nome) :-
@@ -39,9 +39,9 @@ buscarMedico(Nome) :-
     ).
 
 buscarClinicaPorPlano(Planos) :-
-    forall(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Contato,_),
-           show:showClinica(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Contato, _))).
+    forall(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Horario, Contato,_),
+           show:showClinica(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Horario, Contato, _))).
 
 buscarClinicaAgendamento(MetodoAgendamento) :-
-     forall(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Contato,_),
-           show:showClinica(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Contato, _))).
+     forall(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Horario, Contato,_),
+           show:showClinica(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Horario, Contato, _))).

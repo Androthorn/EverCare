@@ -2,8 +2,4 @@
 
 login_clinica(1, "123").
 login_clinica(2, "123").
-login_clinica(3, "1234").
-login_clinica(4, "").
-login_clinica(5, "123").
-login_clinica(6, "123").
 

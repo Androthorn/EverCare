@@ -25,7 +25,7 @@
 % #     format('Médico: ~w~n', [IdMedico]),
 % #     format('Fila: ~w~n', [Fila]).
 
-showClinica(model:clinica(Id, Nome, CNPJ, Endereco, Planos, MetodoAgendamento, Contato, _)) :-
+showClinica(model:clinica(Id, Nome, CNPJ, Endereco, Planos, MetodoAgendamento, Horarios, Contato, _)) :-
     format('----------------------------~n', []),
     format('Clinica  ~w~n', [Id]),
     format('Nome: ~w~n', [Nome]),
@@ -33,6 +33,7 @@ showClinica(model:clinica(Id, Nome, CNPJ, Endereco, Planos, MetodoAgendamento, C
     format('Endereço: ~w~n', [Endereco]),
     format('Planos: ~w~n', [Planos]),
     format('Método de Agendamento: ~w~n', [MetodoAgendamento]),
+    format('Horários de Funcionamento: ~w~n', [Horarios]),
     format('Contato: ~w~n', [Contato]),
     format('----------------------------~n', []).
 
@@ -41,7 +42,7 @@ showConsulta(model:consulta(IdCons, IdClinica, IdMedico, IdPaciente, DataConsult
     format('Id da Consulta: ~w~n', [IdCons]),
     format('Id da Clinica: ~w~n', [IdClinica]),
     format('Id do Medico: ~w~n', [IdMedico]),
-    format('Id do Paciente: ~w~n', [IdPaciente]), % Corrigido aqui
+    format('Id do Paciente: ~w~n', [IdPaciente]), 
     format('Data da consulta: ~w~n', [DataConsulta]),
     format('Hora da consulta: ~w~n', [HoraConsulta]),
     format('Queixas: ~w~n', [Queixas]),
