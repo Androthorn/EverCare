@@ -1,4 +1,4 @@
-:- module(utils, [prompt/2, promptString/2, autentica/3, mensagemEspera/0, promptOption/2, promptPassword/2,
+:- module(utils, [prompt/2, promptString/2, mensagemEspera/0, promptOption/2, promptPassword/2,
                   tituloI/0, tituloInformacao/1, autenticaPaciente/3, autenticaClinica/3, autenticaMedico/3,
                   autenticaLoginClinica/2, autenticaLoginMedico/2, autenticaLoginPaciente/2, autenticaMedicoClinica/3,
                   horaValida/2, dataValida/1, horariosDisponiveis/3, tituloI/0, tituloInformacao/1,
@@ -45,7 +45,7 @@ validaIDChat(_, _) :- false.
 validaIDConsulta(ID) :- model:consulta(ID, _, _, _, _, _, _, _), !.
 validaIDConsulta(_, _) :- false.
 
-validaPacienteMedico(IdPac, IDM) :- model:consulta(_, _, IDM, IDPac, _, _, _, _), !.
+validaPacienteMedico(IdPac, IDM) :- model:consulta(_, _, IDM, IdPac, _, _, _, _), !.
 validaPacienteMedico(_, _, _) :- false.
 
 validaChatPaciente(IdPac, IDChat) :- model:chat(IDChat, IdPac, _, _), !.
@@ -95,9 +95,6 @@ imprimirListaComEspacos([H|T]) :-
     write(H),
     write(' '),
     imprimirListaComEspacos(T).
-
-% Exemplo de uso:
-imprimirListaComEspacos(Horarios).
 
 adicionarPrefixoString(StringOriginal, StringComPrefixo) :-
     string_chars(StringOriginal, ListaOriginal), % Converte a string original para uma lista de caracteres

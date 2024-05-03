@@ -203,7 +203,7 @@ menuBuscarClinicaAgendamento :-
     paciente:buscarClinicaAgendamento(Metodo).
 
 verAgendamento(IdPac) :- 
-  paciente:verConsulta(IdPac),
+  paciente:verConsultaP(IdPac),
   promptOption('Deseja (C)onfirmar ou (D)esmarcar uma Consulta? Ou (V)oltar > ', Op),
   ( Op = "C" -> confirmarConsulta(IdPac);
     Op = "D" -> desmarcarConsulta(IdPac);
@@ -414,7 +414,7 @@ criarChatMed(IdMed):-
       (utils:validaPacienteMedico(IdPac, IdMed) ->
         model:nextIdChat(IdChat),
         promptString('Mensagem > ', Mensagem),
-        string_concat('M: ', Mensagem, MensagemM)
+        string_concat('M: ', Mensagem, MensagemM),
         assertz(model:chat(IdChat, IdPac, IdMed, MensagemM)),
 
         persistence:saveChat,
@@ -457,7 +457,7 @@ enviarMensagemMed(IdMed):-
     ).
 
 
-verConsultaMed(IDM) :- medico:verConsulta(IDM).
+verConsultaMed(IDM) :- medico:verConsultaM(IDM).
 
 menuMedicoEmitir(IDM) :-
     tty_clear,
@@ -497,7 +497,7 @@ emitirLaudo(IDM) :-
     utils:tituloInformacao('EMITIR LAUDO'),
     prompt('ID Paciente > ', IDP),
     (utils:validaIDPaciente(IDP) ->
-      (utils:validaPacienteMedico(IDP, IDM) 
+      (utils:validaPacienteMedico(IDP, IDM) ->
         promptString('Texto > ', Texto),
         assertz(model:laudo(IDM, IDP, Texto)),
         persistence:saveLaudo,

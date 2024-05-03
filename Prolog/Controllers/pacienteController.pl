@@ -1,4 +1,6 @@
-:-module(paciente, [verReceita/1, verLaudo/1, verExame/1, validaIDPaciente/1, verConsulta/1, paciente_logado/1, buscarClinica/1, bucarMedico/1, buscarClinicaPorPlano/1, buscarClinicaAgendamento/1]).
+:-module(paciente, [verReceita/1, verLaudo/1, verExame/1, validaIDPaciente/1,
+                    verConsultaP/1, buscarClinica/1, buscarMedico/1, buscarClinicaPorPlano/1,
+                    buscarClinicaAgendamento/1]).
 
 :- use_module('../App/show.pl').
 :- use_module('../Models/model.pl').
@@ -22,7 +24,7 @@ verLaudo(IDPac) :- forall(model:laudo(IdMed, IDPac, texto), show:showLaudo(model
 verExame(IDPac) :- forall(model:exame(IdMed, IDPac, tipo), show:showExame(model:exame(IdMed, IDPac, tipo))).
 
 
-verConsulta(IDPac) :- forall(model:consulta(IdCons, IdClinica, IdMedico, IDPac, DataConsulta, HoraConsulta, Queixas, C), 
+verConsultaP(IDPac) :- forall(model:consulta(IdCons, IdClinica, IdMedico, IDPac, DataConsulta, HoraConsulta, Queixas, C), 
             show:showConsulta(model:consulta(IdCons, IdClinica, IdMedico, IDPac, DataConsulta, HoraConsulta, Queixas, C))).  
 
 chatsAtivos(IDPac) :- forall(model:chat(Id, IDPac, IdMedico, Mensagens), show:showChat(model:chat(Id, IDPac, IdMedico, Mensagens))).
