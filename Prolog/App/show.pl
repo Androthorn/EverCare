@@ -18,12 +18,12 @@
      format('Médico: ~w~n', [IdMedico]),
      format('Mensagens: ~w~n', [Mensagens]).
 
-% # showFila(model:fila(Id, IdClinica, IdMedico, Fila)) :-
-% #     format('----------------------------~n', []),
-% #     format('FILA ~w~n', [Id]),
-% #     format('Clínica: ~w~n', [IdClinica]),
-% #     format('Médico: ~w~n', [IdMedico]),
-% #     format('Fila: ~w~n', [Fila]).
+showFila(model:fila(Id, IdClinica, IdMedico, Fila)) :-
+    format('----------------------------~n', []),
+    format('FILA ~w~n', [Id]),
+    format('Clínica: ~w~n', [IdClinica]),
+    format('Médico: ~w~n', [IdMedico]),
+    format('Fila: ~w~n', [Fila]).
 
 showClinica(model:clinica(Id, Nome, CNPJ, Endereco, Planos, MetodoAgendamento, Horarios, Contato, _)) :-
     format('----------------------------~n', []),
@@ -89,3 +89,4 @@ showReceita(model:receita(IdMedico, IdPaciente, Texto)) :-
     format('Id do Médico responsável: ~w~n', [IdMedico]),
     format('Paciente: ~w~n', [IdPaciente]),
     format('Remédios:~n~w', [Texto]).
+

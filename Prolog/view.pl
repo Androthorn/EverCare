@@ -83,16 +83,63 @@ menuPaciente(IdPac) :-
     write('[F] Fila Virtual'), nl,
     write('[S] Sair'), nl,
     promptOption('Opção > ', OP),
+    (
+        OP = "B" -> tty_clear, buscarOpcoes(IdPac);
+        OP = "M" -> tty_clear, cadastraConsulta(IdPac), tty_clear, menuPaciente(IdPac);
+        OP = "V" -> tty_clear, verAgendamento(IdPac), utils:mensagemEspera, menuPaciente(IdPac);
+        OP = "R" -> tty_clear, verPosConsulta(IdPac), utils:mensagemEspera, menuPaciente(IdPac);
+        OP = "A" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
+        OP = "C" -> tty_clear, menuChatPac(IdPac), tty_clear, menuPaciente(IdPac);
+        OP = "F" -> menuFilaVirtual(IdPac); % Chama o submenu da fila virtual
+        OP = "S" -> tty_clear, main;
+        writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuPaciente(IdPac)
+    ).
 
-    ( OP = "B" -> tty_clear, buscarOpcoes(IdPac);
-      OP = "M" -> tty_clear, cadastraConsulta(IdPac), tty_clear, menuPaciente(IdPac);
-      OP = "V" -> tty_clear, verAgendamento(IdPac), utils:mensagemEspera, menuPaciente(IdPac);
-      OP = "R" -> tty_clear, verPosConsulta(IdPac), utils:mensagemEspera, menuPaciente(IdPac);
-      OP = "A" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
-      OP = "C" -> tty_clear, menuChatPac(IdPac), tty_clear, menuPaciente(IdPac);
-      OP = "F" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
-      OP = "S" -> tty_clear, main;
-      writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuPaciente(IdPac)).
+entrarNaFila(IdPac) :-
+    tty_clear,
+    write('ID do Médico > '),
+    read(IdMedico),
+    (
+        model:validaIdMedico(IdMedico)
+        ->  (
+                autenticaMedicoClinica(IdClin, IdMedico, 1)
+                ->  (
+                        fila(IdFila, _, IdMedico, ListaPacientes)
+                        ->  length(ListaPacientes, Posicao),
+                            append(ListaPacientes, [IdPac], NovaFila),
+                            retract(fila(IdFila, IdClin, IdMedico, _)),
+                            assertz(fila(IdFila, IdClin, IdMedico, NovaFila)),
+                            writeln('Você entrou na fila com sucesso!'),
+                            format('Você está na posição ~d da fila.~n', [Posicao]),
+                            utils:mensagemEspera
+                        ;   writeln('Fila não encontrada.'),
+                            utils:mensagemEspera
+                    )
+                ;   writeln('Médico não pertence à clínica.'),
+                    utils:mensagemEspera
+            )
+        ;   writeln('Médico não encontrado.'),
+            utils:mensagemEspera
+    ),
+    tty_clear.
+
+
+menuFilaVirtual(IdPac) :-
+    tty_clear,
+    utils:tituloInformacao('FILA VIRTUAL'),
+    write('[E] Entrar na Fila'), nl,
+    write('[V] Ver Fila'), nl,
+    write('[S] Sair'), nl,
+    promptOption('Opção > ', OP),
+    (
+        OP = "E" -> entrarNaFila(IdPac), % Implemente essa opção de acordo com a lógica desejada
+                   tty_clear, utils:mensagemEspera, menuPaciente(IdPac);
+        OP = "V" -> verFila(), % Implemente essa opção para ver a fila
+                   tty_clear, utils:mensagemEspera, menuPaciente(IdPac);
+        OP = "S" -> menuPaciente(IdPac); % Volta para o menu principal do paciente
+        writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuFilaVirtual(IdPac)
+    ).
+
 
 menuChatPac(IdPac):-
     tty_clear,
@@ -295,14 +342,70 @@ menuClinica(IdClin) :-
     promptOption('Opção > ', OP),
 
     ( OP = "C" -> tty_clear, cadastraMedico(IdClin), tty_clear, menuClinica(IdClin);
-      OP = "F" -> tty_clear, menuClinica(IdClin), tty_clear, menuClinica(IdClin);
+      OP = "F" -> tty_clear, verFilaVirtual(IdClin), tty_clear, menuClinica(IdClin);
       OP = "V" -> tty_clear, visualizarInformacaoClinica(IdClin), tty_clear, menuClinica(IdClin);
       OP = "D" -> tty_clear, menuClinica(IdClin), tty_clear, menuClinica(IdClin);
       OP = "S" -> tty_clear, main;
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuClinica(IdClin)).
 
+
+verFilaVirtual(IdClin) :- 
+    tty_clear,
+    utils:tituloInformacao('FILA VIRTUAL'),
+    write('-----------------------------'), nl,
+    write('[C] - Criar Fila'), nl,
+    write('[V] - Ver Filas'), nl,
+    write('[A] - Atualizar Fila'), nl,
+    write('[S] - Sair'), nl,
+    write('-----------------------------'), nl,
+    promptOption('Opção > ', OP),
+    ( OP = "C" -> tty_clear, criarFila(IdClin), utils:mensagemEspera, tty_clear, verFilaVirtual(IdClin);
+      OP = "V" -> tty_clear, verFilas(IdClin), utils:mensagemEspera, tty_clear, verFilaVirtual(IdClin);
+      OP = "A" -> tty_clear, atualizarFila(IdClin), utils:mensagemEspera, tty_clear, verFilaVirtual(IdClin);
+      OP = "S" -> tty_clear, menuClinica(IdClin);
+      writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, verFilaVirtual(IdClin)).
+
+verFilas(IdClin) :- clinica:verFilas(IdClin).
+
+criarFila(IdClin) :-
+    tty_clear,
+    utils:tituloInformacao('CRIAR FILA'),
+    prompt('ID Médico > ', IdMedico),
+    (utils:validaIDMedico(IdMedico) -> 
+        model:nextIdFila(IdFila),
+        assertz(fila(IdFila, IdClin, IdMedico, [])),
+        assertz(model:id_fila(IdFila)), % Certifica-se de inicializar o id da fila
+        persistence:saveFila,
+        persistence:saveIdFila,
+        format('Fila criada com sucesso! O id da Fila é: ~d~n', [IdFila]),
+        sleep(2),
+        utils:mensagemEspera,
+        tty_clear
+    ;
+        writeln('Médico não encontrado'),
+        sleep(1),
+        menuChatPac(IdClin)
+    ).
+
+atualizarFila(IdClin) :-
+    tty_clear,
+    write('ID da fila > '),
+    read(IdFila),
+    (
+        fila(IdFila, IdClin, _, [_|OutrosPacientes])
+        ->  retract(fila(IdFila, IdClin, IdMedico, _)),
+            assertz(fila(IdFila, IdClin, IdMedico, OutrosPacientes)),
+            writeln('Paciente chamado com sucesso! Fila Atualizada!')
+        ;   writeln('Fila não encontrada.')
+    ),
+    utils:mensagemEspera,
+    tty_clear,
+    verFilaVirtual(IdClin).
+
+
 visualizarInformacaoClinica(IdClin) :-
     tty_clear,
+    utils:tituloInformacao('INFORMAÇÕES DA CLÍNICA'),
     write('-----------------------------'), nl,
     write('[A] - Agendamentos'), nl,
     write('[P] - Pacientes'), nl,
@@ -311,12 +414,16 @@ visualizarInformacaoClinica(IdClin) :-
     write('-----------------------------'), nl,
     promptOption('Opção > ', OP),
     ( OP = "A" -> tty_clear, verConsultaClin(IdClin), utils:mensagemEspera, tty_clear, visualizarInformacaoClinica(IdClin);
-      OP = "P" -> tty_clear, visualizarInformacaoClinica(IdClin), !;
-      OP = "M" -> tty_clear, visualizarInformacaoClinica(IdClin), !;
+      OP = "P" -> tty_clear, verPaciente(IdClin), utils:mensagemEspera, tty_clear, visualizarInformacaoClinica(IdClin);
+      OP = "M" -> tty_clear, verMedicos(IdClin), utils:mensagemEspera, tty_clear, visualizarInformacaoClinica(IdClin);
       OP = "V" -> tty_clear, menuClinica(IdClin);
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, visualizarInformacaoClinica(IdClin)).
 
 verConsultaClin(IdClin) :- clinica:verAgendamentoClin(IdClin).
+
+verPacientesClinica(IdClin) :- clinica:verPacientesComConsultaNaClinica(IdClin).
+
+verMedicosClinica(IdClin) :- clinica:verMedicosDaClinica(IdClin).
 
 
 cadastraMedico(IdClin) :-

@@ -2,4 +2,5 @@
 
 clinica(1, "clin", "00", "rua", "Unimed", "A", "88", "88", "123").
 clinica(2, "Clinic", "00", "rua", "Bradesco", "A", "99", "99", "123").
+clinica(3, "aa", "123", "rua", "nao", "o", "20", "123", "123").
 

@@ -4,7 +4,7 @@
                   iniciaConsulta/0, iniciaIdConsulta/0, nextIdConsulta/1 ,
                   iniciaReceita/0, iniciaLaudo/0, iniciaExame/0,
                   iniciaChat/0, iniciaIdChat/0, nextIdChat/1,
-                  iniciaSistema/0]).
+                  iniciaSistema/0, iniciaFila/0, iniciaIdFila/0, nextIdFila/1]).
 
 :- use_module('../Controllers/persistence.pl').
 
@@ -154,6 +154,27 @@ verificaIdChat :- exists_file('bd/chat/id_chat.bd') -> leIdChat ; iniciaIdChat.
 verificaChat :- exists_file('bd/chat/chat.bd') -> leChat ; iniciaChat.
 
 /*
+Inicializa a tabela dinâmica de filas.
+Campos esperados: ID, ID Clínica, ID Médico, Lista de Pacientes.
+*/
+iniciaFila :-
+    dynamic(fila/4).
+
+iniciaIdFila :-
+    asserta(id_fila(0)).
+
+nextIdFila(N) :-
+    id_fila(X), retract(id_fila(X)), N is X + 1, asserta(id_fila(N)).
+
+
+leFila :- consult('bd/fila/fila.bd').
+leIdFila :- consult('bd/fila/id_fila.bd').
+
+verificaFila :- exists_file('bd/fila/fila.bd') -> leFila ; iniciaFila.
+verificaIdFila :- exists_file('bd/fila/id_fila.bd') -> leIdFila ; iniciaIdFila.
+
+
+/*
 Inicializa todas as tabelas dinâmicas do sistema.
 */
 iniciaSistema :- 
@@ -162,4 +183,4 @@ iniciaSistema :-
     verificaMedico, verificaIdMedico, verificaLoginMedico,
     verificaConsulta, verificaIdConsulta,
     verificaLaudo, verificaReceita, verificaExame,
-    verificaChat, verificaIdChat.
+    verificaChat, verificaIdChat, verificaFila, verificaIdFila.

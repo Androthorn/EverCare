@@ -1,0 +1,5 @@
+:- dynamic id_fila/1.
+
+id_fila(6).
+id_fila(6).
+
