@@ -70,7 +70,7 @@ showMedico(model:medico(Clinica, Id, Nome, CRM, Especialidade, _, _,_)) :-
     format('Especialidade: ~w~n', [Especialidade]),
     format('-------------------~n', []).
 
-showPaciente(model:paciente(Id, Nome, Cpf, DataNascimento, Sexo, Endereco, TipoSanguineo, Cardiopata, Hipertenso, Diabetico, _)) :-
+showPaciente(model:paciente(Id, Nome, Cpf, DataNascimento, Sexo, Endereco, Plano, TipoSanguineo, Cardiopata, Hipertenso, Diabetico, _)) :-
     format('-------------------~n', []),
     format('Id do Paciente: ~w~n', [Id]),
     format('Nome Completo: ~w~n', [Nome]),
@@ -78,6 +78,7 @@ showPaciente(model:paciente(Id, Nome, Cpf, DataNascimento, Sexo, Endereco, TipoS
     format('Data de nascimento: ~w~n', [DataNascimento]),
     format('Sexo: ~w~n', [Sexo]),
     format('Endereço: ~w~n', [Endereco]),
+    format('Plano de Saúde: ~w~n', [Plano]),
     format('Tipo sanguíneo: ~w~n', [TipoSanguineo]),
     format('Cardiopata? ~w~n', [Cardiopata]),
     format('Hipertenso? ~w~n', [Hipertenso]),
