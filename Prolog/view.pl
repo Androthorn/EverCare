@@ -113,16 +113,21 @@ criarChatPac(IdPac):-
     utils:tituloInformacao('CRIAR CHAT'),
     prompt('ID Médico > ', IdMedico),
     (utils:validaIDMedico(IdMedico) -> 
-      model:nextIdChat(IdChat),
-      promptString('Mensagem > ', Mensagem),
-      string_concat('P: ', Mensagem, MensagemP),
-      assertz(model:chat(IdChat, IdPac, IdMedico, MensagemP)),
+      (utils:validaPacienteMedico(IdPac, IdMedico) -> 
+        model:nextIdChat(IdChat),
+        promptString('Mensagem > ', Mensagem),
+        string_concat('P: ', Mensagem, MensagemP),
+        assertz(model:chat(IdChat, IdPac, IdMedico, MensagemP)),
 
-      persistence:saveChat,
-      persistence:saveIdChat,
-      (IdChat > 0 -> format('Chat criado com sucesso! O id do Chat é: ~d~n', [IdChat]), sleep(2), 
-      utils:mensagemEspera, tty_clear, menuPaciente(IdPac))
-    ;
+        persistence:saveChat,
+        persistence:saveIdChat,
+        (IdChat > 0 -> format('Chat criado com sucesso! O id do Chat é: ~d~n', [IdChat]), sleep(2), 
+        utils:mensagemEspera, tty_clear, menuPaciente(IdPac))
+        
+        ;
+        writeln('Você não possui consultas com esse médico.'), sleep(1), menuChatPac(IdPac)
+      )
+      ;
       writeln('Médico não encontrado'), sleep(1), menuChatPac(IdPac)
     ).
 
@@ -133,17 +138,22 @@ enviarMensagem(IdPac):-
     utils:tituloInformacao('ENVIAR MENSAGEM'),
     prompt('ID Chat > ', IdChat),
     (utils:validaIDChat(IdChat) -> 
-      promptString('Mensagem > ', MensagemAtual),
-      string_concat('P: ', MensagemAtual, MensagemAtualP),
+      (utils:validaChatPaciente(IdPac, IdChat) ->
 
-      retract(model:chat(IdChat, IdPaciente, IdMedico, Mensagem)),
+        promptString('Mensagem > ', MensagemAtual),
+        string_concat('P: ', MensagemAtual, MensagemAtualP),
 
-      atomic_list_concat([Mensagem, MensagemAtualP], ' ', Mensagens),
-      
-      assertz(model:chat(IdChat, IdPaciente, IdMedico, Mensagens)),
+        retract(model:chat(IdChat, IdPaciente, IdMedico, Mensagem)),
 
-      persistence:saveChat,
-      writeln('Mensagem enviada com sucesso!'), sleep(1), utils:mensagemEspera, tty_clear, menuChatPac(IdPac)
+        atomic_list_concat([Mensagem, MensagemAtualP], ' ', Mensagens),
+        
+        assertz(model:chat(IdChat, IdPaciente, IdMedico, Mensagens)),
+
+        persistence:saveChat,
+        writeln('Mensagem enviada com sucesso!'), sleep(1), utils:mensagemEspera, tty_clear, menuChatPac(IdPac)
+      ;
+        writeln('Você não possui chats com esse ID'), sleep(1), menuChatPac(IdPac)
+      )
     ;
       writeln('Chat não encontrado'), sleep(1)
     ).
@@ -193,7 +203,7 @@ menuBuscarClinicaAgendamento :-
     paciente:buscarClinicaAgendamento(Metodo).
 
 verAgendamento(IdPac) :- 
-  paciente:verConsulta(IdPac),
+  paciente:verConsultaP(IdPac),
   promptOption('Deseja (C)onfirmar ou (D)esmarcar uma Consulta? Ou (V)oltar > ', Op),
   ( Op = "C" -> confirmarConsulta(IdPac);
     Op = "D" -> desmarcarConsulta(IdPac);
@@ -202,21 +212,29 @@ verAgendamento(IdPac) :-
 
 confirmarConsulta(IdPac) :-
     prompt('ID da Consulta > ', IdCons),
-    (utils:validaIDConsulta(IdCons) -> 
-      retract(model:consulta(IdCons, IdClinica, IdMedico, IdPac, DataConsulta, HoraConsulta, Queixas, _)),
-      assertz(model:consulta(IdCons, IdClinica, IdMedico, IdPac, DataConsulta, HoraConsulta, Queixas, 'Confirmado')),
-      persistence:saveConsulta,
-      writeln('Consulta confirmada com sucesso!'), sleep(1), utils:mensagemEspera, tty_clear, menuPaciente(IdPac)
+    (utils:validaIDConsulta(IdCons) ->
+      (utils:validaConsultaPaciente(IdPac, IdCons) ->
+        retract(model:consulta(IdCons, IdClinica, IdMedico, IdPac, DataConsulta, HoraConsulta, Queixas, _)),
+        assertz(model:consulta(IdCons, IdClinica, IdMedico, IdPac, DataConsulta, HoraConsulta, Queixas, 'Confirmado')),
+        persistence:saveConsulta,
+        writeln('Consulta confirmada com sucesso!'), sleep(1), utils:mensagemEspera, tty_clear, menuPaciente(IdPac)
+      ;
+      writeln('Você não possui consultas com esse ID'), sleep(1), menuPaciente(IdPac)
+      )
     ;
-      writeln('Consulta não encontrada'), sleep(1)
+    writeln('Consulta não encontrada'), sleep(1)
     ).
 
 desmarcarConsulta(IdPac) :-
     prompt('ID da Consulta > ', IdCons),
-    (utils:validaIDConsulta(IdCons) -> 
-      retract(model:consulta(IdCons, IdClinica, IdMedico, IdPac, DataConsulta, HoraConsulta, Queixas, C)),
-      persistence:saveConsulta,
-      writeln('Consulta desmarcada com sucesso!'), sleep(1), utils:mensagemEspera, tty_clear, menuPaciente(IdPac)
+    (utils:validaIDConsulta(IdCons) ->
+      (utils:validaConsultaPaciente(IdPac, IdCons) ->
+        retract(model:consulta(IdCons, IdClinica, IdMedico, IdPac, DataConsulta, HoraConsulta, Queixas, C)),
+        persistence:saveConsulta,
+        writeln('Consulta desmarcada com sucesso!'), sleep(1), utils:mensagemEspera, tty_clear, menuPaciente(IdPac)
+      ;
+        writeln('Você não possui consultas com esse ID'), sleep(1), menuPaciente(IdPac)
+      )
     ;
       writeln('Consulta não encontrada'), sleep(1)
     ).
@@ -296,13 +314,14 @@ menuClinica(IdClin) :-
 
     ( OP = "C" -> tty_clear, cadastraMedico(IdClin), tty_clear, menuClinica(IdClin);
       OP = "F" -> tty_clear, menuClinica(IdClin), tty_clear, menuClinica(IdClin);
-      OP = "V" -> tty_clear, visualizarInformacaoClinica(IdClin), tty_clear, menuClinica(IdClin);
+      OP = "V" -> tty_clear, visualizarInformacaoClinica(IdClin), utils:mensagemEspera, tty_clear, menuClinica(IdClin);
       OP = "D" -> tty_clear, menuClinica(IdClin), tty_clear, menuClinica(IdClin);
       OP = "S" -> tty_clear, main;
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuClinica(IdClin)).
 
 visualizarInformacaoClinica(IdClin) :-
     tty_clear,
+    utils:tituloInformacao('INFORMAÇÕES DA CLÍNICA'),
     write('-----------------------------'), nl,
     write('[A] - Agendamentos'), nl,
     write('[P] - Pacientes'), nl,
@@ -310,11 +329,13 @@ visualizarInformacaoClinica(IdClin) :-
     write('[V] - Voltar'), nl,
     write('-----------------------------'), nl,
     promptOption('Opção > ', OP),
-    ( OP = "A" -> tty_clear, verConsultaClin(IdClin), utils:mensagemEspera, tty_clear, visualizarInformacaoClinica(IdClin);
-      OP = "P" -> tty_clear, clinica:verPaciente(IdClin), utils:mensagemEspera, tty_clear, visualizarInformacaoClinica(IdClin);
-      OP = "M" -> tty_clear, verMedicos(IdClin), utils:mensagemEspera, tty_clear, visualizarInformacaoClinica(IdClin);
+    ( OP = "A" -> tty_clear, verConsultaClin(IdClin), !;
+      OP = "P" -> tty_clear, verPacientes(IdClin), !;
+      OP = "M" -> tty_clear, verMedicos(IdClin), !;
       OP = "V" -> tty_clear, menuClinica(IdClin);
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, visualizarInformacaoClinica(IdClin)).
+
+verPacientes(IdClin) :- clinica:visualizaPacientes(IdClin).
 
 verConsultaClin(IdClin) :- clinica:verAgendamentoClin(IdClin).
 
@@ -394,16 +415,20 @@ criarChatMed(IdMed):-
     utils:tituloInformacao('CRIAR CHAT'),
     prompt('ID Paciente > ', IdPac),
     (utils:validaIDPaciente(IdPac) -> 
-      model:nextIdChat(IdChat),
-      promptString('Mensagem > ', Mensagem),
-      string_concat('M: ', Mensagem, MensagemM)
-      assertz(model:chat(IdChat, IdPac, IdMed, MensagemM)),
+      (utils:validaPacienteMedico(IdPac, IdMed) ->
+        model:nextIdChat(IdChat),
+        promptString('Mensagem > ', Mensagem),
+        string_concat('M: ', Mensagem, MensagemM),
+        assertz(model:chat(IdChat, IdPac, IdMed, MensagemM)),
 
-      persistence:saveChat,
-      persistence:saveIdChat,
+        persistence:saveChat,
+        persistence:saveIdChat,
 
-      (IdChat > 0 -> format('Chat criado com sucesso! O id do Chat é: ~d~n', [IdChat]), sleep(2), 
-      utils:mensagemEspera, tty_clear, menuMedico(IdMed))
+        (IdChat > 0 -> format('Chat criado com sucesso! O id do Chat é: ~d~n', [IdChat]), sleep(2), 
+        utils:mensagemEspera, tty_clear, menuMedico(IdMed))
+      ;
+        writeln('Você não possui consultas com esse paciente.'), sleep(1), menuChatMed(IdMed)
+      )
     ;
       writeln('Paciente não encontrado'), sleep(1), menuChatMed(IdMed)
     ).
@@ -415,23 +440,28 @@ enviarMensagemMed(IdMed):-
     utils:tituloInformacao('ENVIAR MENSAGEM'),
     prompt('ID Chat > ', IdChat),
     (utils:validaIDChat(IdChat) -> 
-      promptString('Mensagem > ', MensagemAtual),
-      string_concat('M: ', MensagemAtual, MensagemAtualM),
+      (utils:validaChatMedico(IdMed, IdChat) ->
 
-      retract(model:chat(IdChat, IdPaciente, IdMed, Mensagem)),
+        promptString('Mensagem > ', MensagemAtual),
+        string_concat('M: ', MensagemAtual, MensagemAtualM),
 
-      atomic_list_concat([Mensagem, MensagemAtualM], ' ', Mensagens),
-      
-      assertz(model:chat(IdChat, IdPaciente, IdMed, Mensagens)),
+        retract(model:chat(IdChat, IdPaciente, IdMed, Mensagem)),
 
-      persistence:saveChat,
-      writeln('Mensagem enviada com sucesso!'), sleep(1), utils:mensagemEspera, tty_clear, menuChatMed(IdMed)
+        atomic_list_concat([Mensagem, MensagemAtualM], ' ', Mensagens),
+        
+        assertz(model:chat(IdChat, IdPaciente, IdMed, Mensagens)),
+
+        persistence:saveChat,
+        writeln('Mensagem enviada com sucesso!'), sleep(1), utils:mensagemEspera, tty_clear, menuChatMed(IdMed)
+      ;
+        writeln('Você não possui chats com esse ID'), sleep(1), menuChatMed(IdMed)
+      )
     ;
       writeln('Chat não encontrado'), sleep(1)
     ).
 
 
-verConsultaMed(IDM) :- medico:verConsulta(IDM).
+verConsultaMed(IDM) :- medico:verConsultaM(IDM).
 
 menuMedicoEmitir(IDM) :-
     tty_clear,
@@ -453,10 +483,15 @@ emitirReceita(IDM) :-
     utils:tituloInformacao('EMITIR RECEITA'),
     prompt('ID Paciente > ', IDP),
     (utils:validaIDPaciente(IDP) -> 
-      promptString('Texto > ', Texto),
-      assertz(model:receita(IDM, IDP, Texto)),
-      persistence:saveReceita,
-      writeln('Receita emitida com sucesso!'), sleep(1)
+      (utils:validaPacienteMedico(IDP, IDM) ->
+
+        promptString('Texto > ', Texto),
+        assertz(model:receita(IDM, IDP, Texto)),
+        persistence:saveReceita,
+        writeln('Receita emitida com sucesso!'), sleep(1)
+      ;
+        writeln('Você não possui consultas com esse paciente.'), sleep(1)
+      )
     ;
       writeln('Paciente não encontrado')
     ).
@@ -465,11 +500,15 @@ emitirLaudo(IDM) :-
     tty_clear,
     utils:tituloInformacao('EMITIR LAUDO'),
     prompt('ID Paciente > ', IDP),
-    (utils:validaIDPaciente(IDP) -> 
-      promptString('Texto > ', Texto),
-      assertz(model:laudo(IDM, IDP, Texto)),
-      persistence:saveLaudo,
-      writeln('Laudo emitido com sucesso!'), sleep(1)
+    (utils:validaIDPaciente(IDP) ->
+      (utils:validaPacienteMedico(IDP, IDM) ->
+        promptString('Texto > ', Texto),
+        assertz(model:laudo(IDM, IDP, Texto)),
+        persistence:saveLaudo,
+        writeln('Laudo emitido com sucesso!'), sleep(1)
+      ;
+        writeln('Você não possui consultas com esse paciente.'), sleep(1)
+      )
     ;
       writeln('Paciente não encontrado')
     ).
@@ -478,11 +517,15 @@ emitirExame(IDM) :-
     tty_clear,
     utils:tituloInformacao('EMITIR EXAME'),
     prompt('ID Paciente > ', IDP),
-    (utils:validaIDPaciente(IDP) -> 
-      promptString('Texto > ', Texto),
-      assertz(model:exame(IDM, IDP, Texto)),
-      persistence:saveExame,
-      writeln('Exame emitido com sucesso!'), sleep(1)
+    (utils:validaIDPaciente(IDP) ->
+      (utils:validaPacienteMedico(IDP, IDM) ->
+        promptString('Texto > ', Texto),
+        assertz(model:exame(IDM, IDP, Texto)),
+        persistence:saveExame,
+        writeln('Exame emitido com sucesso!'), sleep(1)
+      ;
+        writeln('Você não possui consultas com esse paciente.'), sleep(1)
+      )
     ;
       writeln('Paciente não encontrado')
     ).

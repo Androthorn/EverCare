@@ -10,8 +10,8 @@
 
 /*
  Inicializa a tabela dinâmica de pacientes.
- Campos esperados: ID, Nome, CPF, Data de Nascimento, Sexo, Endereço, Plano de Saúde,
- Tipo Sanguíneo, Cardiopata (booleano), Diabético (booleano), Hipertenso (booleano), Senha.
+ Campos esperados: ID, Nome, CPF, Data de Nascimento, Sexo, Endereço, Tipo Sanguíneo,
+ Plano de Saúde, Cardiopata (booleano), Diabético (booleano), Hipertenso (booleano), Senha.
 */
 iniciaPaciente :-
     dynamic(paciente/12).
