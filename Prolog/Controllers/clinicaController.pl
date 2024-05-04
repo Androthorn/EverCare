@@ -5,27 +5,27 @@
 :- use_module('../App/utils.pl').
 
 
-% Função para contar a quantidade de consultas, médicos e pacientes de uma clínica
+
 contarInformacoesClinica(IdClinica, NumConsultas, NumMedicos, NumPacientes,RankingMedicos) :-
-    % Contagem de consultas
+    
     findall(IdCons, model:consulta(IdCons, IdClinica, _, _, _, _, _, _), Consultas),
     length(Consultas, NumConsultas),
-    % Contagem de médicos
+    
     findall(IdMedico, model:medico(IdClinica, IdMedico, _, _, _, _, _, _), Medicos),
     length(Medicos, NumMedicos),
-    % Contagem de pacientes
+   s
     findall(IdPac, model:consulta(_, IdClinica, _, IdPac, _, _, _, _), Pacientes),
     list_to_set(Pacientes, PacientesUnicos),
     length(PacientesUnicos, NumPacientes).
-     % Obter o número de consultas realizadas por cada médico
+   
     findall(IdMedico-NumCons, (
         member(IdMedico, Medicos),
         findall(IdCons, model:consulta(IdCons, IdClinica, IdMedico, _, _, _, _, _), ConsultasMedico),
         length(ConsultasMedico, NumCons),
-        format('Médico ~w: ~w consultas~n', [IdMedico, NumCons]) % Mensagem de depuração
+        format('Médico ~w: ~w consultas~n', [IdMedico, NumCons]) 
     ), ConsultasPorMedico),
-    writeln('Consultas por médico:'), writeln(ConsultasPorMedico), % Mensagem de depuração
-     % Ordenar a lista de médicos pelo número de consultas (em ordem decrescente)
+    writeln('Consultas por médico:'), writeln(ConsultasPorMedico), 
+     
     keysort(ConsultasPorMedico, Sorted),
     reverse(Sorted, RankingMedicos).
 
