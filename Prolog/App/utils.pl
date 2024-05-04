@@ -4,7 +4,7 @@
                   horaValida/2, dataValida/1, horariosDisponiveis/3, tituloI/0, tituloInformacao/1,
                   imprimirListaComEspacos/1, validaIDMedico/1, validaIDChat/1, validaIDConsulta/1, validaIDPaciente/1,
                   adicionarPrefixoString/2, validaPacienteMedico/2, validaChatPaciente/2, validaChatMedico/2,
-                  validaConsultaPaciente/2]).
+                  validaConsultaPaciente/2, validaIDClinica/1, validaMedicoClinica/1]).
 
 :- use_module('../Models/model.pl').
 
@@ -45,6 +45,9 @@ validaIDChat(_, _) :- false.
 validaIDConsulta(ID) :- model:consulta(ID, _, _, _, _, _, _, _), !.
 validaIDConsulta(_, _) :- false.
 
+validaIDClinica(ID) :- model:clinica(ID, _, _, _, _, _, _, _, _), !.
+validaIDClinica(_, _) :- false.
+
 validaPacienteMedico(IdPac, IDM) :- model:consulta(_, _, IDM, IdPac, _, _, _, _), !.
 validaPacienteMedico(_, _, _) :- false.
 
@@ -56,6 +59,9 @@ validaChatMedico(_, _, _) :- false.
 
 validaConsultaPaciente(IdPac, IDConsulta) :- model:consulta(IDConsulta, _, _, IdPac, _, _, _, _), !.
 validaConsultaPaciente(_, _, _) :- false.
+
+validaMedicoClinica(IDC, IDM) :- model:medico(IDC, IDM, _, _, _, _, _, _), !.
+validaMedicoClinica(_, _, _) :- false.
 
 mensagemEspera :- promptString('\n\nPressione qualquer tecla para continuar', _), tty_clear.
 

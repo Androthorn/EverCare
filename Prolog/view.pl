@@ -85,7 +85,7 @@ menuPaciente(IdPac) :-
     promptOption('Opção > ', OP),
 
     ( OP = "B" -> tty_clear, buscarOpcoes(IdPac);
-      OP = "M" -> tty_clear, cadastraConsulta(IdPac), tty_clear, menuPaciente(IdPac);
+      OP = "M" -> tty_clear, cadastraConsulta(IdPac), !;
       OP = "V" -> tty_clear, verAgendamento(IdPac), utils:mensagemEspera, menuPaciente(IdPac);
       OP = "R" -> tty_clear, verPosConsulta(IdPac), utils:mensagemEspera, menuPaciente(IdPac);
       OP = "A" -> tty_clear, menuAvaliacao(IdPac), utils:mensagemEspera, tty_clear, menuPaciente(IdPac);
@@ -556,53 +556,57 @@ cadastraConsulta(IdPac) :-
     utils:tituloInformacao('MARCAR CONSULTA'),
     prompt('ID Clínica > ', IdClinica),
 
-    utils:autenticaLoginClinica(IdClinica, N),
-    (
-        N =:= 0 ->
-        writeln('Clínica não encontrada'),
-        utils:mensagemEspera,
-        tty_clear,
-        menuPaciente(IdPac)
-    ;
+    (utils:validaIDClinica(IdClinica) ->
         prompt('ID Médico > ', IdMedico),
-        utils:autenticaMedicoClinica(IdClinica, IdMedico, M),
-        (
-            M =:= 0 ->
-            writeln('Médico não encontrado ou não pertence a clínica'),
-            utils:mensagemEspera,
-            tty_clear,
-            menuPaciente(IdPac)
-        ;
-            promptString('Data da Consulta (dd/mm/aaaa) > ', Data),
-            (
-                \+ dataValida(Data) ->
-                writeln('Data Inválida'),
-                utils:mensagemEspera,
-                tty_clear,
-                menuPaciente(IdPac)
-            ;
-                utils:horariosDisponiveis(IdMedico, Data, Horarios),
-                writeln('Horários Disponíveis:'),
-                imprimirListaComEspacos(Horarios),
-                nl,
-                promptString('Horário da Consulta (hh:mm) > ', Horario),
+        (utils:validaIDMedico(IdMedico) ->
+            (utils:validaMedicoClinica(IdClinica, IdMedico) ->
+                promptString('Data da Consulta (dd/mm/aaaa) > ', Data),
                 (
-                    \+ horaValida(Horario, Horarios) ->
-                    writeln('Horário Inválido'),
+                \+ dataValida(Data) ->
+                    writeln('Data Inválida'),
                     utils:mensagemEspera,
                     tty_clear,
                     menuPaciente(IdPac)
                 ;
-                    promptString('Queixa > ', Queixa),
-                    model:nextIdConsulta(IdConsulta),
-                    assertz(model:consulta(IdConsulta, IdClinica, IdMedico, IdPac, Data, Horario, Queixa, 'Pendente')),
-                    persistence:saveIdConsulta,
-                    persistence:saveConsulta,
-                    format('Consulta marcada com sucesso! Seu ID de consulta é: ~d~n', [IdConsulta]),
-                    utils:mensagemEspera,
-                    tty_clear,
-                    menuPaciente(IdPac)
+                    utils:horariosDisponiveis(IdMedico, Data, Horarios),
+                    writeln('Horários Disponíveis:'),
+                    imprimirListaComEspacos(Horarios),
+                    nl,
+                    promptString('Horário da Consulta (hh:mm) > ', Horario),
+                    
+                    (\+ horaValida(Horario, Horarios) ->
+                        writeln('Horário Inválido'),
+                        utils:mensagemEspera,
+                        tty_clear,
+                        menuPaciente(IdPac)
+                    ;
+                        promptString('Queixa > ', Queixa),
+                        model:nextIdConsulta(IdConsulta),
+                        assertz(model:consulta(IdConsulta, IdClinica, IdMedico, IdPac, Data, Horario, Queixa, 'Pendente')),
+                        persistence:saveIdConsulta,
+                        persistence:saveConsulta,
+                        format('Consulta marcada com sucesso! Seu ID de consulta é: ~d~n', [IdConsulta]),
+                        utils:mensagemEspera,
+                        tty_clear,
+                        menuPaciente(IdPac)
+                    )
                 )
+            ;
+                writeln('Médico não pertence a clínica'),
+                utils:mensagemEspera,
+                tty_clear,
+                menuPaciente(IdPac)
             )
+        ;
+            writeln('Médico não encontrado'),
+            utils:mensagemEspera,
+            tty_clear,
+            menuPaciente(IdPac)
         )
+            
+      ;
+        writeln('Clínica não encontrada'),
+        utils:mensagemEspera,
+        tty_clear,
+        menuPaciente(IdPac)
     ).

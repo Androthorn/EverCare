@@ -7,4 +7,7 @@ consulta(5, 1, 3, 2, "21/09/2024", "08:00", "aaaii", "Pendente").
 consulta(6, 1, 3, 3, "12/03/2024", "17:00", "dor", "Pendente").
 consulta(2, 1, 1, 1, "05/08/2024", "17:00", "nao sei", 'Confirmado').
 consulta(7, 2, 6, 2, "22/05/2024", "10:00", "dorrrr", 'Confirmado').
+consulta(9, 2, 2, 3, "16/07/2024", "11:00", "aiaiaiai", 'Pendente').
+consulta(10, 2, 2, 3, "16/07/2024", "15:00", "pe doi", 'Pendente').
+consulta(11, 2, 2, 2, "16/07/2024", "17:00", "aiaiai", 'Pendente').
 
