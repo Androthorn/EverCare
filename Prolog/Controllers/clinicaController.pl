@@ -12,7 +12,7 @@ verPaciente(IdClinica) :-
         model:consulta(IdCons, IdClinica, IdMedico, IDPac, DataConsulta, HoraConsulta, Queixas, C), 
         (
             model:paciente(IDPac, Nome, CPF, Sexo, DataNascimento, Endereco, TipoSanguineo, Cardiopata, Hipertenso, Diabetico, _, _),
-            showPaciente(paciente(IDPac, Nome, CPF, DataNascimento, Sexo, Endereco, TipoSanguineo, Cardiopata, Hipertenso, Diabetico, _, _))
+            show: showPaciente(paciente(IDPac, Nome, CPF, DataNascimento, Sexo, Endereco, TipoSanguineo, Cardiopata, Hipertenso, Diabetico, _, _))
         )
     ).
 
