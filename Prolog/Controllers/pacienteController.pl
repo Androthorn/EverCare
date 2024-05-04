@@ -6,6 +6,12 @@
 :- use_module('../Models/model.pl').
 :- use_module('../App/utils.pl').
 
+
+
+avaliaMedico( IdPac, IdMed, Nota, Comentario) :-
+    criaAvaliacao([IdPac, IdMed, Nota, Comentario], Avaliacao),
+    showAvaliacao(Avaliacao).
+
 /*
     Consulta as receitas de um paciente.
     @param IDPac ID do paciente.
