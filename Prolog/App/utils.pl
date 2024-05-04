@@ -3,7 +3,7 @@
                   autenticaLoginClinica/2, autenticaLoginMedico/2, autenticaLoginPaciente/2, autenticaMedicoClinica/3,
                   horaValida/2, dataValida/1, horariosDisponiveis/3, tituloI/0, tituloInformacao/1,
                   imprimirListaComEspacos/1, validaIDMedico/1, validaIDChat/1, validaIDConsulta/1, validaIDPaciente/1,
-                  adicionarPrefixoString/2]).
+                  adicionarPrefixoString/2, validaMedicoClinica/2]).
 
 :- use_module('../Models/model.pl').
 
@@ -43,6 +43,9 @@ validaIDChat(_, _) :- false.
 
 validaIDConsulta(ID) :- model:consulta(ID, _, _, _, _, _, _, _), !.
 validaIDConsulta(_, _) :- false.
+
+validaMedicoClinica(IDC, IDM) :- model:medico(IDC, IDM, _, _, _, _, _, _), !.
+validaMedicoClinica(_, _, _) :- false.
 
 mensagemEspera :- promptString('\n\nPressione qualquer tecla para continuar', _), tty_clear.
 

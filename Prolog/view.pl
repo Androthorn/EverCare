@@ -371,32 +371,31 @@ criarFila(IdClin) :-
     tty_clear,
     utils:tituloInformacao('CRIAR FILA'),
     prompt('ID Médico > ', IdMedico),
-    (utils:validaIDMedico(IdMedico) -> 
+    (utils:validaMedicoClinica(IdClin, IdMedico) -> 
         model:nextIdFila(IdFila),
-        assertz(fila(IdFila, IdClin, IdMedico, [])),
-        assertz(model:id_fila(IdFila)), % Certifica-se de inicializar o id da fila
+        assertz(model:fila(IdFila, IdClin, IdMedico, [])),
         persistence:saveFila,
         persistence:saveIdFila,
-        format('Fila criada com sucesso! O id da Fila é: ~d~n', [IdFila]),
-        sleep(2),
-        utils:mensagemEspera,
-        tty_clear
+        (IdFila > 0 -> format('Fila criada com sucesso! O id da Fila é: ~d~n', [IdFila]), sleep(2), 
+      utils:mensagemEspera, tty_clear, verFilaVirtual(IdClin))
     ;
-        writeln('Médico não encontrado'),
-        sleep(1),
-        menuChatPac(IdClin)
+      writeln('Médico não encontrado'), sleep(1), menuClinica(IdClin)
     ).
+
 
 atualizarFila(IdClin) :-
     tty_clear,
     write('ID da fila > '),
     read(IdFila),
     (
-        fila(IdFila, IdClin, _, [_|OutrosPacientes])
-        ->  retract(fila(IdFila, IdClin, IdMedico, _)),
-            assertz(fila(IdFila, IdClin, IdMedico, OutrosPacientes)),
+        model:fila(IdFila, IdClin, _, [Paciente|OutrosPacientes])
+        ->  retract(model:fila(IdFila, IdClin, IdMedico, _)),
+            assertz(model:fila(IdFila, IdClin, IdMedico, OutrosPacientes)),
             writeln('Paciente chamado com sucesso! Fila Atualizada!')
-        ;   writeln('Fila não encontrada.')
+        ;   (   model:fila(IdFila, IdClin, _, [])
+            ->  writeln('A fila está vazia.')
+            ;   writeln('Fila não encontrada.')
+            )
     ),
     utils:mensagemEspera,
     tty_clear,
