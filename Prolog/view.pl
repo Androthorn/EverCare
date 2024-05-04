@@ -323,7 +323,7 @@ loginClinica :-
 
 menuClinica(IdClin) :-
     tty_clear,
-    utils:tituloInformacao('DASHBOARD CLÍNICA'),
+    utils:tituloInformacao('MENU CLÍNICA'),
     write('-----------------------------'), nl,
     write('[C] Cadastrar Médico'), nl,
     write('[F] Fila Virtual'), nl,
@@ -336,9 +336,30 @@ menuClinica(IdClin) :-
     ( OP = "C" -> tty_clear, cadastraMedico(IdClin), tty_clear, menuClinica(IdClin);
       OP = "F" -> tty_clear, menuClinica(IdClin), tty_clear, menuClinica(IdClin);
       OP = "V" -> tty_clear, visualizarInformacaoClinica(IdClin), utils:mensagemEspera, tty_clear, menuClinica(IdClin);
-      OP = "D" -> tty_clear, menuClinica(IdClin), tty_clear, menuClinica(IdClin);
+      OP = "D" -> tty_clear, verDashboard(IdClin), utils:mensagemEspera, tty_clear, menuClinica(IdClin);
       OP = "S" -> tty_clear, main;
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuClinica(IdClin)).
+
+verDashboard(IdClin) :-
+    tty_clear,
+    utils:tituloInformacao('DASHBOARD DA CLÍNICA'),
+    clinica:getClinicaName(IdClin, Clinicas, NomeClinica),
+    clinica:contarInformacoesClinica(IdClin, NumConsultas, NumMedicos, NumPacientes, RankingMedicos),
+    write('Nome da Clínica: '), write(NomeClinica), nl,
+    write('Quantidade de Médicos: '), write(NumMedicos), nl,
+    write('Quantidade de Consultas: '), write(NumConsultas), nl,
+    write('Quantidade de Pacientes: '), write(NumPacientes), nl,
+
+    write('RANKING MÉDICOS: '),nl,
+    write(' -POR N° DE CONSULTAS: '), write(RankingMedicos), nl,
+    write(' -POR NOTA: '),nl,
+    writeln('---------------------------'),
+    utils:mensagemEspera,
+    tty_clear,
+    menuClinica(IdClin).
+
+
+
 
 visualizarInformacaoClinica(IdClin) :-
     tty_clear,
