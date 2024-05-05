@@ -237,9 +237,9 @@ buscarOpcoes(IDPac):-
       utils:tituloInformacao('Menu Buscar'),
       write('[C] Buscar por Clínica'), nl,
       write('[M] Buscar por Médico'), nl,
-      write('[D] Buscar por Especialidade'), nl,
-      write('[P] Buscar Clínicas que aceitam meu plano de saúde'), nl,
-      write('[A] Buscar Clínicas por opção de agendamento'), nl,
+      write('[E] Buscar por Especialidade'), nl,
+      write('[P] Buscar Clínicas por Plano de Saúde'), nl,
+      write('[A] Buscar Clínicas por Opção de Agendamento'), nl,
       write('[S] Buscar por Sintoma'), nl,
       write('[N] Buscar Médicos por Avaliação'), nl,
       write('[V] Voltar'), nl,
@@ -247,13 +247,25 @@ buscarOpcoes(IDPac):-
   
       ( OP = "C" -> tty_clear, menuBuscarClinica,utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac);
         OP = "M" -> tty_clear, menuBuscarMedico,utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac);
-        OP = "D" -> tty_clear, menuBuscarEspecialidade,utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac);
+        OP = "E" -> tty_clear, menuBuscarEspecialidade,utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac);
         OP = "P" -> tty_clear, menuBuscarClinicaPorPlano,utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac);
         OP = "A" -> tty_clear, menuBuscarClinicaAgendamento, utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac);
         OP = "S" -> tty_clear, menuBuscarPorSintoma, utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac);
-        %OP = "N" -> tty_clear, menuMedicoAvaliacao;
+        OP = "N" -> tty_clear, menuMedicoAvaliacao, utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac);
         OP = "V" -> tty_clear, menuPaciente(IDPac);
         writeln('Opção Inválida'), utils:mensagemEspera, buscarOpcoes(IDPac)).
+
+menuMedicoAvaliacao:-
+    tty_clear,
+    utils:tituloInformacao('Buscar Médicos por Avaliação'),
+    promptString('Nota acima de (1 a 5) > ', NotaStr),
+    atom_number(NotaStr, Nota),
+    (between(1, 5, Nota) -> 
+        paciente:buscarMedicoAvaliacao(Nota),
+    ;
+        writeln('Nota inválida. Por favor, insira uma nota entre 1 e 5.'), utils:mensagemEspera, tty_clear, menuMedicoAvaliacao
+    ).
+
 
 menuBuscarPorSintoma:-
     tty_clear,

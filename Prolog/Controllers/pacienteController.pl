@@ -1,6 +1,7 @@
 :-module(paciente, [verReceita/1, verLaudo/1, verExame/1, validaIDPaciente/1,
                     verConsultaP/1, buscarClinica/1, buscarMedico/1, buscarClinicaPorPlano/1,
-                    buscarClinicaAgendamento/1, verFila/1, buscarEspecialidade/1, buscarPorSintoma/1]).
+                    buscarClinicaAgendamento/1, verFila/1, buscarEspecialidade/1, buscarPorSintoma/1,
+                    buscarMedicoAvaliacao/1]).
 
 :- use_module('../App/show.pl').
 :- use_module('../Models/model.pl').
@@ -154,6 +155,17 @@ buscarClinicaPorPlano(Planos) :-
 buscarClinicaAgendamento(MetodoAgendamento) :-
      forall(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Horario, Contato,_),
            show:showClinica(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Horario, Contato, _))).
+
+
+compararNotaMedico(NotaMedico, Nota) :-
+    NotaMedico >= Nota.
+
+% Predicado para buscar médicos com uma nota igual ou superior à nota especificada
+buscarMedicoAvaliacao(Nota) :-
+    forall(
+        (model:medico(Clinica, Id, Nome, CRM, Especialidade, Rede, NotaMedico,_), compararNotaMedico(NotaMedico, Nota)),
+        show:showMedico(model:medico(Clinica, Id, Nome, CRM, Especialidade, Rede, NotaMedico,_))
+    ).
 
 verFila(ID, IDPac, Posicao) :-
     model:fila(ID, IdClinica, IdMedico, Fila),
