@@ -5,3 +5,5 @@ avaliacao(1, 1, 4, "asmei").
 avaliacao(1, 2, 5, "perfect").
 avaliacao(1, 1, 2, "ruim").
 avaliacao(1, 2, 5, "lindo").
+avaliacao(1, 1, 1, "1").
+
