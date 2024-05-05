@@ -343,20 +343,21 @@ menuClinica(IdClin) :-
 verDashboard(IdClin) :-
     tty_clear,
     utils:tituloInformacao('DASHBOARD DA CLÍNICA'),
-    clinica:getClinicaName(IdClin, Clinicas, NomeClinica),
+    clinica:getClinicaName(IdClin, NomeClinica),
     clinica:contarInformacoesClinica(IdClin, NumConsultas, NumMedicos, NumPacientes, RankingMedicos),
     write('Nome da Clínica: '), write(NomeClinica), nl,
     write('Quantidade de Médicos: '), write(NumMedicos), nl,
     write('Quantidade de Consultas: '), write(NumConsultas), nl,
     write('Quantidade de Pacientes: '), write(NumPacientes), nl,
-
+    write('---------------------------'), nl,
     write('RANKING MÉDICOS: '),nl,
-    write(' -POR N° DE CONSULTAS: '), write(RankingMedicos), nl,
-    write(' -POR NOTA: '),nl,
-    writeln('---------------------------'),
-    utils:mensagemEspera,
-    tty_clear,
-    menuClinica(IdClin).
+    nl,
+    write(' -POR N° DE CONSULTAS: '), nl, 
+    nl, 
+    call(clinica:showRankingMedicos(RankingMedicos)), nl,
+    write(' -POR NOTA: '), nl,
+    nl,
+    writeln('---------------------------').
 
 
 

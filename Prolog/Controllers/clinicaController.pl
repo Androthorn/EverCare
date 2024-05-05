@@ -1,4 +1,4 @@
-:- module(clinica, [verAgendamentoClin/1, verMedicos/1, verPaciente/1, visualizaPacientes/1, visualizarInformacaoClinica/1, getClinicaName/1]).
+:- module(clinica, [verAgendamentoClin/1, mapMedicoConsulta/2,verMedicos/1, verPaciente/1, visualizaPacientes/1, visualizarInformacaoClinica/1, getClinicaName/1, showRankingMedicos/1]).
 
 :- use_module('../App/show.pl').
 :- use_module('../Models/model.pl').
@@ -13,26 +13,35 @@ contarInformacoesClinica(IdClinica, NumConsultas, NumMedicos, NumPacientes,Ranki
     
     findall(IdMedico, model:medico(IdClinica, IdMedico, _, _, _, _, _, _), Medicos),
     length(Medicos, NumMedicos),
-   s
+   
     findall(IdPac, model:consulta(_, IdClinica, _, IdPac, _, _, _, _), Pacientes),
     list_to_set(Pacientes, PacientesUnicos),
-    length(PacientesUnicos, NumPacientes).
+    length(PacientesUnicos, NumPacientes),
    
-    findall(IdMedico-NumCons, (
-        member(IdMedico, Medicos),
-        findall(IdCons, model:consulta(IdCons, IdClinica, IdMedico, _, _, _, _, _), ConsultasMedico),
-        length(ConsultasMedico, NumCons),
-        format('Médico ~w: ~w consultas~n', [IdMedico, NumCons]) 
-    ), ConsultasPorMedico),
-    writeln('Consultas por médico:'), writeln(ConsultasPorMedico), 
-     
-    keysort(ConsultasPorMedico, Sorted),
-    reverse(Sorted, RankingMedicos).
+    mapMedicoConsulta(IdClinica, RankingMedicos).
 
+mapMedicoConsulta(IDClin, Map) :-
+    findall(NumCons-IdMed,
+            (model:medico(IDClin, IdMed, _, _, _, _, _, _),
+             findall(IdCons, model:consulta(IdCons, IDClin, IdMed, _, _, _, _, _), Consultas),
+             length(Consultas, NumCons)),
+            Pares),
+    keysort(Pares, Sorted), % Ordena os pares pela quantidade de consultas (NumCons)
+    reverse(Sorted, Reversed), % Inverte a lista ordenada para obter a ordem decrescente
+    maplist(swap_pair, Reversed, Map). % Troca a chave e o valor dos pares
 
-getClinicaName(IdClinica, Clinicas, NomeClinica) :-
-    nth1(IdClinica, Clinicas, Clinica),
-    getNomeClinica(Clinica, NomeClinica).
+% Predicado para trocar a ordem de um par (Chave-Valor) para (Valor-Chave)
+swap_pair(NumCons-IdMed, IdMed-NumCons).
+
+showRankingMedicos([]).
+showRankingMedicos([IdMedico-NumCons|Resto]) :-
+    getMedicoID(IdMedico, NomeMedico),
+    format('Médico: ~w - Consultas: ~w~n', [NomeMedico, NumCons]),
+    showRankingMedicos(Resto).
+
+getClinicaName(IdClinica, NomeClinica) :-
+    model:clinica(IdClinica, Nome, _, _, _, _, _, _,_),
+    NomeClinica = Nome.
 
 getNomeClinica(clinica(IdClinica, NomeClinica, _), NomeClinica).  
 
@@ -56,4 +65,6 @@ verMedicos(IdClinica) :-
     forall(model:medico(IdClinica, IdMed, Nome, CRM, Especialidade, Telefone, Endereco, _),
            show:showMedico(model:medico(IdClinica, IdMed, Nome, CRM, Especialidade, Telefone, Endereco, _))).
 
-
+getMedicoID(IdMedico, NomeMedico) :-
+    model:medico(_, IdMedico, Nome, _, _, _, _, _),
+    NomeMedico = Nome.
