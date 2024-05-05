@@ -6,4 +6,5 @@ login_medico(3, "123").
 login_medico(4, "123").
 login_medico(5, "123").
 login_medico(6, "123").
+login_medico(7, "123").
 

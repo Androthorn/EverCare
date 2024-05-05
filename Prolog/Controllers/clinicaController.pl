@@ -43,8 +43,6 @@ getClinicaName(IdClinica, NomeClinica) :-
     model:clinica(IdClinica, Nome, _, _, _, _, _, _,_),
     NomeClinica = Nome.
 
-getNomeClinica(clinica(IdClinica, NomeClinica, _), NomeClinica).  
-
 verAgendamentoClin(IdClinica) :-
     forall(model:consulta(IdCons, IdClinica, IdMedico, IDPac, DataConsulta, HoraConsulta, Queixas, C),
            show:showConsulta(model:consulta(IdCons, IdClinica, IdMedico, IDPac, DataConsulta, HoraConsulta, Queixas, C))).
