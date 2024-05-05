@@ -147,29 +147,6 @@ verFilaPac(IdPac) :-
             writeln('Você não está nessa fila')
         ).
 
-% atualizarFila(IdClin) :-
-%     tty_clear,
-%     utils:tituloInformacao('ATUALIZAR FILA'),
-%     prompt('ID Fila > ', IdFila),
-%     (utils:validaIDFila(IdFila) ->
-%         (utils:validaFilaClinica(IdFila, IdClin) ->
-%             model:fila(IdFila, IdClin, IdMedico, Fila),
-%             (Fila \= [] ->
-%                 retract(model:fila(IdFila, IdClin, IdMedico, [Paciente|Resto])),
-%                 assertz(model:fila(IdFila, IdClin, IdMedico, Resto)),
-%                 persistence:saveFila,
-%                 writeln('Paciente atendido com sucesso!')
-%             ;
-%                 writeln('Fila vazia')
-%             )
-%         ;
-%             writeln('Fila não é dessa clínica')
-%         )
-%     ;
-%         writeln('Fila não encontrada')
-%     ).
-
-
 menuAvaliacao(IdPac) :-
   tty_clear,
   utils:tituloInformacao('AVALIAR CONSULTA'),
