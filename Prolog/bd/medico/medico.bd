@@ -6,4 +6,5 @@ medico(1, 3, "ana", "123", "creu", "123", "rua", "123").
 medico(1, 4, "oi", "123", "unhas", "21", "12", "123").
 medico(1, 5, "jota", "p", "p", "p", "p", "123").
 medico(2, 6, "lilo", "p", "p", "p", "p", "123").
+medico(2, 7, "Joao Carlos", "33", "Neurologista", "22", "rua", "123").
 

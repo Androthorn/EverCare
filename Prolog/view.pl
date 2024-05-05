@@ -233,22 +233,38 @@ enviarMensagem(IdPac):-
 
 buscarOpcoes(IDPac):-
       tty_clear,
-      utils:tituloInformacao('Escolha uma opção de busca:'),
+      utils:tituloInformacao('Menu Buscar'),
       write('[C] Buscar por Clínica'), nl,
       write('[M] Buscar por Médico'), nl,
+      write('[D] Buscar por Especialidade'), nl,
       write('[P] Buscar Clínicas que aceitam meu plano de saúde'), nl,
       write('[A] Buscar Clínicas por opção de agendamento'), nl,
+      write('[S] Buscar por Sintoma'), nl,
       write('[N] Buscar Médicos por Avaliação'), nl,
       write('[V] Voltar'), nl,
       promptOption('Opção > ', OP),
   
-      ( OP = "C" -> tty_clear, menuBuscarClinica,utils: mensagemEspera, tty_clear, buscarOpcoes(IDPac);
-        OP = "M" -> tty_clear, menuBuscarMedico,utils: mensagemEspera, tty_clear, buscarOpcoes(IDPac);
-        OP = "P" -> tty_clear, menuBuscarClinicaPorPlano,utils: mensagemEspera, tty_clear, buscarOpcoes(IDPac);
-        OP = "A" -> tty_clear, menuBuscarClinicaAgendamento, utils: mensagemEspera, tty_clear, buscarOpcoes(IDPac);
+      ( OP = "C" -> tty_clear, menuBuscarClinica,utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac);
+        OP = "M" -> tty_clear, menuBuscarMedico,utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac);
+        OP = "D" -> tty_clear, menuBuscarEspecialidade,utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac);
+        OP = "P" -> tty_clear, menuBuscarClinicaPorPlano,utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac);
+        OP = "A" -> tty_clear, menuBuscarClinicaAgendamento, utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac);
+        OP = "S" -> tty_clear, menuBuscarPorSintoma, utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac);
         %OP = "N" -> tty_clear, menuMedicoAvaliacao;
         OP = "V" -> tty_clear, menuPaciente(IDPac);
-        writeln('Opção Inválida')).
+        writeln('Opção Inválida'), utils:mensagemEspera, buscarOpcoes(IDPac)).
+
+menuBuscarPorSintoma:-
+    tty_clear,
+    utils:tituloInformacao('Buscar por Sintoma'),
+    promptString('Sintoma > ', Sintoma),
+    paciente:buscarPorSintoma(Sintoma).
+
+menuBuscarEspecialidade:-
+    tty_clear,
+    utils:tituloInformacao('Buscar por Especialidade'),
+    promptString('Especialidade > ', Especialidade),
+    paciente:buscarEspecialidade(Especialidade).
 
 menuBuscarClinica:-
     tty_clear,
