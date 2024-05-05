@@ -63,7 +63,7 @@ verificaIdClinica :- exists_file('bd/clinica/id_clinica.bd') -> leIdClinica ; in
 
 /*
 Inicializa a tabela dinamica de médicos.
-Campos esperados: ID Clínica, ID, Nome, CPF, CRM, Especialidade, Telefone, Senha.
+Campos esperados: ID Clínica, ID, Nome, CPF, CRM, Especialidade, Telefone, Nota, Senha.
 */
 iniciaMedico :-
     dynamic(medico/8).

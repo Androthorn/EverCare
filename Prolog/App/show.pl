@@ -60,13 +60,15 @@ showLaudo(model:laudo(IdMedico, IdPaciente, Texto)) :-
     format('Id do Paciente: ~w~n', [IdPaciente]),
     format('Resultado: ~w', [Texto]).
 
-showMedico(model:medico(Clinica, Id, Nome, CRM, Especialidade, _, _,_)) :-
+showMedico(model:medico(Clinica, Id, Nome, CRM, Especialidade, RedeSocial,Nota,_)) :-
     format('----------------------------~n', []),
     format('Médico ~w~n', [Id]),
     format('Nome: ~w~n', [Nome]),
     format('CRM: ~w~n', [CRM]),
     format('Clínica: ~w~n', [Clinica]),
     format('Especialidade: ~w~n', [Especialidade]),
+    format('Rede Social: ~w~n', [RedeSocial]),
+    format('Nota: ~w~n', [Nota]),
     format('-------------------~n', []).
 
 showPaciente(model:paciente(Id, Nome, Cpf, DataNascimento, Sexo, Endereco, Plano, TipoSanguineo, Cardiopata, Hipertenso, Diabetico, _)) :-

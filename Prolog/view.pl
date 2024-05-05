@@ -158,6 +158,7 @@ menuAvaliacao(IdPac) :-
         promptString('Comentário > ', Comentario),
         assertz(model:avaliacao(IdPac, IdMedico, Nota, Comentario)),
         persistence:saveAvaliacao,
+        medico:atualizarNota(IdMedico),
         writeln('Mensagem enviada e médico avaliado com sucesso!')
       ;
         writeln('Nota inválida. Por favor, insira uma nota entre 1 e 5.')
@@ -512,12 +513,11 @@ cadastraMedico(IdClin) :-
     promptString('Nome > ', Nome),
     promptString('CRM > ', CRM),
     promptString('Especialidade > ', Especialidade),
-    promptString('Telefone > ', Telefone),
-    promptString('Endereço > ', Endereco),
+    promptString('Rede Social > ', RedeSocial),
     promptString('Senha > ', Senha),
 
     model:nextIdMedico(N),
-    assertz(model:medico(IdClin, N, Nome, CRM, Especialidade, Telefone, Endereco, Senha)),
+    assertz(model:medico(IdClin, N, Nome, CRM, Especialidade, RedeSocial,'0.0', Senha)),
     assertz(model:login_medico(N, Senha)),
    
     persistence:saveIdMedico,

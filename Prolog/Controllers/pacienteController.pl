@@ -137,14 +137,14 @@ buscarPorSintoma(SintomaU) :-
 
 buscarEspecialidade(Especialidade) :-
     forall(
-        model:medico(Clinica, Id, Nome, CRM, Especialidade, _, _,_),
-        show:showMedico(model:medico(Clinica, Id, Nome, CRM, Especialidade, _, _,_))
+        model:medico(Clinica, Id, Nome, CRM, Especialidade, Rede, Nota,_),
+        show:showMedico(model:medico(Clinica, Id, Nome, CRM, Especialidade, Rede, Nota,_))
     ).
 
 buscarMedico(Nome) :-
     forall(
-        model:medico(Clinica, Id, Nome, CRM, Especialidade, _, _,_),
-        show:showMedico(model:medico(Clinica, Id, Nome, CRM, Especialidade, _, _,_))
+        model:medico(Clinica, Id, Nome, CRM, Especialidade, Rede, Nota,_),
+        show:showMedico(model:medico(Clinica, Id, Nome, CRM, Especialidade, Rede, Nota,_))
     ).
 
 buscarClinicaPorPlano(Planos) :-

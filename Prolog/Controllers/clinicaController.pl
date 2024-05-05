@@ -40,6 +40,10 @@ showRankingMedicos([IdMedico-NumCons|Resto]) :-
     format('Médico: ~w - Consultas: ~w~n', [NomeMedico, NumCons]),
     showRankingMedicos(Resto).
 
+getMedicoID(IdMedico, NomeMedico) :-
+    model:medico(_, IdMedico, Nome, _, _, _, _, _),
+    NomeMedico = Nome.
+
 getClinicaName(IdClinica, NomeClinica) :-
     model:clinica(IdClinica, Nome, _, _, _, _, _, _,_),
     NomeClinica = Nome.
@@ -61,5 +65,5 @@ verPaciente(IdClinica) :-
            show:showPaciente(model:paciente(IDPac, Nome, CPF, DataNascimento, Sexo, Endereco, TipoSanguineo, Plano, Cardiopata, Hipertenso, Diabetico, _))).
 
 verMedicos(IdClinica) :-
-    forall(model:medico(IdClinica, IdMed, Nome, CRM, Especialidade, Telefone, Endereco, _),
-           show:showMedico(model:medico(IdClinica, IdMed, Nome, CRM, Especialidade, Telefone, Endereco, _))).
+    forall(model:medico(IdClinica, IdMed, Nome, CRM, Especialidade, Rede, Nota, _),
+           show:showMedico(model:medico(IdClinica, IdMed, Nome, CRM, Especialidade, Rede, Nota, _))).
