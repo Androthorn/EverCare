@@ -1,6 +1,6 @@
 :-module(paciente, [verReceita/1, verLaudo/1, verExame/1, validaIDPaciente/1,
                     verConsultaP/1, buscarClinica/1, buscarMedico/1, buscarClinicaPorPlano/1,
-                    buscarClinicaAgendamento/1]).
+                    buscarClinicaAgendamento/1, verFila/1]).
 
 :- use_module('../App/show.pl').
 :- use_module('../Models/model.pl').
@@ -53,3 +53,8 @@ buscarClinicaPorPlano(Planos) :-
 buscarClinicaAgendamento(MetodoAgendamento) :-
      forall(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Horario, Contato,_),
            show:showClinica(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Horario, Contato, _))).
+
+verFila(ID, IDPac, Posicao) :-
+    model:fila(ID, IdClinica, IdMedico, Fila),
+    utils:getPacienteID(IDPac, Nome),
+    nth1(Posicao, Fila, Nome).

@@ -1,4 +1,4 @@
-:- module(clinica, [verAgendamentoClin/1, verMedicos/1, verPaciente/1, visualizaPacientes/1]).
+:- module(clinica, [verAgendamentoClin/1, verMedicos/1, verPaciente/1, visualizaPacientes/1, verFila/1]).
 
 :- use_module('../App/show.pl').
 :- use_module('../Models/model.pl').
@@ -22,3 +22,7 @@ verPaciente(IdClinica) :-
 verMedicos(IdClinica) :-
     forall(model:medico(IdClinica, IdMed, Nome, CRM, Especialidade, Telefone, Endereco, _), 
            show:showMedico(model:medico(IdClinica, IdMed, Nome, CRM, Especialidade, Telefone, Endereco, _))).
+
+verFila(IdClinica) :-
+    forall(model:fila(ID, IdClinica, IdMedico, Fila), 
+           show:showFila(model:fila(ID, IdClinica, IdMedico, Fila))).

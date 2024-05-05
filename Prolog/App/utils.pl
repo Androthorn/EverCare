@@ -4,7 +4,7 @@
                   horaValida/2, dataValida/1, horariosDisponiveis/3, tituloI/0, tituloInformacao/1,
                   imprimirListaComEspacos/1, validaIDMedico/1, validaIDChat/1, validaIDConsulta/1, validaIDPaciente/1,
                   adicionarPrefixoString/2, validaPacienteMedico/2, validaChatPaciente/2, validaChatMedico/2,
-                  validaConsultaPaciente/2, validaIDClinica/1, validaMedicoClinica/1]).
+                  validaConsultaPaciente/2, validaIDClinica/1, validaMedicoClinica/1, validaIdFila/1]).
 
 :- use_module('../Models/model.pl').
 
@@ -48,6 +48,11 @@ validaIDConsulta(_, _) :- false.
 validaIDClinica(ID) :- model:clinica(ID, _, _, _, _, _, _, _, _), !.
 validaIDClinica(_, _) :- false.
 
+validaIDFila(ID) :- model:fila(ID, _, _, _), !.
+validaIDFila(_, _) :- false.
+
+validaIdFila(ID) :- model:fila(ID, _, _, _), !.
+
 validaPacienteMedico(IdPac, IDM) :- model:consulta(_, _, IDM, IdPac, _, _, _, _), !.
 validaPacienteMedico(_, _, _) :- false.
 
@@ -63,6 +68,17 @@ validaConsultaPaciente(_, _, _) :- false.
 validaMedicoClinica(IDC, IDM) :- model:medico(IDC, IDM, _, _, _, _, _, _), !.
 validaMedicoClinica(_, _, _) :- false.
 
+validaFilaClinica(ID, IDC) :- model:fila(ID, IDC, _, _), !.
+validaFilaClinica(_, _, _) :- false.
+
+validaMedicoFila(IDM) :- model:fila(_, _, IDM, _), !.
+validaMedicoFila(_, _) :- false.
+
+validaFilaPaciente(IDPac, IDFila) :-
+    getPacienteID(IDPac, Nome),
+    model:fila(IDFila, _, _, Fila),
+    member(Nome, Fila), !.
+
 mensagemEspera :- promptString('\n\nPressione qualquer tecla para continuar', _), tty_clear.
 
 autenticaLoginPaciente(ID, 1) :- model:paciente(ID, _, _, _, _, _, _, _, _, _, _, _), !.
@@ -76,6 +92,8 @@ autenticaLoginMedico(_, 0).
 
 autenticaMedicoClinica(IDC, IDM, 1) :- model:medico(IDC, IDM, _, _, _, _, _, _), !.
 autenticaMedicoClinica(_, _, 0).
+
+getPacienteID(IDPac, N) :- model:paciente(IDPac, Nome, _, _, _, _, _, _, _, _, _, _), N = Nome.
 
 dataValida(Date) :-
     atomic_list_concat(DateList, '/', Date),

@@ -90,12 +90,87 @@ menuPaciente(IdPac) :-
       OP = "R" -> tty_clear, verPosConsulta(IdPac), utils:mensagemEspera, menuPaciente(IdPac);
       OP = "A" -> tty_clear, menuAvaliacao(IdPac), utils:mensagemEspera, tty_clear, menuPaciente(IdPac);
       OP = "C" -> tty_clear, menuChatPac(IdPac), tty_clear, menuPaciente(IdPac);
-      OP = "F" -> tty_clear, menuPaciente(IdPac), tty_clear, menuPaciente(IdPac);
+      OP = "F" -> tty_clear, menuFilaPac(IdPac),!;
       OP = "S" -> tty_clear, main;
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuPaciente(IdPac)).
 
+menuFilaPac(IdPac) :-
+    tty_clear,
+    utils:tituloInformacao('FILA VIRTUAL'),
+    writeln('[E] - Entrar em Fila'),
+    writeln('[V] - Ver Fila'),
+    writeln('[S] - Sair'),
+    promptOption('Opção > ', OP),
+    ( OP = "E" -> tty_clear, entrarFila(IdPac), utils:mensagemEspera, tty_clear, menuPaciente(IdPac);
+      OP = "V" -> tty_clear, verFilaPac(IdPac), utils:mensagemEspera, tty_clear, menuPaciente(IdPac);
+      OP = "S" -> tty_clear, menuPaciente(IdPac);
+      writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuFilaPac(IdPac)).
 
-  menuAvaliacao(IdPac) :-
+entrarFila(IdPac) :-
+    tty_clear,
+    utils:tituloInformacao('ENTRAR EM FILA'),
+    prompt('ID Médico > ', IdMedico),
+    (utils:validaIDMedico(IdMedico) ->
+        (utils:validaPacienteMedico(IdPac, IdMedico) ->
+            (utils:validaMedicoFila(IdMedico) ->
+                retract(model:fila(IdFila, IdClinica, IdMedico, Fila)),
+                utils:getPacienteID(IdPac, Nome),
+                append(Fila, [Nome], FilaAtualizada),
+                assertz(model:fila(IdFila, IdClinica, IdMedico, FilaAtualizada)),
+                persistence:saveFila,
+                persistence:saveIdFila,
+                (IdFila > 0 -> 
+                    writeln('Entrou na fila com sucesso!'),
+                    format('O id da Fila é: ~d~n', [IdFila]),
+                    length(FilaAtualizada, Tamanho),
+                    format('Sua posição na fila é: ~d~n', [Tamanho]))
+            ;
+                writeln('Médico não possui fila')
+            )
+        ;
+          writeln('Você não possui consultas com esse médico')
+        )
+    ;
+      writeln('Médico não encontrado')
+    ).
+
+verFilaPac(IdPac) :- 
+    tty_clear,
+    utils:tituloInformacao('FILA VIRTUAL - PACIENTE'),
+    prompt('ID Fila > ', IDFila),
+        (utils:validaFilaPaciente(IdPac, IDFila) ->
+            model:fila(IDFila, _, _, Fila),
+            paciente:verFila(IDFila, IdPac, Posicao),
+            (Fila \= [] ->
+                format('Sua posição na fila é: ~d~n', [Posicao]))
+        ;
+            writeln('Você não está nessa fila')
+        ).
+
+% atualizarFila(IdClin) :-
+%     tty_clear,
+%     utils:tituloInformacao('ATUALIZAR FILA'),
+%     prompt('ID Fila > ', IdFila),
+%     (utils:validaIDFila(IdFila) ->
+%         (utils:validaFilaClinica(IdFila, IdClin) ->
+%             model:fila(IdFila, IdClin, IdMedico, Fila),
+%             (Fila \= [] ->
+%                 retract(model:fila(IdFila, IdClin, IdMedico, [Paciente|Resto])),
+%                 assertz(model:fila(IdFila, IdClin, IdMedico, Resto)),
+%                 persistence:saveFila,
+%                 writeln('Paciente atendido com sucesso!')
+%             ;
+%                 writeln('Fila vazia')
+%             )
+%         ;
+%             writeln('Fila não é dessa clínica')
+%         )
+%     ;
+%         writeln('Fila não encontrada')
+%     ).
+
+
+menuAvaliacao(IdPac) :-
   tty_clear,
   utils:tituloInformacao('AVALIAR CONSULTA'),
   prompt('ID Médico > ', IdMedico),
@@ -334,11 +409,67 @@ menuClinica(IdClin) :-
     promptOption('Opção > ', OP),
 
     ( OP = "C" -> tty_clear, cadastraMedico(IdClin), tty_clear, menuClinica(IdClin);
-      OP = "F" -> tty_clear, menuClinica(IdClin), tty_clear, menuClinica(IdClin);
+      OP = "F" -> tty_clear, filaVirtual(IdClin), !;
       OP = "V" -> tty_clear, visualizarInformacaoClinica(IdClin), utils:mensagemEspera, tty_clear, menuClinica(IdClin);
       OP = "D" -> tty_clear, menuClinica(IdClin), tty_clear, menuClinica(IdClin);
       OP = "S" -> tty_clear, main;
       writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuClinica(IdClin)).
+
+filaVirtual(IdClin) :-
+    tty_clear,
+    utils:tituloInformacao('FILA VIRTUAL - CLÍNICA'),
+    writeln('[C] - Criar Fila'),
+    writeln('[V] - Ver Fila'),
+    writeln('[A] - Atualizar Fila'),
+    writeln('[S] - Sair'),
+    promptOption('Opção > ', OP),
+    ( OP = "C" -> tty_clear, criarFila(IdClin), utils:mensagemEspera, tty_clear, menuClinica(IdClin);
+      OP = "V" -> tty_clear, verFila(IdClin), utils:mensagemEspera, tty_clear, menuClinica(IdClin);
+      OP = "A" -> tty_clear, atualizarFila(IdClin), utils:mensagemEspera, tty_clear, menuClinica(IdClin);
+      OP = "S" -> tty_clear, menuClinica(IdClin), !;
+      writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, filaVirtual(IdClin)).
+
+criarFila(IdClin) :-
+    tty_clear,
+    utils:tituloInformacao('CRIAR FILA'),
+    prompt('ID Médico > ', IdMedico),
+    (utils:validaIDMedico(IdMedico) ->
+        (utils:validaMedicoClinica(IdClin, IdMedico) ->
+            model:nextIdFila(IdFila),
+            assertz(model:fila(IdFila, IdClin, IdMedico, [])),
+            persistence:saveFila,
+            persistence:saveIdFila,
+            (IdFila > 0 -> format('Fila criada com sucesso! O id da Fila é: ~d~n', [IdFila]))
+        ;
+          writeln('Médico não é dessa clínica')
+        )
+    ;
+      writeln('Médico não encontrado')
+    ).
+
+verFila(IdClin) :- clinica:verFila(IdClin).
+
+atualizarFila(IdClin) :-
+    tty_clear,
+    utils:tituloInformacao('ATUALIZAR FILA'),
+    prompt('ID Fila > ', IdFila),
+    (utils:validaIDFila(IdFila) ->
+        (utils:validaFilaClinica(IdFila, IdClin) ->
+            model:fila(IdFila, IdClin, IdMedico, Fila),
+            (Fila \= [] ->
+                retract(model:fila(IdFila, IdClin, IdMedico, [Paciente|Resto])),
+                assertz(model:fila(IdFila, IdClin, IdMedico, Resto)),
+                persistence:saveFila,
+                writeln('Paciente atendido com sucesso!')
+            ;
+                writeln('Fila vazia')
+            )
+        ;
+            writeln('Fila não é dessa clínica')
+        )
+    ;
+        writeln('Fila não encontrada')
+    ).
 
 visualizarInformacaoClinica(IdClin) :-
     tty_clear,

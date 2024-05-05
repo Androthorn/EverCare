@@ -80,3 +80,13 @@ saveIdAvaliacao :-
     tell('bd/avaliacao/id_avaliacao.bd'),
     listing(model:id_avaliacao),
     told.
+
+saveFila :-
+    tell('bd/fila/fila.bd'),
+    listing(model:fila),
+    told.
+
+saveIdFila :-
+    tell('bd/fila/id_fila.bd'),
+    listing(model:id_fila),
+    told.
