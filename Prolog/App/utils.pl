@@ -74,7 +74,7 @@ validaFilaClinica(_, _, _) :- false.
 validaMedicoFila(IDM) :- model:fila(_, _, IDM, _), !.
 validaMedicoFila(_, _) :- false.
 
-validaClinicaAgendado(IDC) :- model:clinica(IDC, _, _, _, _, "A", _, _, _), !.
+validaClinicaAgendado(IDC) :- model:clinica(IDC, _, _, _, _, "A", _, _), !.
 validaClinicaAgendado(_, _) :- false.
 
 validaFilaPaciente(IDPac, IDFila) :-
