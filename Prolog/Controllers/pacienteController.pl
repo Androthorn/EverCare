@@ -154,6 +154,11 @@ buscarClinicaAgendamento(MetodoAgendamento) :-
      forall(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Horario, Contato,_),
            show:showClinica(model:clinica(ID, NomeClinica, CNPJ, Endereco, Planos, MetodoAgendamento, Horario, Contato, _))).
 
+buscarMedicosDaClinica(IDClinica) :-
+    forall(
+        model:medico(IDClinica, Id, Nome, CRM, Especialidade, Rede, Nota,_),
+        show:showMedico(model:medico(IDClinica, Id, Nome, CRM, Especialidade, Rede, Nota,_))
+    ).
 
 compararNotaMedico(NotaMedico, Nota) :-
     NotaMedico >= Nota.
