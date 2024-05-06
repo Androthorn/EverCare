@@ -405,12 +405,11 @@ cadastraClinica :-
     promptString('Endereço > ', Endereco),
     promptString('Plano de Saúde > ', Planos),
     promptString('Método de Agendamento (A)gendado ou (O)rdem de Chegada > ', MetodoAgendamento),
-    promptString('Horário de Funcionamento > ', HorarioFuncionamento),
     promptString('Telefone > ', Telefone),
     promptString('Senha > ', Senha),
 
     model:nextIdClinica(N),
-    assertz(model:clinica(N, Nome, CNPJ, Endereco, Planos, MetodoAgendamento, HorarioFuncionamento, Telefone, Senha)),
+    assertz(model:clinica(N, Nome, CNPJ, Endereco, Planos, MetodoAgendamento, Telefone, Senha)),
     assertz(model:login_clinica(N, Senha)),
    
     persistence:saveIdClinica,
