@@ -232,26 +232,48 @@ enviarMensagem(IdPac):-
       writeln('Chat não encontrado'), sleep(1)
     ).
 
-buscarOpcoes(IDPac):-
+menuBuscar(IDPac) :-
       tty_clear,
-      utils:tituloInformacao('Menu Buscar'),
-      write('[C] Buscar por Clínica'), nl,
-      write('[M] Buscar por Médico'), nl,
-      write('[E] Buscar por Especialidade'), nl,
+      utils:tituloInformacao('BUSCAR'),
+      write('[M] Buscar Médicos'), nl,
+      write('[C] Buscar Clínicas'), nl,
+      promptOption('Opção > ', OP),
+
+      ( OP = "M" -> tty_clear, menuDeBuscaMedicos,utils:mensagemEspera, tty_clear, menuPaciente(IDPac);
+        OP = "C" -> tty_clear, menuDeBuscaClinicas,utils:mensagemEspera, tty_clear, menuPaciente(IDPac);
+        writeln('Opção Inválida'), utils:mensagemEspera, menuBuscar(IDPac)).
+
+menuDeBuscaMedicos(IDPac) :-
+      tty_clear,
+      utils:tituloInformacao('BUSCAR MÉDICOS'),
+      write('[M] - Nome do Médico'), nl,
+      write('[C] - Clínica'), nl, 
+      write('[E] - Especialidade'), nl,
+      write('[A] - Avaliação acima de (0-10)'), nl,
+      write('[S] - Sintoma'), nl,
+      write('[V] - Voltar'), nl,
+      promptOption('Opção > ', OP),
+
+      ( OP = "M" -> tty_clear, menuBuscarMedico,utils:mensagemEspera, tty_clear, menuDeBuscaMedicos(IDPac);
+        OP = "C" -> tty_clear, menuBuscarMedicoClinica,utils:mensagemEspera, tty_clear, menuDeBuscaMedicos(IDPac);
+        OP = "E" -> tty_clear, menuBuscarEspecialidade,utils:mensagemEspera, tty_clear, menuDeBuscaMedicos(IDPac);
+        OP = "A" -> tty_clear, menuBuscarPorSintoma,utils:mensagemEspera, tty_clear, menuDeBuscaMedicos(IDPac);
+        OP = "S" -> tty_clear, menuBuscarPorSintoma,utils:mensagemEspera, tty_clear, menuDeBuscaMedicos(IDPac);
+        OP = "V" -> tty_clear, menuPaciente(IDPac);
+        writeln('Opção Inválida'), utils:mensagemEspera, menuDeBuscaMedicos(IDPac)).
+
+menuDeBuscaClinicas(IDPac):-
+      tty_clear,
+      utils:tituloInformacao('BUSCAR CLÍNICAS'),
+      write('[C] Nome da Clínica'), nl,
       write('[P] Buscar Clínicas por Plano de Saúde'), nl,
       write('[A] Buscar Clínicas por Opção de Agendamento'), nl,
-      write('[S] Buscar por Sintoma'), nl,
-      write('[N] Buscar Médicos por Avaliação'), nl,
       write('[V] Voltar'), nl,
       promptOption('Opção > ', OP),
   
-      ( OP = "C" -> tty_clear, menuBuscarClinica,utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac);
-        OP = "M" -> tty_clear, menuBuscarMedico,utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac);
-        OP = "E" -> tty_clear, menuBuscarEspecialidade,utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac);
-        OP = "P" -> tty_clear, menuBuscarClinicaPorPlano,utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac);
-        OP = "A" -> tty_clear, menuBuscarClinicaAgendamento, utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac);
-        OP = "S" -> tty_clear, menuBuscarPorSintoma, utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac);
-        OP = "N" -> tty_clear, menuMedicoAvaliacao, utils:mensagemEspera, tty_clear, buscarOpcoes(IDPac);
+      ( OP = "C" -> tty_clear, menuBuscarClinica,utils:mensagemEspera, tty_clear, menuDeBuscaClinicas(IDPac);
+        OP = "P" -> tty_clear, menuBuscarClinicaPorPlano,utils:mensagemEspera, tty_clear, menuDeBuscaClinicas(IDPac);
+        OP = "A" -> tty_clear, menuBuscarClinicaAgendamento, utils:mensagemEspera, tty_clear, menuDeBuscaClinicas(IDPac);
         OP = "V" -> tty_clear, menuPaciente(IDPac);
         writeln('Opção Inválida'), utils:mensagemEspera, buscarOpcoes(IDPac)).
 
@@ -266,6 +288,11 @@ menuMedicoAvaliacao:-
         writeln('Nota inválida. Por favor, insira uma nota entre 1 e 5.'), utils:mensagemEspera, tty_clear, menuMedicoAvaliacao
     ).
 
+menuBuscarMedicoClinica :-
+    tty_clear,
+    utils:tituloInformacao('Buscar Médico por Clínica'),
+    promptString('ID da Clínica > ', IDClinica),
+    paciente:buscarMedicoClinica(IDClinica).
 
 menuBuscarPorSintoma:-
     tty_clear,
