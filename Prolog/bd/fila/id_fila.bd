@@ -1,4 +1,4 @@
 :- dynamic id_fila/1.
 
-id_fila(1).
+id_fila(0).
 

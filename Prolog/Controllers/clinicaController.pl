@@ -1,5 +1,5 @@
 :- module(clinica, [verAgendamentoClin/1, mapMedicoConsulta/2,verMedicos/1, verPaciente/1, visualizaPacientes/1, 
-                    verFila/1, visualizarInformacaoClinica/1, getClinicaName/1, showRankingMedicos/1]).
+                    verFila/1, visualizarInformacaoClinica/1, getClinicaName/1, showRankingMedicos/1, showMedicosNota/1]).
 
 :- use_module('../App/show.pl').
 :- use_module('../Models/model.pl').
@@ -7,7 +7,7 @@
 
 
 
-contarInformacoesClinica(IdClinica, NumConsultas, NumMedicos, NumPacientes,RankingMedicos) :-
+contarInformacoesClinica(IdClinica, NumConsultas, NumMedicos, NumPacientes,RankingMedicos, PorNota) :-
     
     findall(IdCons, model:consulta(IdCons, IdClinica, _, _, _, _, _, _), Consultas),
     length(Consultas, NumConsultas),
@@ -19,7 +19,25 @@ contarInformacoesClinica(IdClinica, NumConsultas, NumMedicos, NumPacientes,Ranki
     list_to_set(Pacientes, PacientesUnicos),
     length(PacientesUnicos, NumPacientes),
    
-    mapMedicoConsulta(IdClinica, RankingMedicos).
+    mapMedicoConsulta(IdClinica, RankingMedicos),
+    mapMedicosNota(IdClinica, PorNota).
+
+mapMedicosNota(IdClinica, Map) :-
+    findall(Nota-IdMed,
+            (model:medico(IdClinica, IdMed, _, _, _, _, Nota, _)),
+            Pares),
+    keysort(Pares, Sorted), 
+    reverse(Sorted, Reversed), 
+    maplist(swap_paire, Reversed, Map). 
+
+swap_paire(Nota-IdMed, IdMed-Nota).
+
+showMedicosNota([]).
+showMedicosNota([IdMedico-Nota|Resto]) :-
+    getMedicoID(IdMedico, NomeMedico),
+    format('Médico: ~w - Nota: ~w~n', [NomeMedico, Nota]),
+    showMedicosNota(Resto).
+
 
 mapMedicoConsulta(IDClin, Map) :-
     findall(NumCons-IdMed,

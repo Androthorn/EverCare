@@ -1,5 +1,1 @@
 :- dynamic avaliacao/4.
-
-avaliacao(1, 1, 5, "a").
-avaliacao(1, 1, 4, "a").
-

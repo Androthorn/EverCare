@@ -1,4 +1,4 @@
 :- dynamic medico/8.
 
-medico(1, 1, "Marcos", "00", "Psiquiatra", "marquinho", 4.5, _).
+medico(1, 1, "Jonata", "9898", "Dermatologista", "jonatin", "0.0", "123").
 

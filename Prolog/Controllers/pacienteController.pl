@@ -1,6 +1,6 @@
 :-module(paciente, [verReceita/1, verLaudo/1, verExame/1, validaIDPaciente/1,
                     verConsultaP/1, buscarClinica/1, buscarMedico/1, buscarClinicaPorPlano/1,
-                    buscarClinicaAgendamento/1, verFila/1, buscarEspecialidade/1, buscarPorSintoma/1,
+                    buscarClinicaAgendamento/1, verFila/3, buscarEspecialidade/1, buscarPorSintoma/1,
                     buscarMedicoAvaliacao/1]).
 
 :- use_module('../App/show.pl').
@@ -168,6 +168,6 @@ buscarMedicoAvaliacao(Nota) :-
     ).
 
 verFila(ID, IDPac, Posicao) :-
-    model:fila(ID, IdClinica, IdMedico, Fila),
+    model:fila(ID, _, _, Fila),
     utils:getPacienteID(IDPac, Nome),
     nth1(Posicao, Fila, Nome).

@@ -1,6 +1,4 @@
 :- dynamic login_paciente/2.
 
-login_paciente(1, "1").
-login_paciente(2, "123").
-login_paciente(3, "123").
+login_paciente(1, "123").
 

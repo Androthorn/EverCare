@@ -1,4 +1,4 @@
 :- dynamic id_chat/1.
 
-id_chat(5).
+id_chat(0).
 

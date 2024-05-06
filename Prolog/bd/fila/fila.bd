@@ -1,4 +1,2 @@
 :- dynamic fila/4.
 
-fila(1, 1, 1, ["ana"]).
-

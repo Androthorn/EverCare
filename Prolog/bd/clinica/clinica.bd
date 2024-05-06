@@ -1,5 +1,4 @@
 :- dynamic clinica/9.
 
-clinica(1, "clin", "00", "rua", "Unimed", "A", "88", "88", "123").
-clinica(2, "Clinic", "00", "rua", "Bradesco", "A", "99", "99", "123").
+clinica(1, "Clinica", "11", "Rua", "Unimed, Bradesco", "A", "9-10", "22", "123").
 

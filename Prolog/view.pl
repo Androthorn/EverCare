@@ -481,7 +481,7 @@ verDashboard(IdClin) :-
     tty_clear,
     utils:tituloInformacao('DASHBOARD DA CLÍNICA'),
     clinica:getClinicaName(IdClin, NomeClinica),
-    clinica:contarInformacoesClinica(IdClin, NumConsultas, NumMedicos, NumPacientes, RankingMedicos),
+    clinica:contarInformacoesClinica(IdClin, NumConsultas, NumMedicos, NumPacientes, RankingMedicos, PorNota),
     write('Nome da Clínica: '), write(NomeClinica), nl,
     write('Quantidade de Médicos: '), write(NumMedicos), nl,
     write('Quantidade de Consultas: '), write(NumConsultas), nl,
@@ -494,6 +494,7 @@ verDashboard(IdClin) :-
     call(clinica:showRankingMedicos(RankingMedicos)), nl,
     write(' -POR NOTA: '), nl,
     nl,
+    call(clinica:showMedicosNota(PorNota)), nl,
     writeln('---------------------------').
 
 
