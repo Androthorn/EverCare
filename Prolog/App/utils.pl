@@ -4,7 +4,7 @@
                   horaValida/2, dataValida/1, horariosDisponiveis/3, tituloI/0, tituloInformacao/1,
                   imprimirListaComEspacos/1, validaIDMedico/1, validaIDChat/1, validaIDConsulta/1, validaIDPaciente/1,
                   adicionarPrefixoString/2, validaPacienteMedico/2, validaChatPaciente/2, validaChatMedico/2,
-                  validaConsultaPaciente/2, validaIDClinica/1, validaMedicoClinica/1, validaIdFila/1]).
+                  validaConsultaPaciente/2, validaIDClinica/1, validaMedicoClinica/2, validaIdFila/1]).
 
 :- use_module('../Models/model.pl').
 

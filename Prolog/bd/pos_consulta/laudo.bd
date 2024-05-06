@@ -1,4 +1,1 @@
 :- dynamic laudo/3.
-
-laudo(1, 2, "ala").
-

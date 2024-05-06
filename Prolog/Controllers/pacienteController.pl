@@ -19,17 +19,15 @@ avaliaMedico( IdPac, IdMed, Nota, Comentario) :-
 */
 verReceita(IdPaciente) :- forall(model:receita(IdMedico, IdPaciente, Texto), show:showReceita(model:receita(IdMedico, IdPaciente, Texto))).
 /*
-    Consulta os medicamentos de um paciente.
+    Consulta os laudos de um paciente.
     @param IDPac ID do paciente.
 */
-verLaudo(IDPac) :- forall(model:laudo(IdMed, IDPac, texto), show:showLaudo(model:laudo(IdMed, IDPac, texto))).
-
+verLaudo(IDPaciente) :- forall(model:laudo(IdMedico, IDPaciente, Texto), show:showLaudo(model:laudo(IdMedico, IDPaciente, Texto))).
 /*
     Consulta os exames de um paciente.
     @param IDPac ID do paciente.
 */
-verExame(IDPac) :- forall(model:exame(IdMed, IDPac, tipo), show:showExame(model:exame(IdMed, IDPac, tipo))).
-
+verExame(IDPaciente) :- forall(model:exame(IdMedico, IDPaciente, Texto), show:showExame(model:exame(IdMedico, IDPaciente, Texto))).
 
 verConsultaP(IDPac) :- forall(model:consulta(IdCons, IdClinica, IdMedico, IDPac, DataConsulta, HoraConsulta, Queixas, C), 
             show:showConsulta(model:consulta(IdCons, IdClinica, IdMedico, IDPac, DataConsulta, HoraConsulta, Queixas, C))).  

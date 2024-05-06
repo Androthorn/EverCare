@@ -350,14 +350,13 @@ verPosConsulta(IdPac) :-
     writeln('[V] - Voltar'),
     promptOption('Opção > ', OP),
     ( OP = "R" -> tty_clear, verReceita(IdPac);
-      OP = "L" -> tty_clear, verLaudo(IdPac);
+      OP = "L" -> tty_clear, paciente:verLaudo(IdPac);
       OP = "E" -> tty_clear, verExame(IdPac);
       OP = "V" -> tty_clear, menuPaciente(IdPac);
       writeln('Opção Inválida')).
 
 verReceita(IdPac) :- paciente:verReceita(IdPac).
-verLaudo(IdPac) :- paciente:verLaudo(IdPac).
-verExame(IdPac) :- paciente:verExame(IdPac).
+
 
 inicialClinica :-
     tty_clear,

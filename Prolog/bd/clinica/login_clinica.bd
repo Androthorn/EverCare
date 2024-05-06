@@ -1,4 +1,2 @@
 :- dynamic login_clinica/2.
 
-login_clinica(1, "123").
-

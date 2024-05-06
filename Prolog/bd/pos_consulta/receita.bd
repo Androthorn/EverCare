@@ -1,4 +1,1 @@
 :- dynamic receita/3.
-
-receita(1, 2, "aaaa").
-

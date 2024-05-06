@@ -1,4 +1,1 @@
 :- dynamic login_medico/2.
-
-login_medico(1, "123").
-

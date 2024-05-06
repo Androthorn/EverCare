@@ -1,5 +1,5 @@
 :- module(clinica, [verAgendamentoClin/1, mapMedicoConsulta/2,verMedicos/1, verPaciente/1, visualizaPacientes/1, 
-                    verFila/1, visualizarInformacaoClinica/1, getClinicaName/1, showRankingMedicos/1, showMedicosNota/1]).
+                    verFila/1, getClinicaName/2, showRankingMedicos/1, showMedicosNota/1]).
 
 :- use_module('../App/show.pl').
 :- use_module('../Models/model.pl').
