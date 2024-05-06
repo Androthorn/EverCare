@@ -84,7 +84,7 @@ menuPaciente(IdPac) :-
     write('[S] Sair'), nl,
     promptOption('Opção > ', OP),
 
-    ( OP = "B" -> tty_clear, buscarOpcoes(IdPac);
+    ( OP = "B" -> tty_clear, menuBuscar(IdPac);
       OP = "M" -> tty_clear, cadastraConsulta(IdPac), !;
       OP = "V" -> tty_clear, verAgendamento(IdPac), utils:mensagemEspera, menuPaciente(IdPac);
       OP = "R" -> tty_clear, verPosConsulta(IdPac), utils:mensagemEspera, menuPaciente(IdPac);
@@ -239,8 +239,8 @@ menuBuscar(IDPac) :-
       write('[C] Buscar Clínicas'), nl,
       promptOption('Opção > ', OP),
 
-      ( OP = "M" -> tty_clear, menuDeBuscaMedicos,utils:mensagemEspera, tty_clear, menuPaciente(IDPac);
-        OP = "C" -> tty_clear, menuDeBuscaClinicas,utils:mensagemEspera, tty_clear, menuPaciente(IDPac);
+      ( OP = "M" -> tty_clear, menuDeBuscaMedicos(IDPac),utils:mensagemEspera, tty_clear, menuPaciente(IDPac);
+        OP = "C" -> tty_clear, menuDeBuscaClinicas(IDPac),utils:mensagemEspera, tty_clear, menuPaciente(IDPac);
         writeln('Opção Inválida'), utils:mensagemEspera, menuBuscar(IDPac)).
 
 menuDeBuscaMedicos(IDPac) :-
