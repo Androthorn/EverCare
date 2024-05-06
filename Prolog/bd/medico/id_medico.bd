@@ -1,4 +1,4 @@
 :- dynamic id_medico/1.
 
-id_medico(0).
+id_medico(6).
 
