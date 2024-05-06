@@ -158,7 +158,6 @@ buscarClinicaAgendamento(MetodoAgendamento) :-
 compararNotaMedico(NotaMedico, Nota) :-
     NotaMedico >= Nota.
 
-% Predicado para buscar médicos com uma nota igual ou superior à nota especificada
 buscarMedicoAvaliacao(Nota) :-
     forall(
         (model:medico(Clinica, Id, Nome, CRM, Especialidade, Rede, NotaMedico,_), compararNotaMedico(NotaMedico, Nota)),
