@@ -4,7 +4,7 @@
                   horaValida/2, dataValida/1, horariosDisponiveis/3, tituloI/0, tituloInformacao/1,
                   imprimirListaComEspacos/1, validaIDMedico/1, validaIDChat/1, validaIDConsulta/1, validaIDPaciente/1,
                   adicionarPrefixoString/2, validaPacienteMedico/2, validaChatPaciente/2, validaChatMedico/2,
-                  validaConsultaPaciente/2, validaIDClinica/1, validaMedicoClinica/2, validaIdFila/1]).
+                  validaConsultaPaciente/2, validaIDClinica/1, validaMedicoClinica/2, validaIdFila/1, validaClinicaAgendado/1]).
 
 :- use_module('../Models/model.pl').
 
@@ -73,6 +73,9 @@ validaFilaClinica(_, _, _) :- false.
 
 validaMedicoFila(IDM) :- model:fila(_, _, IDM, _), !.
 validaMedicoFila(_, _) :- false.
+
+validaClinicaAgendado(IDC) :- model:clinica(IDC, _, _, _, _, "A", _, _, _), !.
+validaClinicaAgendado(_, _) :- false.
 
 validaFilaPaciente(IDPac, IDFila) :-
     getPacienteID(IDPac, Nome),

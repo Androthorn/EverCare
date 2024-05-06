@@ -403,7 +403,7 @@ cadastraClinica :-
     promptString('Nome > ', Nome),
     promptString('CNPJ > ', CNPJ),
     promptString('Endereço > ', Endereco),
-    promptString('Planos de Saúde > ', Planos),
+    promptString('Plano de Saúde > ', Planos),
     promptString('Método de Agendamento (A)gendado ou (O)rdem de Chegada > ', MetodoAgendamento),
     promptString('Horário de Funcionamento > ', HorarioFuncionamento),
     promptString('Telefone > ', Telefone),
@@ -429,6 +429,28 @@ loginClinica :-
       writeln('Login ou senha inválidos'), utils:mensagemEspera, tty_clear, inicialClinica).
 
 menuClinica(IdClin) :-
+    (utils:validaClinicaAgendado(IdClin) ->
+    menuClinicaAgendado(IdClin);
+    menuClinicaOrdem(IdClin)).
+
+menuClinicaAgendado(IdClin) :-
+    tty_clear,
+    utils:tituloInformacao('MENU CLÍNICA'),
+    write('-----------------------------'), nl,
+    write('[C] Cadastrar Médico'), nl,
+    write('[V] Ver Informações'), nl,
+    write('[D] Dashboard'), nl,
+    write('[S] Sair'), nl,
+    write('-----------------------------'), nl,
+    promptOption('Opção > ', OP),
+
+    ( OP = "C" -> tty_clear, cadastraMedico(IdClin), tty_clear, menuClinica(IdClin);
+      OP = "V" -> tty_clear, visualizarInformacaoClinica(IdClin), utils:mensagemEspera, tty_clear, menuClinica(IdClin);
+      OP = "D" -> tty_clear, verDashboard(IdClin), utils:mensagemEspera, tty_clear, menuClinica(IdClin);
+      OP = "S" -> tty_clear, main;
+      writeln('Opção Inválida'), utils:mensagemEspera, tty_clear, menuClinica(IdClin)).
+
+menuClinicaOrdem(IdClin) :-
     tty_clear,
     utils:tituloInformacao('MENU CLÍNICA'),
     write('-----------------------------'), nl,
