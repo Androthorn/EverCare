@@ -563,7 +563,7 @@ menuMedico(ID) :-
     tty_clear,
     utils:tituloInformacao('DASHBOARD MÉDICO'),
     write('[V] Ver Consultas'), nl,
-    write('[E] Emitir Receita/Laudo'), nl,
+    write('[E] Emitir Pós Consulta'), nl,
     write('[C] Chats'), nl,
     write('[S] Sair'), nl,
     promptOption('Opção > ', OP),
