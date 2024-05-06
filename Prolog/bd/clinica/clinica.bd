@@ -1,2 +1,3 @@
-:- dynamic clinica/9.
+:- dynamic clinica/8.
 
+clinica(1, "Clínica do Otorrino", "23431", "Rua Caxias Norte", "Unimed, Bradesco", "A", "8394045", "123").

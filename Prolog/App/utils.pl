@@ -45,7 +45,7 @@ validaIDChat(_, _) :- false.
 validaIDConsulta(ID) :- model:consulta(ID, _, _, _, _, _, _, _), !.
 validaIDConsulta(_, _) :- false.
 
-validaIDClinica(ID) :- model:clinica(ID, _, _, _, _, _, _, _, _), !.
+validaIDClinica(ID) :- model:clinica(ID, _, _, _, _, _, _, _), !.
 validaIDClinica(_, _) :- false.
 
 validaIDFila(ID) :- model:fila(ID, _, _, _), !.
@@ -84,7 +84,7 @@ mensagemEspera :- promptString('\n\nPressione qualquer tecla para continuar', _)
 autenticaLoginPaciente(ID, 1) :- model:paciente(ID, _, _, _, _, _, _, _, _, _, _, _), !.
 autenticaLoginPaciente(_, 0).
 
-autenticaLoginClinica(ID, 1) :- model:clinica(ID, _, _, _, _, _, _, _, _), !.
+autenticaLoginClinica(ID, 1) :- model:clinica(ID, _, _, _, _, _, _, _), !.
 autenticaLoginClinica(_, 0).
 
 autenticaLoginMedico(ID, 1) :- model:medico(_, ID, _, _, _, _, _, _), !.

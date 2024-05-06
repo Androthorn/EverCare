@@ -63,7 +63,7 @@ getMedicoID(IdMedico, NomeMedico) :-
     NomeMedico = Nome.
 
 getClinicaName(IdClinica, NomeClinica) :-
-    model:clinica(IdClinica, Nome, _, _, _, _, _, _,_),
+    model:clinica(IdClinica, Nome, _, _, _, _, _,_),
     NomeClinica = Nome.
 
 verFila(IdClinica) :-

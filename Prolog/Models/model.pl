@@ -41,7 +41,7 @@ Inicializa a tabela dinamica de clinicas.
 Campos esperados: ID, Nome, CNPJ, Endereço, Planos, Metodo de Agendamento, Horário de Funcionamento, Contato, Senha.
 */
 iniciaClinica :-
-    dynamic(clinica/9).
+    dynamic(clinica/8).
 
 iniciaLoginClinica :-
     dynamic(login_clinica/2).
