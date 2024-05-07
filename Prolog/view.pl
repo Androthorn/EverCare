@@ -153,15 +153,15 @@ menuAvaliacao(IdPac) :-
   prompt('ID Médico > ', IdMedico),
   (utils:validaIDMedico(IdMedico) ->
     (
-      prompt('Nota (Escala de 1 a 5) > ', Nota),
-      (between(1, 5, Nota) -> % Verifica se a nota está entre 1 e 5
+      prompt('Nota (Escala de 0 a 5) > ', Nota),
+      (between(0, 5, Nota) -> % Verifica se a nota está entre 1 e 5
         promptString('Comentário > ', Comentario),
         assertz(model:avaliacao(IdPac, IdMedico, Nota, Comentario)),
         persistence:saveAvaliacao,
         medico:atualizarNota(IdMedico),
         writeln('Mensagem enviada e médico avaliado com sucesso!')
       ;
-        writeln('Nota inválida. Por favor, insira uma nota entre 1 e 5.')
+        writeln('Nota inválida. Por favor, insira uma nota entre 0 e 5.')
       )
     )
     ;
@@ -239,8 +239,8 @@ menuBuscar(IDPac) :-
       write('[C] Buscar Clínicas'), nl,
       promptOption('Opção > ', OP),
 
-      ( OP = "M" -> tty_clear, menuDeBuscaMedicos(IDPac),utils:mensagemEspera, tty_clear, menuPaciente(IDPac);
-        OP = "C" -> tty_clear, menuDeBuscaClinicas(IDPac),utils:mensagemEspera, tty_clear, menuPaciente(IDPac);
+      ( OP = "M" -> tty_clear, menuDeBuscaMedicos(IDPac);
+        OP = "C" -> tty_clear, menuDeBuscaClinicas(IDPac);
         writeln('Opção Inválida'), utils:mensagemEspera, menuBuscar(IDPac)).
 
 menuDeBuscaMedicos(IDPac) :-
@@ -249,7 +249,7 @@ menuDeBuscaMedicos(IDPac) :-
       write('[M] - Nome do Médico'), nl,
       write('[C] - Clínica'), nl, 
       write('[E] - Especialidade'), nl,
-      write('[A] - Avaliação acima de (0-10)'), nl,
+      write('[A] - Avaliação acima de (0-5)'), nl,
       write('[S] - Sintoma'), nl,
       write('[V] - Voltar'), nl,
       promptOption('Opção > ', OP),
@@ -257,7 +257,7 @@ menuDeBuscaMedicos(IDPac) :-
       ( OP = "M" -> tty_clear, menuBuscarMedico,utils:mensagemEspera, tty_clear, menuDeBuscaMedicos(IDPac);
         OP = "C" -> tty_clear, menuBuscarMedicoClinica,utils:mensagemEspera, tty_clear, menuDeBuscaMedicos(IDPac);
         OP = "E" -> tty_clear, menuBuscarEspecialidade,utils:mensagemEspera, tty_clear, menuDeBuscaMedicos(IDPac);
-        OP = "A" -> tty_clear, menuBuscarPorSintoma,utils:mensagemEspera, tty_clear, menuDeBuscaMedicos(IDPac);
+        OP = "A" -> tty_clear, menuMedicoAvaliacao,utils:mensagemEspera, tty_clear, menuDeBuscaMedicos(IDPac);
         OP = "S" -> tty_clear, menuBuscarPorSintoma,utils:mensagemEspera, tty_clear, menuDeBuscaMedicos(IDPac);
         OP = "V" -> tty_clear, menuPaciente(IDPac);
         writeln('Opção Inválida'), utils:mensagemEspera, menuDeBuscaMedicos(IDPac)).
@@ -280,9 +280,9 @@ menuDeBuscaClinicas(IDPac):-
 menuMedicoAvaliacao:-
     tty_clear,
     utils:tituloInformacao('Buscar Médicos por Avaliação'),
-    promptString('Nota acima de (1 a 5) > ', NotaStr),
+    promptString('Nota acima de (0 a 5) > ', NotaStr),
     atom_number(NotaStr, Nota),
-    (between(1, 5, Nota) -> 
+    (between(0, 5, Nota) -> 
         paciente:buscarMedicoAvaliacao(Nota),
     ;
         writeln('Nota inválida. Por favor, insira uma nota entre 1 e 5.'), utils:mensagemEspera, tty_clear, menuMedicoAvaliacao

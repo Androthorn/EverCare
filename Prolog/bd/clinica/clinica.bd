@@ -1,3 +1,4 @@
 :- dynamic clinica/8.
 
-clinica(1, "Clínica do Otorrino", "23431", "Rua Caxias Norte", "Unimed, Bradesco", "A", "8394045", "123").
+clinica(1, "Clínica do Otorrino", "23431", "Rua Caxias Norte", "Unimed", "A", "8394045", "123").
+clinica(2, "Clin Med", "456712", "Rua Baixada", "Bradesco", "O", "8344567", "123").

@@ -1,4 +1,5 @@
 :- dynamic paciente/12.
 
 paciente(1, "Guilherme", "126.989.504-47", "M", "05/08/2004", "Rua Vila Nova", "O+", "Bradesco", "N", "N", "N", "123").
+paciente(2, "Ana", "99876653", "F", "16/08/2004", "Rua Nova", "A+", "Unimed", "N", "N", "N", "123").
 
